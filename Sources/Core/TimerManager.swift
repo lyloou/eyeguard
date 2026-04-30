@@ -9,7 +9,7 @@ class TimerManager {
     private let queue = DispatchQueue(label: "com.eyeguard.timer", qos: .userInteractive)
 
     private(set) var state: EyeState = .idle
-    private var remainingSeconds: Int = 0        // 当前状态剩余秒数
+    private(set) var remainingSeconds: Int = 0        // 当前状态剩余秒数（外部只读）
     private var frozenSeconds: Int = 0           // 冻结时的值（.paused 时用）
 
     private weak var statusBarController: StatusBarController?

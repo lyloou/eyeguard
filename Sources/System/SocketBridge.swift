@@ -98,7 +98,12 @@ class SocketBridge {
 
         switch command {
         case "status":
-            return jsonify(["ok": true, "state": timer.state.displayText, "text": timer.statusBarText])
+            return jsonify([
+                "ok": true,
+                "state": timer.state.displayText,
+                "text": timer.statusBarText,
+                "remaining": timer.remainingSeconds
+            ])
 
         case "start":
             timer.start()
@@ -124,6 +129,21 @@ class SocketBridge {
             timer.skipRest()
             return jsonify(["ok": true])
 
+        case "toggle":
+            if case .paused = timer.state {
+                timer.resume()
+            } else {
+                timer.pause()
+            }
+            return jsonify(["ok": true])
+
+        case "stats":
+            return jsonify([
+                "ok": true,
+                "rounds": StatsManager.shared.roundsCompletedToday,
+                "restMinutes": StatsManager.shared.totalRestMinutesToday
+            ])
+
         case "settings":
             let s = Settings.shared
             return jsonify([
@@ -131,7 +151,11 @@ class SocketBridge {
                 "workDuration": s.workDuration,
                 "restDuration": s.restDuration,
                 "enforceRest": s.enforceRest,
-                "pauseOnLock": s.pauseOnLock
+                "pauseOnLock": s.pauseOnLock,
+                "notifyOnWorkEnd": s.notifyOnWorkEnd,
+                "notifyOnRestEnd": s.notifyOnRestEnd,
+                "soundEnabled": s.soundEnabled,
+                "launchAtLogin": LoginItemManager.shared.isEnabled
             ])
 
         default:
