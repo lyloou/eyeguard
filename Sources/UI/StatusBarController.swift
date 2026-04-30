@@ -179,7 +179,7 @@ class StatusBarController: NSObject {
             pauseMenuItem.isEnabled = true
             resetMenuItem.isEnabled = true
             restNowMenuItem.isEnabled = true
-            statusItem.button?.title = L10n.statusWorking(timeStr)
+            statusItem.button?.title = formatStatusBarText(state: .working, timeStr: timeStr)
 
         case .paused(let frozen):
             statusMenuItem.title = L10n.statusPaused(formatTime(frozen))
@@ -189,7 +189,7 @@ class StatusBarController: NSObject {
             pauseMenuItem.isEnabled = false
             resetMenuItem.isEnabled = true
             restNowMenuItem.isEnabled = true
-            statusItem.button?.title = L10n.statusPaused(formatTime(frozen))
+            statusItem.button?.title = formatStatusBarText(state: .paused(remaining: frozen), timeStr: formatTime(frozen))
 
         case .resting:
             statusMenuItem.title = L10n.statusResting(timeStr)
@@ -197,7 +197,55 @@ class StatusBarController: NSObject {
             pauseMenuItem.isEnabled = false
             resetMenuItem.isEnabled = false
             restNowMenuItem.isEnabled = false
-            statusItem.button?.title = L10n.statusResting(timeStr)
+            statusItem.button?.title = formatStatusBarText(state: .resting, timeStr: timeStr)
+        }
+    }
+
+    private func formatStatusBarText(state: EyeState, timeStr: String) -> String {
+        let style = Settings.shared.statusBarStyle
+        switch style {
+        case .classic:
+            switch state {
+            case .idle:    return L10n.appName
+            case .working: return "Working \(timeStr)"
+            case .paused:  return "Paused \(timeStr)"
+            case .resting: return "Resting \(timeStr)"
+            }
+        case .minimal:
+            switch state {
+            case .idle:    return L10n.appName
+            case .working: return "工作中 \(timeStr)"
+            case .paused:  return "已暂停 \(timeStr)"
+            case .resting: return "休息中 \(timeStr)"
+            }
+        case .emoji:
+            switch state {
+            case .idle:    return L10n.appName
+            case .working: return "💼工作中 \(timeStr)"
+            case .paused:  return "⏸已暂停 \(timeStr)"
+            case .resting: return "🌿休息中 \(timeStr)"
+            }
+        case .compact:
+            switch state {
+            case .idle:    return L10n.appName
+            case .working: return "W \(timeStr)"
+            case .paused:  return "P \(timeStr)"
+            case .resting: return "R \(timeStr)"
+            }
+        case .bracket:
+            switch state {
+            case .idle:    return L10n.appName
+            case .working: return "[工作中] \(timeStr)"
+            case .paused:  return "[已暂停] \(timeStr)"
+            case .resting: return "[休息中] \(timeStr)"
+            }
+        case .star:
+            switch state {
+            case .idle:    return L10n.appName
+            case .working: return "☆工作中☆ \(timeStr)"
+            case .paused:  return "☆已暂停☆ \(timeStr)"
+            case .resting: return "☆休息中☆ \(timeStr)"
+            }
         }
     }
 

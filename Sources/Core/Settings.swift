@@ -17,6 +17,21 @@ class Settings {
         static let notifyOnRestEnd = "notifyOnRestEnd"
         static let soundEnabled   = "soundEnabled"
         static let hasLaunchedBefore = "hasLaunchedBefore"
+        static let statusBarStyle = "statusBarStyle"
+    }
+
+    /// 状态栏样式
+    enum StatusBarStyle: String, CaseIterable {
+        case classic = "classic"   // Working 29:59
+        case minimal = "minimal"   // 工作中 29:59
+        case emoji   = "emoji"      // 💼工作中 29:59
+        case compact = "compact"   // W 29:59
+        case bracket = "bracket"    // [工作中] 29:59
+        case star    = "star"      // ☆工作中☆ 29:59
+
+        var index: Int {
+            Settings.StatusBarStyle.allCases.firstIndex(of: self) ?? 0
+        }
     }
 
     // 默认值（秒）
@@ -31,7 +46,8 @@ class Settings {
             Keys.pauseOnLock: true,
             Keys.notifyOnWorkEnd: true,
             Keys.notifyOnRestEnd: false,
-            Keys.soundEnabled: true
+            Keys.soundEnabled: true,
+            Keys.statusBarStyle: StatusBarStyle.classic.rawValue
         ])
     }
 
@@ -81,5 +97,14 @@ class Settings {
     var hasLaunchedBefore: Bool {
         get { defaults.bool(forKey: Keys.hasLaunchedBefore) }
         set { defaults.set(newValue, forKey: Keys.hasLaunchedBefore) }
+    }
+
+    /// 状态栏样式
+    var statusBarStyle: StatusBarStyle {
+        get {
+            let raw = defaults.string(forKey: Keys.statusBarStyle) ?? StatusBarStyle.classic.rawValue
+            return StatusBarStyle(rawValue: raw) ?? .classic
+        }
+        set { defaults.set(newValue.rawValue, forKey: Keys.statusBarStyle) }
     }
 }

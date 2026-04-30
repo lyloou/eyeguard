@@ -75,6 +75,16 @@ class L10n {
     static var aboutTitle: String { ns("About EyeGuard") }
     static var aboutVersion: String { ns("Version %@") }
 
+    // MARK: - 状态栏样式选项
+
+    static var statusBarStyle: String { ns("Status Bar Style:") }
+    static var styleClassic: String { ns("Classic (Working 29:59)") }
+    static var styleMinimal: String { ns("Minimal (工作中 29:59)") }
+    static var styleEmoji: String { ns("Emoji (💼工作中 29:59)") }
+    static var styleCompact: String { ns("Compact (W 29:59)") }
+    static var styleBracket: String { ns("Bracket ([工作中] 29:59)") }
+    static var styleStar: String { ns("Star (☆工作中☆ 29:59)") }
+
     // MARK: - Helper
 
     private static func ns(_ key: String) -> String {

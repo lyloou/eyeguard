@@ -16,6 +16,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     private var notifyOnRestEndCheckbox: NSButton!
     private var soundEnabledCheckbox: NSButton!
     private var loginItemCheckbox: NSButton!
+    private var statusBarStylePopup: NSPopUpButton!
 
     private override init() {
         super.init()
@@ -122,6 +123,25 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         loginItemCheckbox.frame = NSRect(x: 20, y: y, width: 300, height: 22)
         contentView.addSubview(loginItemCheckbox)
 
+        y -= 30
+
+        // 状态栏样式
+        let styleLabel = makeLabel(L10n.statusBarStyle, at: NSPoint(x: 20, y: y))
+        contentView.addSubview(styleLabel)
+
+        statusBarStylePopup = NSPopUpButton(frame: NSRect(x: 140, y: y - 2, width: 200, height: 22))
+        statusBarStylePopup.addItems(withTitles: [
+            L10n.styleClassic,
+            L10n.styleMinimal,
+            L10n.styleEmoji,
+            L10n.styleCompact,
+            L10n.styleBracket,
+            L10n.styleStar
+        ])
+        statusBarStylePopup.target = self
+        statusBarStylePopup.action = #selector(statusBarStyleChanged)
+        contentView.addSubview(statusBarStylePopup)
+
         y -= 40
 
         // 保存按钮
@@ -164,6 +184,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         notifyOnRestEndCheckbox.state = s.notifyOnRestEnd ? .on : .off
         soundEnabledCheckbox.state = s.soundEnabled ? .on : .off
         loginItemCheckbox.state = LoginItemManager.shared.isEnabled ? .on : .off
+        statusBarStylePopup.selectItem(at: s.statusBarStyle.index)
     }
 
     @objc private func saveClicked() {
@@ -212,6 +233,11 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
     @objc private func loginItemChanged() {
         LoginItemManager.shared.toggle()
+    }
+
+    @objc private func statusBarStyleChanged() {
+        let index = statusBarStylePopup.indexOfSelectedItem
+        Settings.shared.statusBarStyle = Settings.StatusBarStyle.allCases[index]
     }
 
     // MARK: - Show
