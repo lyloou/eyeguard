@@ -1,0 +1,196 @@
+import AppKit
+
+/// 状态栏菜单控制器
+class StatusBarController: NSObject {
+
+    // MARK: - Properties
+
+    private var statusItem: NSStatusItem!
+    private var menu: NSMenu!
+
+    weak var timerManager: TimerManager?
+
+    // 菜单项
+    private var statusMenuItem: NSMenuItem!
+    private var startMenuItem: NSMenuItem!
+    private var pauseMenuItem: NSMenuItem!
+    private var resetMenuItem: NSMenuItem!
+    private var restNowMenuItem: NSMenuItem!
+
+    // MARK: - Init
+
+    override init() {
+        super.init()
+        setupStatusItem()
+        setupMenu()
+    }
+
+    // MARK: - Setup
+
+    private func setupStatusItem() {
+        statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
+        if let button = statusItem.button {
+            button.title = "护眼卫士"
+            button.font = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)
+            button.target = self
+            button.action = #selector(statusItemClicked(_:))
+            button.sendAction(on: [.leftMouseUp, .rightMouseUp])
+            applyGreenBackground(to: button)
+        }
+    }
+
+    private func applyGreenBackground(to button: NSStatusBarButton) {
+        let bgColor = NSColor(red: 0.13, green: 0.55, blue: 0.13, alpha: 1.0) // 绿色
+        button.wantsLayer = true
+        button.layer?.backgroundColor = bgColor.cgColor
+        button.layer?.cornerRadius = 4
+        button.layer?.masksToBounds = true
+    }
+
+    private func setupMenu() {
+        menu = NSMenu()
+
+        // 状态行
+        statusMenuItem = NSMenuItem(title: "当前状态: 空闲", action: nil, keyEquivalent: "")
+        statusMenuItem.isEnabled = false
+        menu.addItem(statusMenuItem)
+
+        menu.addItem(NSMenuItem.separator())
+
+        // 开始/暂停
+        startMenuItem = NSMenuItem(title: "▶ 开始", action: #selector(startClicked), keyEquivalent: "")
+        startMenuItem.target = self
+        menu.addItem(startMenuItem)
+
+        pauseMenuItem = NSMenuItem(title: "⏸ 暂停", action: #selector(pauseClicked), keyEquivalent: "")
+        pauseMenuItem.target = self
+        menu.addItem(pauseMenuItem)
+
+        resetMenuItem = NSMenuItem(title: "🔄 重置", action: #selector(resetClicked), keyEquivalent: "")
+        resetMenuItem.target = self
+        menu.addItem(resetMenuItem)
+
+        // 立即休息
+        restNowMenuItem = NSMenuItem(title: "⏰ 立即休息", action: #selector(restNowClicked), keyEquivalent: "")
+        restNowMenuItem.target = self
+        menu.addItem(restNowMenuItem)
+
+        menu.addItem(NSMenuItem.separator())
+
+        // 设置
+        let settingsItem = NSMenuItem(title: "⚙ 设置...", action: #selector(settingsClicked), keyEquivalent: ",")
+        settingsItem.target = self
+        menu.addItem(settingsItem)
+
+        menu.addItem(NSMenuItem.separator())
+
+        // 退出
+        let quitItem = NSMenuItem(title: "❌ 退出", action: #selector(quitClicked), keyEquivalent: "q")
+        quitItem.target = self
+        menu.addItem(quitItem)
+
+        statusItem.menu = menu
+    }
+
+    // MARK: - Actions
+
+    @objc private func statusItemClicked(_ sender: NSStatusBarButton) {
+        statusItem.menu = menu
+        statusItem.button?.performClick(nil)
+    }
+
+    @objc private func startClicked() {
+        timerManager?.start()
+    }
+
+    @objc private func pauseClicked() {
+        guard let manager = timerManager else { return }
+        if case .paused = manager.currentState {
+            manager.resume()
+        } else {
+            manager.pause()
+        }
+    }
+
+    @objc private func resetClicked() {
+        timerManager?.reset()
+    }
+
+    @objc private func restNowClicked() {
+        timerManager?.restNow()
+    }
+
+    @objc private func settingsClicked() {
+        SettingsWindowController.shared.show()
+    }
+
+    @objc private func quitClicked() {
+        NSApp.terminate(nil)
+    }
+
+    // MARK: - Update UI
+
+    func updateState(_ state: EyeState, remaining: Int) {
+        DispatchQueue.main.async { [weak self] in
+            self?.refreshMenu(state: state, remaining: remaining)
+        }
+    }
+
+    private func refreshMenu(state: EyeState, remaining: Int) {
+        // 状态文字
+        let timeStr = formatTime(remaining)
+        switch state {
+        case .idle:
+            statusMenuItem.title = "当前状态: 空闲"
+            startMenuItem.title = "▶ 开始"
+            startMenuItem.isEnabled = true
+            pauseMenuItem.title = "⏸ 暂停"
+            pauseMenuItem.isEnabled = false
+            resetMenuItem.isEnabled = false
+            restNowMenuItem.isEnabled = false
+            statusItem.button?.title = "护眼卫士"
+
+        case .working:
+            statusMenuItem.title = "当前状态: 工作中 \(timeStr)"
+            startMenuItem.title = "▶ 开始"
+            startMenuItem.isEnabled = false
+            pauseMenuItem.title = "⏸ 暂停"
+            pauseMenuItem.isEnabled = true
+            resetMenuItem.isEnabled = true
+            restNowMenuItem.isEnabled = true
+            statusItem.button?.title = "工作中 \(timeStr)"
+
+        case .paused(let frozen):
+            statusMenuItem.title = "当前状态: 已暂停 \(formatTime(frozen))"
+            startMenuItem.title = "▶ 继续"
+            startMenuItem.isEnabled = true
+            pauseMenuItem.title = "⏸ 暂停"
+            pauseMenuItem.isEnabled = false
+            resetMenuItem.isEnabled = true
+            restNowMenuItem.isEnabled = true
+            statusItem.button?.title = "已暂停 \(formatTime(frozen))"
+
+        case .resting:
+            statusMenuItem.title = "当前状态: 休息中 \(timeStr)"
+            startMenuItem.isEnabled = false
+            pauseMenuItem.isEnabled = false
+            resetMenuItem.isEnabled = false
+            restNowMenuItem.isEnabled = false
+            statusItem.button?.title = "休息中 \(timeStr)"
+        }
+    }
+
+    private func formatTime(_ seconds: Int) -> String {
+        let m = seconds / 60
+        let s = seconds % 60
+        return String(format: "%02d:%02d", m, s)
+    }
+}
+
+// MARK: - TimerManager 用到的计算属性
+
+extension TimerManager {
+    var currentState: EyeState {
+        return state
+    }
+}

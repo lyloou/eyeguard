@@ -1,0 +1,31 @@
+# macOS
+.DS_Store
+*.swp
+*~
+
+# Xcode
+*.xcodeproj/*
+!.xcodeproj/project.pbxproj
+*.pbxuser
+!*.pbxproj
+*.mode1v3
+*.mode2v3
+*.perspectivev3
+*.xcuserstate
+*.xcworkspace/
+xcuserdata/
+DerivedData/
+
+# Build
+build/
+*.app
+*.appex
+*.dSYM
+*.build/
+
+# Logs
+*.log
+
+# EyeGuard runtime files
+/tmp/eyeguard.lock
+/tmp/eyeguard.sock
