@@ -1,4 +1,4 @@
-# 护眼卫士 EyeGuard — 需求规格文档 v0.1
+# 护眼卫士 EyeGuard — 需求规格文档 v0.2
 
 ## 一、项目概述
 
@@ -50,7 +50,12 @@
 ⏸ 暂停
 🔄 重置
 ─────────────────
+  今日统计
+  3 轮已完成
+  15 分钟休息
+─────────────────
 ⚙ 设置...
+关于 EyeGuard
 ─────────────────
 ❌ 退出
 ```
@@ -61,6 +66,8 @@
 |---|---|---|
 | `Space` / `ESC` | 休息弹窗存在 | 关闭弹窗，开始工作计时 |
 | `Space` / `ESC` | 其他状态 | 无操作 |
+| `⌘⇧E` | 全局（任意应用） | 继续工作（从暂停恢复） |
+| `⌘⇧P` | 全局（任意应用） | 暂停计时 |
 
 ### 3.3 暂停/重置
 
@@ -83,11 +90,12 @@
 
 - `NSStatusItem`，左键点击显示下拉菜单
 - 状态文字格式：`{状态名} {MM:SS}` 或 `{状态名}`
+- 图标：SF Symbol `eye.fill`（template image，深浅色自适应）
 
 ### 4.2 休息弹窗（NSPanel）
 
 - **位置**：屏幕右上角（多屏跟随鼠标所在屏幕）
-- **样式**：无标题栏、圆角、置顶、半透明背景
+- **样式**：无标题栏、圆角、置顶、`NSVisualEffectView`（自适应深浅色）
 - **内容**：
   - 主文本：`休息中` 或 `Resting`
   - 倒计时：`04:59`（大字）
@@ -105,6 +113,10 @@
 | `restDuration` | 5 min | 休息时长，范围 1~30 |
 | `enforceRest` | true | 强制休息（不允许跳过） |
 | `pauseOnLock` | true | 锁屏自动暂停 |
+| `notifyOnWorkEnd` | true | 工作结束时发送通知 |
+| `notifyOnRestEnd` | false | 休息结束时发送通知 |
+| `soundEnabled` | true | 音效提示 |
+| `launchAtLogin` | false | 开机自动启动 |
 
 ---
 
@@ -138,9 +150,85 @@
 - 通知点击后聚焦 App 窗口
 - 首次启动时请求通知授权（`UNUserNotificationCenter`）
 
+### 5.5 音效提示
+
+使用 `AudioToolbox` 系统音效 ID：
+
+| 事件 | 音效 |
+|------|------|
+| 工作结束（开始休息） | `kSystemSoundID_1016`（Basso）|
+| 休息结束（开始工作） | `kSystemSoundID_1013`（Pop）|
+
+### 5.6 登录启动
+
+使用 `SMAppService`（macOS 13+）注册/取消登录项。
+
+### 5.7 全局快捷键
+
+使用 Carbon `RegisterEventHotKey` API：
+
+| 快捷键 | 行为 |
+|--------|------|
+| `⌘⇧E` | 继续工作（从暂停恢复）|
+| `⌘⇧P` | 暂停计时 |
+
+### 5.8 暗黑适配
+
+- 休息弹窗使用 `NSVisualEffectView`（`.hudWindow` 材质）自动适配深浅色
+- 状态栏图标使用 SF Symbol template image（`NSImageNameStatusBarIcon`）
+
 ---
 
-## 六、技术栈
+## 六、今日统计
+
+内存记录，`StatsManager` 管理，次日零时自动清零：
+
+| 指标 | 说明 |
+|------|------|
+| `roundsCompletedToday` | 今日完成的轮次（每次工作→休息算1轮）|
+| `totalRestMinutesToday` | 今日累计休息分钟数 |
+
+菜单位置底部显示，格式：
+```
+  今日统计
+  3 轮已完成
+  15 分钟休息
+```
+
+---
+
+## 七、国际化
+
+`L10n.swift` 统一管理，`en.lproj/Localizable.strings` 提供英文：
+
+| Key | 中文 | 英文 |
+|-----|------|------|
+| `appName` | 护眼卫士 | EyeGuard |
+| `working` | 工作中 | Working |
+| `resting` | 休息中 | Resting |
+| `paused` | 已暂停 | Paused |
+| `idle` | 空闲 | Idle |
+| `menuStart` | ▶ 开始 | ▶ Start |
+| `menuPause` | ⏸ 暂停 | ⏸ Pause |
+| `settingsTitle` | 护眼卫士 设置 | EyeGuard Settings |
+| `restTitle` | 休息一下 | Take a Break |
+| ... | ... | ... |
+
+---
+
+## 八、首次引导
+
+首次启动时自动弹出 3 步引导页：
+
+1. 工作 30 分钟 → 休息 5 分钟
+2. 休息弹窗出现时，按 Space/ESC 或等待
+3. 自动开始下一轮
+
+`Settings.hasLaunchedBefore` 判断，AppDelegate 在 `applicationDidFinishLaunching` 时检测。
+
+---
+
+## 九、技术栈
 
 | 模块 | 技术 |
 |---|---|
@@ -150,7 +238,7 @@
 | 项目生成 | XcodeGen |
 | 最低 macOS | 12.0+ |
 
-### 6.1 架构 — Unix Domain Socket IPC
+### 9.1 架构 — Unix Domain Socket IPC
 
 ```
 CLI (shell + nc)                  App (Swift)
@@ -171,17 +259,25 @@ CLI (shell + nc)                  App (Swift)
 
 ---
 
-## 七、交付清单
+## 十、交付清单
 
 - [x] 需求规格文档（本文）
 - [x] Xcode 项目（XcodeGen 生成）—— `EyeGuard.xcodeproj`
-- [x] 状态栏菜单（NSStatusItem）
-- [x] 定时器核心（TimerManager + StateMachine）
-- [x] 休息弹窗（NSPanel）
+- [x] 状态栏菜单（NSStatusItem + SF Symbol template image）
+- [x] 定时器核心（TimerManager + StateMachine + DispatchSourceTimer）
+- [x] 休息弹窗（NSPanel + NSVisualEffectView 暗黑适配）
 - [x] 锁屏检测（LockScreenMonitor）
-- [x] 设置面板（设置窗口 + UserDefaults）
+- [x] 设置面板（SettingsWindowController + UserDefaults）
 - [x] 单例保护（/tmp/eyeguard.lock）
 - [x] Unix Domain Socket IPC（SocketBridge.swift）
 - [x] CLI 工具（~/.hermes/bin/eyeguard + skill）
 - [x] 系统通知（NotificationManager + UNUserNotificationCenter）
+- [x] 音效提示（SoundManager + AudioToolbox）
+- [x] 登录启动（LoginItemManager + SMAppService）
+- [x] 全局快捷键（HotkeyManager + Carbon API）
+- [x] 今日统计（StatsManager + 菜单底部显示）
+- [x] 国际化（L10n.swift + en.lproj/Localizable.strings）
+- [x] 首次引导（OnboardingWindowController）
+- [x] 关于窗口（AboutWindowController）
+- [x] App 图标（AppIcon.appiconset，绿色护眼主题）
 - [x] 构建验证（编译通过 ✅）
