@@ -7,6 +7,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var lockScreenMonitor: LockScreenMonitor!
     private var socketBridge: SocketBridge!
     private var notificationManager: NotificationManager!
+    private var hotkeyManager: HotkeyManager!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // 初始化设置
@@ -31,6 +32,10 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // 初始化 Socket 桥接（接收 CLI 命令）
         socketBridge = SocketBridge()
 
+        // 初始化全局快捷键
+        hotkeyManager = HotkeyManager.shared
+        hotkeyManager.register()
+
         // 初始化定时器管理器
         timerManager = TimerManager(statusBarController: statusBarController)
         statusBarController.timerManager = timerManager
@@ -50,6 +55,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applicationWillTerminate(_ notification: Notification) {
+        hotkeyManager.unregister()
         lockScreenMonitor.stop()
     }
 }

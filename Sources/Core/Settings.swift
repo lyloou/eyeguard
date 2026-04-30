@@ -15,6 +15,7 @@ class Settings {
         static let pauseOnLock    = "pauseOnLock"
         static let notifyOnWorkEnd = "notifyOnWorkEnd"
         static let notifyOnRestEnd = "notifyOnRestEnd"
+        static let soundEnabled   = "soundEnabled"
     }
 
     // 默认值（秒）
@@ -27,8 +28,9 @@ class Settings {
             Keys.restDuration: Self.defaultRest,
             Keys.enforceRest: true,
             Keys.pauseOnLock: true,
-            Keys.notifyOnWorkEnd: true,   // 默认开启工作结束通知
-            Keys.notifyOnRestEnd: false   // 默认关闭休息结束通知
+            Keys.notifyOnWorkEnd: true,
+            Keys.notifyOnRestEnd: false,
+            Keys.soundEnabled: true
         ])
     }
 
@@ -66,5 +68,11 @@ class Settings {
     var notifyOnRestEnd: Bool {
         get { defaults.bool(forKey: Keys.notifyOnRestEnd) }
         set { defaults.set(newValue, forKey: Keys.notifyOnRestEnd) }
+    }
+
+    /// 音效开关
+    var soundEnabled: Bool {
+        get { defaults.bool(forKey: Keys.soundEnabled) }
+        set { defaults.set(newValue, forKey: Keys.soundEnabled) }
     }
 }

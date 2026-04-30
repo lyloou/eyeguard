@@ -21,7 +21,6 @@ class RestWindowController: NSObject {
     // MARK: - Setup
 
     private func setupPanel() {
-        // 创建浮动面板
         panel = NSPanel(
             contentRect: NSRect(x: 0, y: 0, width: 280, height: 160),
             styleMask: [.titled, .closable, .nonactivatingPanel, .fullSizeContentView],
@@ -36,11 +35,19 @@ class RestWindowController: NSObject {
         panel.hidesOnDeactivate = false
         panel.becomesKeyOnlyIfNeeded = true
 
-        // 圆角背景
-        panel.backgroundColor = NSColor.windowBackgroundColor
+        // 透明背景 + 模糊效果（自动适配深浅色）
+        panel.backgroundColor = .clear
         panel.isOpaque = false
 
-        // 居中到右上角
+        // 使用 NSVisualEffectView 作为内容背景
+        let visualEffect = NSVisualEffectView(frame: NSRect(x: 0, y: 0, width: 280, height: 160))
+        visualEffect.material = .hudWindow
+        visualEffect.state = .active
+        visualEffect.wantsLayer = true
+        visualEffect.layer?.cornerRadius = 12
+        visualEffect.layer?.masksToBounds = true
+        panel.contentView = visualEffect
+
         positionToTopRight()
     }
 

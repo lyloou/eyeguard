@@ -30,21 +30,19 @@ class StatusBarController: NSObject {
     private func setupStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
-            button.title = "护眼卫士"
+            // 使用 SF Symbol 作为状态栏图标（template 模式，自动适配深浅色）
+            if let image = NSImage(systemSymbolName: "eye.fill", accessibilityDescription: "EyeGuard") {
+                let config = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
+                button.image = image.withSymbolConfiguration(config)
+                button.image?.isTemplate = true
+            } else {
+                button.title = "护眼卫士"
+            }
             button.font = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)
             button.target = self
             button.action = #selector(statusItemClicked(_:))
             button.sendAction(on: [.leftMouseUp, .rightMouseUp])
-            applyGreenBackground(to: button)
         }
-    }
-
-    private func applyGreenBackground(to button: NSStatusBarButton) {
-        let bgColor = NSColor(red: 0.13, green: 0.55, blue: 0.13, alpha: 1.0) // 绿色
-        button.wantsLayer = true
-        button.layer?.backgroundColor = bgColor.cgColor
-        button.layer?.cornerRadius = 4
-        button.layer?.masksToBounds = true
     }
 
     private func setupMenu() {

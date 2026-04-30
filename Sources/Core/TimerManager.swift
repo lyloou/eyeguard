@@ -112,6 +112,7 @@ class TimerManager {
         state = .working
         startTimer()
         updateUI()
+        SoundManager.shared.playWorkStart()
     }
 
     private func startResting() {
@@ -124,6 +125,7 @@ class TimerManager {
             workMinutes: Settings.shared.workDuration / 60,
             restMinutes: Settings.shared.restDuration / 60
         )
+        SoundManager.shared.playRestStart()
     }
 
     private func startTimer() {
@@ -184,6 +186,7 @@ class TimerManager {
     func dismissRestWindow() {
         closeRestWindow()
         NotificationManager.shared.notifyRestEnd()
+        SoundManager.shared.playRestEnd()
         startWorking()
     }
 
@@ -191,6 +194,7 @@ class TimerManager {
     func restTimerExpired() {
         closeRestWindow()
         NotificationManager.shared.notifyRestEnd()
+        SoundManager.shared.playRestEnd()
         startWorking()
     }
 

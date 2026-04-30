@@ -14,6 +14,8 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     private var pauseOnLockCheckbox: NSButton!
     private var notifyOnWorkEndCheckbox: NSButton!
     private var notifyOnRestEndCheckbox: NSButton!
+    private var soundEnabledCheckbox: NSButton!
+    private var loginItemCheckbox: NSButton!
 
     private override init() {
         super.init()
@@ -24,7 +26,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
     private func setupWindow() {
         window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 360, height: 280),
+            contentRect: NSRect(x: 0, y: 0, width: 360, height: 340),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
@@ -106,6 +108,20 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         notifyOnRestEndCheckbox.frame = NSRect(x: 20, y: y, width: 300, height: 22)
         contentView.addSubview(notifyOnRestEndCheckbox)
 
+        y -= 30
+
+        // 音效
+        soundEnabledCheckbox = NSButton(checkboxWithTitle: "音效提示", target: self, action: #selector(soundEnabledChanged))
+        soundEnabledCheckbox.frame = NSRect(x: 20, y: y, width: 300, height: 22)
+        contentView.addSubview(soundEnabledCheckbox)
+
+        y -= 30
+
+        // 登录启动
+        loginItemCheckbox = NSButton(checkboxWithTitle: "开机自动启动", target: self, action: #selector(loginItemChanged))
+        loginItemCheckbox.frame = NSRect(x: 20, y: y, width: 300, height: 22)
+        contentView.addSubview(loginItemCheckbox)
+
         y -= 40
 
         // 保存按钮
@@ -146,6 +162,8 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         pauseOnLockCheckbox.state = s.pauseOnLock ? .on : .off
         notifyOnWorkEndCheckbox.state = s.notifyOnWorkEnd ? .on : .off
         notifyOnRestEndCheckbox.state = s.notifyOnRestEnd ? .on : .off
+        soundEnabledCheckbox.state = s.soundEnabled ? .on : .off
+        loginItemCheckbox.state = LoginItemManager.shared.isEnabled ? .on : .off
     }
 
     @objc private func saveClicked() {
@@ -156,6 +174,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         s.pauseOnLock = (pauseOnLockCheckbox.state == .on)
         s.notifyOnWorkEnd = (notifyOnWorkEndCheckbox.state == .on)
         s.notifyOnRestEnd = (notifyOnRestEndCheckbox.state == .on)
+        s.soundEnabled = (soundEnabledCheckbox.state == .on)
         window.close()
     }
 
@@ -185,6 +204,14 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
     @objc private func notifyOnRestEndChanged() {
         Settings.shared.notifyOnRestEnd = (notifyOnRestEndCheckbox.state == .on)
+    }
+
+    @objc private func soundEnabledChanged() {
+        Settings.shared.soundEnabled = (soundEnabledCheckbox.state == .on)
+    }
+
+    @objc private func loginItemChanged() {
+        LoginItemManager.shared.toggle()
     }
 
     // MARK: - Show
