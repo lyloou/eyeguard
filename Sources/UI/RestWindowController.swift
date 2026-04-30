@@ -28,7 +28,7 @@ class RestWindowController: NSObject {
             defer: false
         )
 
-        panel.title = "休息一下"
+        panel.title = L10n.restTitle
         panel.level = .floating
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         panel.isMovableByWindowBackground = true
@@ -69,7 +69,7 @@ class RestWindowController: NSObject {
         guard let contentView = panel.contentView else { return }
 
         // 主标题
-        let titleLabel = NSTextField(labelWithString: "休息一下")
+        let titleLabel = NSTextField(labelWithString: L10n.restTitle)
         titleLabel.font = NSFont.systemFont(ofSize: 18, weight: .semibold)
         titleLabel.textColor = .labelColor
         titleLabel.alignment = .center
@@ -85,7 +85,7 @@ class RestWindowController: NSObject {
         contentView.addSubview(countdownLabel)
 
         // 跳过按钮（非强制模式）
-        skipButton = NSButton(title: "跳过休息", target: self, action: #selector(skipClicked))
+        skipButton = NSButton(title: L10n.skipRest, target: self, action: #selector(skipClicked))
         skipButton.bezelStyle = .rounded
         skipButton.translatesAutoresizingMaskIntoConstraints = false
 

@@ -31,7 +31,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
             backing: .buffered,
             defer: false
         )
-        window.title = "护眼卫士 设置"
+        window.title = L10n.settingsTitle
         window.delegate = self
         window.isReleasedWhenClosed = false
         window.center()
@@ -43,7 +43,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         var y: CGFloat = 240
 
         // 工作时长
-        let workLabel = makeLabel("工作时长:", at: NSPoint(x: 20, y: y))
+        let workLabel = makeLabel(L10n.workDuration, at: NSPoint(x: 20, y: y))
         contentView.addSubview(workLabel)
 
         workTextField = makeTextField(editable: false, at: NSPoint(x: 120, y: y - 2))
@@ -57,13 +57,13 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         workStepper.action = #selector(workStepperChanged)
         contentView.addSubview(workStepper)
 
-        let workUnitLabel = makeLabel("分钟", at: NSPoint(x: 230, y: y))
+        let workUnitLabel = makeLabel(L10n.minutes, at: NSPoint(x: 230, y: y))
         contentView.addSubview(workUnitLabel)
 
         y -= 40
 
         // 休息时长
-        let restLabel = makeLabel("休息时长:", at: NSPoint(x: 20, y: y))
+        let restLabel = makeLabel(L10n.restDuration, at: NSPoint(x: 20, y: y))
         contentView.addSubview(restLabel)
 
         restTextField = makeTextField(editable: false, at: NSPoint(x: 120, y: y - 2))
@@ -77,55 +77,55 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         restStepper.action = #selector(restStepperChanged)
         contentView.addSubview(restStepper)
 
-        let restUnitLabel = makeLabel("分钟", at: NSPoint(x: 230, y: y))
+        let restUnitLabel = makeLabel(L10n.minutes, at: NSPoint(x: 230, y: y))
         contentView.addSubview(restUnitLabel)
 
         y -= 40
 
         // 强制休息
-        enforceCheckbox = NSButton(checkboxWithTitle: "强制休息（不允许跳过）", target: self, action: #selector(enforceChanged))
+        enforceCheckbox = NSButton(checkboxWithTitle: L10n.enforceRest, target: self, action: #selector(enforceChanged))
         enforceCheckbox.frame = NSRect(x: 20, y: y, width: 300, height: 22)
         contentView.addSubview(enforceCheckbox)
 
         y -= 30
 
         // 锁屏暂停
-        pauseOnLockCheckbox = NSButton(checkboxWithTitle: "锁屏时自动暂停", target: self, action: #selector(pauseOnLockChanged))
+        pauseOnLockCheckbox = NSButton(checkboxWithTitle: L10n.pauseOnLock, target: self, action: #selector(pauseOnLockChanged))
         pauseOnLockCheckbox.frame = NSRect(x: 20, y: y, width: 300, height: 22)
         contentView.addSubview(pauseOnLockCheckbox)
 
         y -= 30
 
         // 工作结束通知
-        notifyOnWorkEndCheckbox = NSButton(checkboxWithTitle: "工作结束时发送通知", target: self, action: #selector(notifyOnWorkEndChanged))
+        notifyOnWorkEndCheckbox = NSButton(checkboxWithTitle: L10n.notifyOnWorkEnd, target: self, action: #selector(notifyOnWorkEndChanged))
         notifyOnWorkEndCheckbox.frame = NSRect(x: 20, y: y, width: 300, height: 22)
         contentView.addSubview(notifyOnWorkEndCheckbox)
 
         y -= 30
 
         // 休息结束通知
-        notifyOnRestEndCheckbox = NSButton(checkboxWithTitle: "休息结束时发送通知", target: self, action: #selector(notifyOnRestEndChanged))
+        notifyOnRestEndCheckbox = NSButton(checkboxWithTitle: L10n.notifyOnRestEnd, target: self, action: #selector(notifyOnRestEndChanged))
         notifyOnRestEndCheckbox.frame = NSRect(x: 20, y: y, width: 300, height: 22)
         contentView.addSubview(notifyOnRestEndCheckbox)
 
         y -= 30
 
         // 音效
-        soundEnabledCheckbox = NSButton(checkboxWithTitle: "音效提示", target: self, action: #selector(soundEnabledChanged))
+        soundEnabledCheckbox = NSButton(checkboxWithTitle: L10n.soundEnabled, target: self, action: #selector(soundEnabledChanged))
         soundEnabledCheckbox.frame = NSRect(x: 20, y: y, width: 300, height: 22)
         contentView.addSubview(soundEnabledCheckbox)
 
         y -= 30
 
         // 登录启动
-        loginItemCheckbox = NSButton(checkboxWithTitle: "开机自动启动", target: self, action: #selector(loginItemChanged))
+        loginItemCheckbox = NSButton(checkboxWithTitle: L10n.loginItem, target: self, action: #selector(loginItemChanged))
         loginItemCheckbox.frame = NSRect(x: 20, y: y, width: 300, height: 22)
         contentView.addSubview(loginItemCheckbox)
 
         y -= 40
 
         // 保存按钮
-        let saveButton = NSButton(title: "保存", target: self, action: #selector(saveClicked))
+        let saveButton = NSButton(title: L10n.save, target: self, action: #selector(saveClicked))
         saveButton.bezelStyle = .rounded
         saveButton.frame = NSRect(x: window.contentView!.bounds.width - 100, y: 15, width: 80, height: 28)
         saveButton.autoresizingMask = [.minXMargin, .maxYMargin]

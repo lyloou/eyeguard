@@ -121,6 +121,7 @@ class TimerManager {
         stopTimer()
         updateUI()
         showRestWindow()
+        StatsManager.shared.recordRoundCompleted()
         NotificationManager.shared.notifyRestStart(
             workMinutes: Settings.shared.workDuration / 60,
             restMinutes: Settings.shared.restDuration / 60
@@ -184,9 +185,11 @@ class TimerManager {
 
     /// 休息弹窗中用户按 Space/ESC 或点跳过
     func dismissRestWindow() {
+        let elapsedRest = Settings.shared.restDuration - remainingSeconds
         closeRestWindow()
         NotificationManager.shared.notifyRestEnd()
         SoundManager.shared.playRestEnd()
+        StatsManager.shared.recordRestSeconds(elapsedRest)
         startWorking()
     }
 
@@ -195,6 +198,7 @@ class TimerManager {
         closeRestWindow()
         NotificationManager.shared.notifyRestEnd()
         SoundManager.shared.playRestEnd()
+        StatsManager.shared.recordRestSeconds(Settings.shared.restDuration)
         startWorking()
     }
 

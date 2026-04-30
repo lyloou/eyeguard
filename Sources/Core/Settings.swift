@@ -16,6 +16,7 @@ class Settings {
         static let notifyOnWorkEnd = "notifyOnWorkEnd"
         static let notifyOnRestEnd = "notifyOnRestEnd"
         static let soundEnabled   = "soundEnabled"
+        static let hasLaunchedBefore = "hasLaunchedBefore"
     }
 
     // 默认值（秒）
@@ -74,5 +75,11 @@ class Settings {
     var soundEnabled: Bool {
         get { defaults.bool(forKey: Keys.soundEnabled) }
         set { defaults.set(newValue, forKey: Keys.soundEnabled) }
+    }
+
+    /// 是否曾启动过（用于首次引导判断）
+    var hasLaunchedBefore: Bool {
+        get { defaults.bool(forKey: Keys.hasLaunchedBefore) }
+        set { defaults.set(newValue, forKey: Keys.hasLaunchedBefore) }
     }
 }

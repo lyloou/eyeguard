@@ -71,8 +71,8 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         guard Settings.shared.notifyOnWorkEnd else { return }
 
         let content = UNMutableNotificationContent()
-        content.title = "休息一下 🎉"
-        content.body = "已工作 \(workMinutes) 分钟，休息 \(restMinutes) 分钟"
+        content.title = L10n.notifyRestStartTitle
+        content.body = L10n.notifyRestStartBody(work: workMinutes, rest: restMinutes)
         content.sound = .default
         content.categoryIdentifier = Category.restStart
 
@@ -85,8 +85,8 @@ class NotificationManager: NSObject, UNUserNotificationCenterDelegate {
         guard Settings.shared.notifyOnRestEnd else { return }
 
         let content = UNMutableNotificationContent()
-        content.title = "继续工作 💪"
-        content.body = "休息完毕，开始新一轮吧"
+        content.title = L10n.notifyRestEndTitle
+        content.body = L10n.notifyRestEndBody
         content.sound = .default
         content.categoryIdentifier = Category.restEnd
 

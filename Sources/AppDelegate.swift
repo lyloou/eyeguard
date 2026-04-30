@@ -8,6 +8,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var socketBridge: SocketBridge!
     private var notificationManager: NotificationManager!
     private var hotkeyManager: HotkeyManager!
+    private var onboardingWindowController: OnboardingWindowController?
+    private var aboutWindowController: AboutWindowController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // 初始化设置
@@ -39,6 +41,25 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         // 初始化定时器管理器
         timerManager = TimerManager(statusBarController: statusBarController)
         statusBarController.timerManager = timerManager
+
+        // 首次启动引导
+        if !Settings.shared.hasLaunchedBefore {
+            Settings.shared.hasLaunchedBefore = true
+            onboardingWindowController = OnboardingWindowController()
+            onboardingWindowController?.show()
+        }
+
+        // 监听显示关于窗口通知
+        NotificationCenter.default.addObserver(
+            forName: .showAboutWindow,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            if self?.aboutWindowController == nil {
+                self?.aboutWindowController = AboutWindowController()
+            }
+            self?.aboutWindowController?.show()
+        }
 
         // 启动后自动开始工作计时
         timerManager.start()

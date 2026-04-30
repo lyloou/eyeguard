@@ -36,7 +36,7 @@ class StatusBarController: NSObject {
                 button.image = image.withSymbolConfiguration(config)
                 button.image?.isTemplate = true
             } else {
-                button.title = "护眼卫士"
+                button.title = L10n.appName
             }
             button.font = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)
             button.target = self
@@ -56,34 +56,53 @@ class StatusBarController: NSObject {
         menu.addItem(NSMenuItem.separator())
 
         // 开始/暂停
-        startMenuItem = NSMenuItem(title: "▶ 开始", action: #selector(startClicked), keyEquivalent: "")
+        startMenuItem = NSMenuItem(title: L10n.menuStart, action: #selector(startClicked), keyEquivalent: "")
         startMenuItem.target = self
         menu.addItem(startMenuItem)
 
-        pauseMenuItem = NSMenuItem(title: "⏸ 暂停", action: #selector(pauseClicked), keyEquivalent: "")
+        pauseMenuItem = NSMenuItem(title: L10n.menuPause, action: #selector(pauseClicked), keyEquivalent: "")
         pauseMenuItem.target = self
         menu.addItem(pauseMenuItem)
 
-        resetMenuItem = NSMenuItem(title: "🔄 重置", action: #selector(resetClicked), keyEquivalent: "")
+        resetMenuItem = NSMenuItem(title: L10n.menuReset, action: #selector(resetClicked), keyEquivalent: "")
         resetMenuItem.target = self
         menu.addItem(resetMenuItem)
 
         // 立即休息
-        restNowMenuItem = NSMenuItem(title: "⏰ 立即休息", action: #selector(restNowClicked), keyEquivalent: "")
+        restNowMenuItem = NSMenuItem(title: L10n.menuRestNow, action: #selector(restNowClicked), keyEquivalent: "")
         restNowMenuItem.target = self
         menu.addItem(restNowMenuItem)
 
         menu.addItem(NSMenuItem.separator())
 
+        // 今日统计
+        let statsItem = NSMenuItem(title: L10n.todayStats, action: nil, keyEquivalent: "")
+        statsItem.isEnabled = false
+        menu.addItem(statsItem)
+
+        let roundsItem = NSMenuItem(title: L10n.roundsCompleted(StatsManager.shared.roundsCompletedToday), action: nil, keyEquivalent: "")
+        roundsItem.isEnabled = false
+        menu.addItem(roundsItem)
+
+        let restItem = NSMenuItem(title: L10n.totalRest(StatsManager.shared.totalRestMinutesToday), action: nil, keyEquivalent: "")
+        restItem.isEnabled = false
+        menu.addItem(restItem)
+
+        menu.addItem(NSMenuItem.separator())
+
         // 设置
-        let settingsItem = NSMenuItem(title: "⚙ 设置...", action: #selector(settingsClicked), keyEquivalent: ",")
+        let settingsItem = NSMenuItem(title: L10n.menuSettings, action: #selector(settingsClicked), keyEquivalent: ",")
         settingsItem.target = self
         menu.addItem(settingsItem)
+
+        let aboutItem = NSMenuItem(title: L10n.menuAbout, action: #selector(aboutClicked), keyEquivalent: "")
+        aboutItem.target = self
+        menu.addItem(aboutItem)
 
         menu.addItem(NSMenuItem.separator())
 
         // 退出
-        let quitItem = NSMenuItem(title: "❌ 退出", action: #selector(quitClicked), keyEquivalent: "q")
+        let quitItem = NSMenuItem(title: L10n.menuQuit, action: #selector(quitClicked), keyEquivalent: "q")
         quitItem.target = self
         menu.addItem(quitItem)
 
@@ -122,6 +141,10 @@ class StatusBarController: NSObject {
         SettingsWindowController.shared.show()
     }
 
+    @objc private func aboutClicked() {
+        NotificationCenter.default.post(name: .showAboutWindow, object: nil)
+    }
+
     @objc private func quitClicked() {
         NSApp.terminate(nil)
     }
@@ -139,42 +162,42 @@ class StatusBarController: NSObject {
         let timeStr = formatTime(remaining)
         switch state {
         case .idle:
-            statusMenuItem.title = "当前状态: 空闲"
-            startMenuItem.title = "▶ 开始"
+            statusMenuItem.title = L10n.statusIdle
+            startMenuItem.title = L10n.menuStart
             startMenuItem.isEnabled = true
-            pauseMenuItem.title = "⏸ 暂停"
+            pauseMenuItem.title = L10n.menuPause
             pauseMenuItem.isEnabled = false
             resetMenuItem.isEnabled = false
             restNowMenuItem.isEnabled = false
-            statusItem.button?.title = "护眼卫士"
+            statusItem.button?.title = L10n.appName
 
         case .working:
-            statusMenuItem.title = "当前状态: 工作中 \(timeStr)"
-            startMenuItem.title = "▶ 开始"
+            statusMenuItem.title = L10n.statusWorking(timeStr)
+            startMenuItem.title = L10n.menuStart
             startMenuItem.isEnabled = false
-            pauseMenuItem.title = "⏸ 暂停"
+            pauseMenuItem.title = L10n.menuPause
             pauseMenuItem.isEnabled = true
             resetMenuItem.isEnabled = true
             restNowMenuItem.isEnabled = true
-            statusItem.button?.title = "工作中 \(timeStr)"
+            statusItem.button?.title = L10n.statusWorking(timeStr)
 
         case .paused(let frozen):
-            statusMenuItem.title = "当前状态: 已暂停 \(formatTime(frozen))"
-            startMenuItem.title = "▶ 继续"
+            statusMenuItem.title = L10n.statusPaused(formatTime(frozen))
+            startMenuItem.title = L10n.menuResume
             startMenuItem.isEnabled = true
-            pauseMenuItem.title = "⏸ 暂停"
+            pauseMenuItem.title = L10n.menuPause
             pauseMenuItem.isEnabled = false
             resetMenuItem.isEnabled = true
             restNowMenuItem.isEnabled = true
-            statusItem.button?.title = "已暂停 \(formatTime(frozen))"
+            statusItem.button?.title = L10n.statusPaused(formatTime(frozen))
 
         case .resting:
-            statusMenuItem.title = "当前状态: 休息中 \(timeStr)"
+            statusMenuItem.title = L10n.statusResting(timeStr)
             startMenuItem.isEnabled = false
             pauseMenuItem.isEnabled = false
             resetMenuItem.isEnabled = false
             restNowMenuItem.isEnabled = false
-            statusItem.button?.title = "休息中 \(timeStr)"
+            statusItem.button?.title = L10n.statusResting(timeStr)
         }
     }
 

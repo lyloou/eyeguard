@@ -1,0 +1,57 @@
+/* Status bar */
+"Working" = "Working";
+"Paused" = "Paused";
+"Resting" = "Resting";
+"Idle" = "Idle";
+"Working %@" = "Working %@";
+"Paused %@" = "Paused %@";
+"Resting %@" = "Resting %@";
+
+/* Menu items */
+"▶ Start" = "▶ Start";
+"▶ Resume" = "▶ Resume";
+"⏸ Pause" = "⏸ Pause";
+"🔄 Reset" = "🔄 Reset";
+"⏰ Rest Now" = "⏰ Rest Now";
+"⚙ Settings..." = "⚙ Settings...";
+"❌ Quit" = "❌ Quit";
+
+/* Settings window */
+"EyeGuard Settings" = "EyeGuard Settings";
+"Work Duration:" = "Work Duration:";
+"Rest Duration:" = "Rest Duration:";
+"minutes" = "minutes";
+"Enforce Rest (no skip)" = "Enforce Rest (no skip)";
+"Pause on Lock" = "Pause on Lock";
+"Notify on Work End" = "Notify on Work End";
+"Notify on Rest End" = "Notify on Rest End";
+"Sound Effects" = "Sound Effects";
+"Launch at Login" = "Launch at Login";
+"Save" = "Save";
+
+/* Rest window */
+"Take a Break" = "Take a Break";
+"Rest" = "Rest";
+"Skip Rest" = "Skip Rest";
+
+/* Notifications */
+"Take a Break 🎉" = "Take a Break 🎉";
+"Worked %d min, rest %d min" = "Worked %d min, rest %d min";
+"Back to Work 💪" = "Back to Work 💪";
+"Rest done, start a new session" = "Rest done, start a new session";
+
+/* Stats */
+"Today's Stats" = "Today's Stats";
+"%d rounds completed" = "%d rounds completed";
+"%d min rested" = "%d min rested";
+
+/* Guide */
+"Welcome to EyeGuard" = "Welcome to EyeGuard";
+"Work for 30 min → rest 5 min" = "Work for 30 min → rest 5 min";
+"Rest window appears when work ends" = "Rest window appears when work ends";
+"Press Space/ESC or wait to continue" = "Press Space/ESC or wait to continue";
+"Got it!" = "Got it!";
+
+/* About */
+"About EyeGuard" = "About EyeGuard";
+"Version %@" = "Version %@";

@@ -10,37 +10,47 @@
 		00863D4473F9BEBB2846B9BF /* StateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBC9083AB6CFBFD94734F0B /* StateMachine.swift */; };
 		10BEA6A897A84B5E6A6973B1 /* TimerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9650AF4E93E22526B4A99521 /* TimerManager.swift */; };
 		179F2929C1280C86B3E266A6 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CCB6207267F5C3452324B74 /* SettingsWindowController.swift */; };
+		196B69055964FEBC533E67CE /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BD959AEF323D3FC899EEDC /* AboutWindowController.swift */; };
+		3509368FEC01C29ACADB9E57 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF99384BFC8824F1774C81D5 /* Localizable.strings */; };
 		3ABCC27C7F4B9CA51BBBC906 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB3C76F23D59C8FA85E7C1EA /* Assets.xcassets */; };
 		4F2C43A7D0C475DC0CFAE44A /* LockScreenMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C384D7842FF70843B032A136 /* LockScreenMonitor.swift */; };
 		59674A9C59AFC20A8335EF13 /* SocketBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EF024B07DCD3D7FA6D4A283 /* SocketBridge.swift */; };
 		7802780B81A0ADE9E4BAA905 /* LoginItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96202C8DB002514B2A08326 /* LoginItemManager.swift */; };
 		8E541B77DE3ECB7529B6B971 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45A9FDF9BED4048D9CE96627 /* SoundManager.swift */; };
+		A2D69B84A19DF9A0B2CED74C /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF8ADAC3813149ED5103419 /* L10n.swift */; };
+		B441A7B9E9D972F3C09DD218 /* StatsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0D58E2B068E0FA90C27C4F /* StatsManager.swift */; };
 		D0580FE46E482C183A2E9754 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7420247C36273FEE7137939 /* Settings.swift */; };
 		D1853B7CDC5B7559DCBC117C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD80D60F81F32FB77FCA97 /* AppDelegate.swift */; };
 		DCE87AF5F6C7B244A624D2A5 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E7E62EA4297D0F2B0333D62 /* HotkeyManager.swift */; };
 		E13916EF355A03381FD28842 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9211CAD0BAC93F0685AAE8A2 /* main.swift */; };
 		E29F1F58C5868B954EC2AE70 /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69B95E3CA5DE16846A232EF /* StatusBarController.swift */; };
+		F4CE3CE8D746CB01802EF8DC /* OnboardingWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = DA5178CEB6B19E580177C356 /* OnboardingWindowController.swift */; };
 		F8367868D28767109FE048E1 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB773750B90275492596685 /* NotificationManager.swift */; };
 		FAA442CB7E5E6349A872A469 /* RestWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C385397E83EBD3E5E96CC6 /* RestWindowController.swift */; };
 		FF34F782EE44C4CC640C2B55 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74E3AAF8330651BFB3517313 /* UserNotifications.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		0AFDEE85250C026DB42B9EC1 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		3DB773750B90275492596685 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		3EF024B07DCD3D7FA6D4A283 /* SocketBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketBridge.swift; sourceTree = "<group>"; };
 		42C385397E83EBD3E5E96CC6 /* RestWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestWindowController.swift; sourceTree = "<group>"; };
 		45A9FDF9BED4048D9CE96627 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
 		5CCB6207267F5C3452324B74 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
+		69BD959AEF323D3FC899EEDC /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
 		74E3AAF8330651BFB3517313 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UserNotifications.framework; sourceTree = "<group>"; };
+		7CF8ADAC3813149ED5103419 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 		8EBC9083AB6CFBFD94734F0B /* StateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateMachine.swift; sourceTree = "<group>"; };
 		9211CAD0BAC93F0685AAE8A2 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		93BD80D60F81F32FB77FCA97 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9650AF4E93E22526B4A99521 /* TimerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerManager.swift; sourceTree = "<group>"; };
 		9E7E62EA4297D0F2B0333D62 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
 		A96202C8DB002514B2A08326 /* LoginItemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItemManager.swift; sourceTree = "<group>"; };
+		AB0D58E2B068E0FA90C27C4F /* StatsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsManager.swift; sourceTree = "<group>"; };
 		C384D7842FF70843B032A136 /* LockScreenMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenMonitor.swift; sourceTree = "<group>"; };
 		C7420247C36273FEE7137939 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		D69B95E3CA5DE16846A232EF /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
+		DA5178CEB6B19E580177C356 /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWindowController.swift; sourceTree = "<group>"; };
 		DB3C76F23D59C8FA85E7C1EA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E9CFAB285D60A6606C58BEBF /* EyeGuard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EyeGuard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -98,8 +108,10 @@
 		78A2E0D52716C7DB3F43A06C /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				7CF8ADAC3813149ED5103419 /* L10n.swift */,
 				C7420247C36273FEE7137939 /* Settings.swift */,
 				8EBC9083AB6CFBFD94734F0B /* StateMachine.swift */,
+				AB0D58E2B068E0FA90C27C4F /* StatsManager.swift */,
 				9650AF4E93E22526B4A99521 /* TimerManager.swift */,
 			);
 			path = Core;
@@ -122,6 +134,7 @@
 			isa = PBXGroup;
 			children = (
 				DB3C76F23D59C8FA85E7C1EA /* Assets.xcassets */,
+				DF99384BFC8824F1774C81D5 /* Localizable.strings */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -129,6 +142,8 @@
 		B17014ED0C77ACF88F62B715 /* UI */ = {
 			isa = PBXGroup;
 			children = (
+				69BD959AEF323D3FC899EEDC /* AboutWindowController.swift */,
+				DA5178CEB6B19E580177C356 /* OnboardingWindowController.swift */,
 				42C385397E83EBD3E5E96CC6 /* RestWindowController.swift */,
 				5CCB6207267F5C3452324B74 /* SettingsWindowController.swift */,
 				D69B95E3CA5DE16846A232EF /* StatusBarController.swift */,
@@ -198,6 +213,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				3ABCC27C7F4B9CA51BBBC906 /* Assets.xcassets in Resources */,
+				3509368FEC01C29ACADB9E57 /* Localizable.strings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -208,17 +224,21 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				196B69055964FEBC533E67CE /* AboutWindowController.swift in Sources */,
 				D1853B7CDC5B7559DCBC117C /* AppDelegate.swift in Sources */,
 				DCE87AF5F6C7B244A624D2A5 /* HotkeyManager.swift in Sources */,
+				A2D69B84A19DF9A0B2CED74C /* L10n.swift in Sources */,
 				4F2C43A7D0C475DC0CFAE44A /* LockScreenMonitor.swift in Sources */,
 				7802780B81A0ADE9E4BAA905 /* LoginItemManager.swift in Sources */,
 				F8367868D28767109FE048E1 /* NotificationManager.swift in Sources */,
+				F4CE3CE8D746CB01802EF8DC /* OnboardingWindowController.swift in Sources */,
 				FAA442CB7E5E6349A872A469 /* RestWindowController.swift in Sources */,
 				D0580FE46E482C183A2E9754 /* Settings.swift in Sources */,
 				179F2929C1280C86B3E266A6 /* SettingsWindowController.swift in Sources */,
 				59674A9C59AFC20A8335EF13 /* SocketBridge.swift in Sources */,
 				8E541B77DE3ECB7529B6B971 /* SoundManager.swift in Sources */,
 				00863D4473F9BEBB2846B9BF /* StateMachine.swift in Sources */,
+				B441A7B9E9D972F3C09DD218 /* StatsManager.swift in Sources */,
 				E29F1F58C5868B954EC2AE70 /* StatusBarController.swift in Sources */,
 				10BEA6A897A84B5E6A6973B1 /* TimerManager.swift in Sources */,
 				E13916EF355A03381FD28842 /* main.swift in Sources */,
@@ -226,6 +246,17 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		DF99384BFC8824F1774C81D5 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				0AFDEE85250C026DB42B9EC1 /* en */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		AC9AF279961ADEE89E17986D /* Release */ = {
