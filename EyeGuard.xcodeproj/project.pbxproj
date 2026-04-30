@@ -17,13 +17,17 @@
 		D1853B7CDC5B7559DCBC117C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD80D60F81F32FB77FCA97 /* AppDelegate.swift */; };
 		E13916EF355A03381FD28842 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9211CAD0BAC93F0685AAE8A2 /* main.swift */; };
 		E29F1F58C5868B954EC2AE70 /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69B95E3CA5DE16846A232EF /* StatusBarController.swift */; };
+		F8367868D28767109FE048E1 /* NotificationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DB773750B90275492596685 /* NotificationManager.swift */; };
 		FAA442CB7E5E6349A872A469 /* RestWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 42C385397E83EBD3E5E96CC6 /* RestWindowController.swift */; };
+		FF34F782EE44C4CC640C2B55 /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 74E3AAF8330651BFB3517313 /* UserNotifications.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		3DB773750B90275492596685 /* NotificationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationManager.swift; sourceTree = "<group>"; };
 		3EF024B07DCD3D7FA6D4A283 /* SocketBridge.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocketBridge.swift; sourceTree = "<group>"; };
 		42C385397E83EBD3E5E96CC6 /* RestWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestWindowController.swift; sourceTree = "<group>"; };
 		5CCB6207267F5C3452324B74 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
+		74E3AAF8330651BFB3517313 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UserNotifications.framework; sourceTree = "<group>"; };
 		8EBC9083AB6CFBFD94734F0B /* StateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateMachine.swift; sourceTree = "<group>"; };
 		9211CAD0BAC93F0685AAE8A2 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		93BD80D60F81F32FB77FCA97 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -35,12 +39,32 @@
 		E9CFAB285D60A6606C58BEBF /* EyeGuard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EyeGuard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
+/* Begin PBXFrameworksBuildPhase section */
+		AC228288A00BD06FF40DA2C1 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FF34F782EE44C4CC640C2B55 /* UserNotifications.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
 /* Begin PBXGroup section */
+		3C5CDC922D73C14BD0139E9F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				74E3AAF8330651BFB3517313 /* UserNotifications.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		45EE2DE05864B2DE921582EB = {
 			isa = PBXGroup;
 			children = (
 				8F28EC86BE896AE480664AB0 /* Resources */,
 				4CC19380FAB868AED0B0AC62 /* Sources */,
+				3C5CDC922D73C14BD0139E9F /* Frameworks */,
 				5C933B6015F598653B4CC7DA /* Products */,
 			);
 			sourceTree = "<group>";
@@ -79,6 +103,7 @@
 			isa = PBXGroup;
 			children = (
 				C384D7842FF70843B032A136 /* LockScreenMonitor.swift */,
+				3DB773750B90275492596685 /* NotificationManager.swift */,
 				3EF024B07DCD3D7FA6D4A283 /* SocketBridge.swift */,
 			);
 			path = System;
@@ -111,6 +136,7 @@
 			buildPhases = (
 				67D59D1E769D8BD1BD30E9A9 /* Sources */,
 				0C56F8BA4818ECFD7CE07313 /* Resources */,
+				AC228288A00BD06FF40DA2C1 /* Frameworks */,
 			);
 			buildRules = (
 			);
@@ -175,6 +201,7 @@
 			files = (
 				D1853B7CDC5B7559DCBC117C /* AppDelegate.swift in Sources */,
 				4F2C43A7D0C475DC0CFAE44A /* LockScreenMonitor.swift in Sources */,
+				F8367868D28767109FE048E1 /* NotificationManager.swift in Sources */,
 				FAA442CB7E5E6349A872A469 /* RestWindowController.swift in Sources */,
 				D0580FE46E482C183A2E9754 /* Settings.swift in Sources */,
 				179F2929C1280C86B3E266A6 /* SettingsWindowController.swift in Sources */,
@@ -195,6 +222,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = EyeGuard.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\".\"",
+				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.eyeguard.app;
@@ -276,6 +307,10 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = EyeGuard.entitlements;
 				COMBINE_HIDPI_IMAGES = YES;
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\".\"",
+				);
 				INFOPLIST_FILE = Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.eyeguard.app;

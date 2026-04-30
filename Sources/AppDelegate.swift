@@ -6,6 +6,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private(set) var timerManager: TimerManager!
     private var lockScreenMonitor: LockScreenMonitor!
     private var socketBridge: SocketBridge!
+    private var notificationManager: NotificationManager!
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         // 初始化设置
@@ -16,6 +17,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // 初始化锁屏监控
         lockScreenMonitor = LockScreenMonitor()
+
+        // 初始化通知管理器（请求授权）
+        notificationManager = NotificationManager.shared
+        notificationManager.requestAuthorization { granted in
+            if granted {
+                print("NotificationManager: 通知授权已授予")
+            } else {
+                print("NotificationManager: 通知授权被拒绝")
+            }
+        }
 
         // 初始化 Socket 桥接（接收 CLI 命令）
         socketBridge = SocketBridge()

@@ -126,6 +126,18 @@
 
 `NSApplication.setActivationPolicy(.accessory)` — 隐藏 Dock 图标。
 
+### 5.4 系统通知
+
+使用 `UserNotifications.framework`，支持工作结束/休息结束时发送本地通知：
+
+| 通知 | 默认 | 触发时机 |
+|------|------|---------|
+| 工作结束提醒 | ✅ 开启 | `startResting()` 时 |
+| 休息结束提醒 | ❌ 关闭 | `dismissRestWindow()` / `restTimerExpired()` 时 |
+
+- 通知点击后聚焦 App 窗口
+- 首次启动时请求通知授权（`UNUserNotificationCenter`）
+
 ---
 
 ## 六、技术栈
@@ -171,4 +183,5 @@ CLI (shell + nc)                  App (Swift)
 - [x] 单例保护（/tmp/eyeguard.lock）
 - [x] Unix Domain Socket IPC（SocketBridge.swift）
 - [x] CLI 工具（~/.hermes/bin/eyeguard + skill）
+- [x] 系统通知（NotificationManager + UNUserNotificationCenter）
 - [x] 构建验证（编译通过 ✅）

@@ -120,6 +120,10 @@ class TimerManager {
         stopTimer()
         updateUI()
         showRestWindow()
+        NotificationManager.shared.notifyRestStart(
+            workMinutes: Settings.shared.workDuration / 60,
+            restMinutes: Settings.shared.restDuration / 60
+        )
     }
 
     private func startTimer() {
@@ -179,12 +183,14 @@ class TimerManager {
     /// 休息弹窗中用户按 Space/ESC 或点跳过
     func dismissRestWindow() {
         closeRestWindow()
+        NotificationManager.shared.notifyRestEnd()
         startWorking()
     }
 
     /// 休息计时耗尽，用户还未按键
     func restTimerExpired() {
         closeRestWindow()
+        NotificationManager.shared.notifyRestEnd()
         startWorking()
     }
 

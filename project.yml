@@ -34,3 +34,6 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
         COMBINE_HIDPI_IMAGES: YES
+    dependencies:
+      - framework: UserNotifications.framework
+        embed: false

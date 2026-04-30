@@ -13,6 +13,8 @@ class Settings {
         static let restDuration   = "restDuration"
         static let enforceRest    = "enforceRest"
         static let pauseOnLock    = "pauseOnLock"
+        static let notifyOnWorkEnd = "notifyOnWorkEnd"
+        static let notifyOnRestEnd = "notifyOnRestEnd"
     }
 
     // 默认值（秒）
@@ -24,7 +26,9 @@ class Settings {
             Keys.workDuration: Self.defaultWork,
             Keys.restDuration: Self.defaultRest,
             Keys.enforceRest: true,
-            Keys.pauseOnLock: true
+            Keys.pauseOnLock: true,
+            Keys.notifyOnWorkEnd: true,   // 默认开启工作结束通知
+            Keys.notifyOnRestEnd: false   // 默认关闭休息结束通知
         ])
     }
 
@@ -50,5 +54,17 @@ class Settings {
     var pauseOnLock: Bool {
         get { defaults.bool(forKey: Keys.pauseOnLock) }
         set { defaults.set(newValue, forKey: Keys.pauseOnLock) }
+    }
+
+    /// 工作结束时发送系统通知
+    var notifyOnWorkEnd: Bool {
+        get { defaults.bool(forKey: Keys.notifyOnWorkEnd) }
+        set { defaults.set(newValue, forKey: Keys.notifyOnWorkEnd) }
+    }
+
+    /// 休息结束时发送系统通知
+    var notifyOnRestEnd: Bool {
+        get { defaults.bool(forKey: Keys.notifyOnRestEnd) }
+        set { defaults.set(newValue, forKey: Keys.notifyOnRestEnd) }
     }
 }

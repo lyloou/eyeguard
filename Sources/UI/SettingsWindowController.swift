@@ -12,6 +12,8 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     private var restTextField: NSTextField!
     private var enforceCheckbox: NSButton!
     private var pauseOnLockCheckbox: NSButton!
+    private var notifyOnWorkEndCheckbox: NSButton!
+    private var notifyOnRestEndCheckbox: NSButton!
 
     private override init() {
         super.init()
@@ -22,7 +24,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
     private func setupWindow() {
         window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 360, height: 240),
+            contentRect: NSRect(x: 0, y: 0, width: 360, height: 280),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
@@ -36,7 +38,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         contentView.autoresizingMask = [.width, .height]
         window.contentView = contentView
 
-        var y: CGFloat = 200
+        var y: CGFloat = 240
 
         // 工作时长
         let workLabel = makeLabel("工作时长:", at: NSPoint(x: 20, y: y))
@@ -90,6 +92,20 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         pauseOnLockCheckbox.frame = NSRect(x: 20, y: y, width: 300, height: 22)
         contentView.addSubview(pauseOnLockCheckbox)
 
+        y -= 30
+
+        // 工作结束通知
+        notifyOnWorkEndCheckbox = NSButton(checkboxWithTitle: "工作结束时发送通知", target: self, action: #selector(notifyOnWorkEndChanged))
+        notifyOnWorkEndCheckbox.frame = NSRect(x: 20, y: y, width: 300, height: 22)
+        contentView.addSubview(notifyOnWorkEndCheckbox)
+
+        y -= 30
+
+        // 休息结束通知
+        notifyOnRestEndCheckbox = NSButton(checkboxWithTitle: "休息结束时发送通知", target: self, action: #selector(notifyOnRestEndChanged))
+        notifyOnRestEndCheckbox.frame = NSRect(x: 20, y: y, width: 300, height: 22)
+        contentView.addSubview(notifyOnRestEndCheckbox)
+
         y -= 40
 
         // 保存按钮
@@ -128,6 +144,8 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         restStepper.integerValue = s.restDuration / 60
         enforceCheckbox.state = s.enforceRest ? .on : .off
         pauseOnLockCheckbox.state = s.pauseOnLock ? .on : .off
+        notifyOnWorkEndCheckbox.state = s.notifyOnWorkEnd ? .on : .off
+        notifyOnRestEndCheckbox.state = s.notifyOnRestEnd ? .on : .off
     }
 
     @objc private func saveClicked() {
@@ -136,6 +154,8 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         s.restDuration = restTextField.integerValue * 60
         s.enforceRest = (enforceCheckbox.state == .on)
         s.pauseOnLock = (pauseOnLockCheckbox.state == .on)
+        s.notifyOnWorkEnd = (notifyOnWorkEndCheckbox.state == .on)
+        s.notifyOnRestEnd = (notifyOnRestEndCheckbox.state == .on)
         window.close()
     }
 
@@ -157,6 +177,14 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
     @objc private func pauseOnLockChanged() {
         Settings.shared.pauseOnLock = (pauseOnLockCheckbox.state == .on)
+    }
+
+    @objc private func notifyOnWorkEndChanged() {
+        Settings.shared.notifyOnWorkEnd = (notifyOnWorkEndCheckbox.state == .on)
+    }
+
+    @objc private func notifyOnRestEndChanged() {
+        Settings.shared.notifyOnRestEnd = (notifyOnRestEndCheckbox.state == .on)
     }
 
     // MARK: - Show
