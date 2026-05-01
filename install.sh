@@ -6,7 +6,7 @@ set -e
 
 VERSION=${1:-}
 if [ -z "$VERSION" ]; then
-  VERSION=$(curl -s https://api.github.com/repos/lyloou/eyeguard/releases/latest | grep '"tag_name"' | sed 's/.*"v\?\([^"]*\)".*/\1/')
+  VERSION=$(curl -s https://api.github.com/repos/lyloou/eyeguard/releases/latest | grep -o '"tag_name": "[^"]*"' | grep -o 'v[0-9.]*')
 fi
 REPO="lyloou/eyeguard"
 BASE_URL="https://github.com/$REPO/releases/download/$VERSION"

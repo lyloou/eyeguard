@@ -187,8 +187,8 @@ Sources/
 ### 一键安装（推荐）
 
 ```bash
-VER=$(curl -s https://api.github.com/repos/lyloou/eyeguard/releases/latest | grep '"tag_name"' | sed 's/.*"v\?\([^"]*\)".*/\1/')
-curl -L "https://github.com/lyloou/eyeguard/releases/download/v${VER}/v${VER}.zip" | funzip | bash
+VER=$(curl -s https://api.github.com/repos/lyloou/eyeguard/releases/latest | grep -o '"tag_name": "[^"]*"' | grep -o 'v[0-9.]*')
+curl -L "https://github.com/lyloou/eyeguard/releases/download/${VER}/${VER}.zip" | funzip | bash
 ```
 
 然后重启终端或运行 `source ~/.zshrc`，输入 `eyeguard --help` 验证。
