@@ -16,6 +16,25 @@ class RestWindowController: NSObject {
         super.init()
         setupPanel()
         setupUI()
+        setupNotificationObserver()
+    }
+
+    private func setupNotificationObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(settingsDidChange(_:)),
+            name: .settingsDidChange,
+            object: nil
+        )
+    }
+
+    @objc private func settingsDidChange(_ notification: Notification) {
+        guard let key = notification.object as? String, key == "enforceRest" else { return }
+        updateSkipButtonVisibility()
+    }
+
+    private func updateSkipButtonVisibility() {
+        skipButton.isHidden = Settings.shared.enforceRest
     }
 
     // MARK: - Setup

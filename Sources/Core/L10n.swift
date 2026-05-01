@@ -84,6 +84,9 @@ class L10n {
     static var styleCompact: String { ns("Compact (W 29:59)") }
     static var styleBracket: String { ns("Bracket ([工作中] 29:59)") }
     static var styleStar: String { ns("Star (☆工作中☆ 29:59)") }
+    static var stylePureTime: String { ns("Pure Time (29:59)") }
+    static var styleDots: String { ns("Dots (◐◔◑◕)") }
+    static var styleProgressBar: String { ns("Progress Bar (████░░░░)") }
 
     // MARK: - Helper
 

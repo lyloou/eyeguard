@@ -22,12 +22,15 @@ class Settings {
 
     /// 状态栏样式
     enum StatusBarStyle: String, CaseIterable {
-        case classic = "classic"   // Working 29:59
-        case minimal = "minimal"   // 工作中 29:59
-        case emoji   = "emoji"      // 💼工作中 29:59
-        case compact = "compact"   // W 29:59
-        case bracket = "bracket"    // [工作中] 29:59
-        case star    = "star"      // ☆工作中☆ 29:59
+        case classic    = "classic"    // Working 29:59
+        case minimal    = "minimal"    // 工作中 29:59
+        case emoji      = "emoji"      // 💼工作中 29:59
+        case compact    = "compact"    // W 29:59
+        case bracket    = "bracket"    // [工作中] 29:59
+        case star       = "star"       // ☆工作中☆ 29:59
+        case pureTime   = "pureTime"   // 29:59
+        case dots       = "dots"       // ◐◔◑◕
+        case progressBar = "progressBar" // ████░░░░
 
         var index: Int {
             Settings.StatusBarStyle.allCases.firstIndex(of: self) ?? 0

@@ -194,7 +194,7 @@ class StatusBarController: NSObject {
             pauseMenuItem.isEnabled = true
             resetMenuItem.isEnabled = true
             restNowMenuItem.isEnabled = true
-            statusItem.button?.title = formatStatusBarText(state: .working, timeStr: timeStr)
+            statusItem.button?.title = formatStatusBarText(state: .working, timeStr: timeStr, remaining: remaining)
 
         case .paused(let frozen):
             statusMenuItem.title = L10n.statusPaused(formatTime(frozen))
@@ -204,7 +204,7 @@ class StatusBarController: NSObject {
             pauseMenuItem.isEnabled = false
             resetMenuItem.isEnabled = true
             restNowMenuItem.isEnabled = true
-            statusItem.button?.title = formatStatusBarText(state: .paused(remaining: frozen), timeStr: formatTime(frozen))
+            statusItem.button?.title = formatStatusBarText(state: .paused(remaining: frozen), timeStr: formatTime(frozen), remaining: frozen)
 
         case .resting:
             statusMenuItem.title = L10n.statusResting(timeStr)
@@ -212,11 +212,11 @@ class StatusBarController: NSObject {
             pauseMenuItem.isEnabled = false
             resetMenuItem.isEnabled = false
             restNowMenuItem.isEnabled = false
-            statusItem.button?.title = formatStatusBarText(state: .resting, timeStr: timeStr)
+            statusItem.button?.title = formatStatusBarText(state: .resting, timeStr: timeStr, remaining: remaining)
         }
     }
 
-    private func formatStatusBarText(state: EyeState, timeStr: String) -> String {
+    private func formatStatusBarText(state: EyeState, timeStr: String, remaining: Int) -> String {
         let style = Settings.shared.statusBarStyle
         switch style {
         case .classic:
@@ -261,6 +261,47 @@ class StatusBarController: NSObject {
             case .paused:  return "☆已暂停☆ \(timeStr)"
             case .resting: return "☆休息中☆ \(timeStr)"
             }
+        case .pureTime:
+            // 纯时间：只有倒计时，无状态前缀
+            switch state {
+            case .idle:    return L10n.appName
+            case .working: return timeStr
+            case .paused:  return timeStr
+            case .resting: return timeStr
+            }
+        case .dots:
+            // 进度点：◐◔◑◕ 动态圆弧表示进度
+            let total = totalSeconds(for: state)
+            let filled = total > 0 ? (total - remaining) * 4 / total : 0
+            let dots = ["◐", "◔", "◑", "◕"]
+            switch state {
+            case .idle:    return L10n.appName
+            case .working: return "\(dots[min(filled, 3)])工作中 \(timeStr)"
+            case .paused:  return "⏸ \(timeStr)"
+            case .resting: return "\(dots[min(filled, 3)])休息中 \(timeStr)"
+            }
+        case .progressBar:
+            // 进度条：███░░░░░ 表示进度
+            let total = totalSeconds(for: state)
+            let barLength = 8
+            let filled = total > 0 ? (total - remaining) * barLength / total : 0
+            let bar = String(repeating: "█", count: min(filled, barLength)) + String(repeating: "░", count: barLength - min(filled, barLength))
+            switch state {
+            case .idle:    return L10n.appName
+            case .working: return "\(bar) \(timeStr)"
+            case .paused:  return "⏸ \(timeStr)"
+            case .resting: return "\(bar) \(timeStr)"
+            }
+        }
+    }
+
+    /// 根据状态获取总时长（秒）
+    private func totalSeconds(for state: EyeState) -> Int {
+        switch state {
+        case .idle:    return 0
+        case .working: return Settings.shared.workDuration
+        case .paused:  return Settings.shared.workDuration  // 暂停时用工作总时长算进度
+        case .resting: return Settings.shared.restDuration
         }
     }
 

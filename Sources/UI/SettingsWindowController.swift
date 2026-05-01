@@ -136,7 +136,10 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
             L10n.styleEmoji,
             L10n.styleCompact,
             L10n.styleBracket,
-            L10n.styleStar
+            L10n.styleStar,
+            L10n.stylePureTime,
+            L10n.styleDots,
+            L10n.styleProgressBar
         ])
         statusBarStylePopup.target = self
         statusBarStylePopup.action = #selector(statusBarStyleChanged)
@@ -213,6 +216,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
     @objc private func enforceChanged() {
         Settings.shared.enforceRest = (enforceCheckbox.state == .on)
+        NotificationCenter.default.post(name: .settingsDidChange, object: "enforceRest")
     }
 
     @objc private func pauseOnLockChanged() {
@@ -238,7 +242,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     @objc private func statusBarStyleChanged() {
         let index = statusBarStylePopup.indexOfSelectedItem
         Settings.shared.statusBarStyle = Settings.StatusBarStyle.allCases[index]
-        NotificationCenter.default.post(name: .settingsDidChange, object: nil)
+        NotificationCenter.default.post(name: .settingsDidChange, object: "statusBarStyle")
     }
 
     // MARK: - Show
