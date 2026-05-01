@@ -25,6 +25,7 @@
 		B8B2307F6E1E84E7D8E8417D /* DisplayServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1ED7895279BDC0B44359E0BA /* DisplayServices.framework */; };
 		D0580FE46E482C183A2E9754 /* Settings.swift in Sources */ = {isa = PBXBuildFile; fileRef = C7420247C36273FEE7137939 /* Settings.swift */; };
 		D1853B7CDC5B7559DCBC117C /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 93BD80D60F81F32FB77FCA97 /* AppDelegate.swift */; };
+		DA9D7C64877A092C909451F5 /* RestQuoteProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6B63A120A6F3CD1EB9B5518B /* RestQuoteProvider.swift */; };
 		DCE87AF5F6C7B244A624D2A5 /* HotkeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9E7E62EA4297D0F2B0333D62 /* HotkeyManager.swift */; };
 		E13916EF355A03381FD28842 /* main.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9211CAD0BAC93F0685AAE8A2 /* main.swift */; };
 		E29F1F58C5868B954EC2AE70 /* StatusBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D69B95E3CA5DE16846A232EF /* StatusBarController.swift */; };
@@ -44,6 +45,7 @@
 		5CCB6207267F5C3452324B74 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
 		6984A54FE81A6A4D17E4A887 /* AppPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPanel.swift; sourceTree = "<group>"; };
 		69BD959AEF323D3FC899EEDC /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
+		6B63A120A6F3CD1EB9B5518B /* RestQuoteProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestQuoteProvider.swift; sourceTree = "<group>"; };
 		74E3AAF8330651BFB3517313 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UserNotifications.framework; sourceTree = "<group>"; };
 		7CF8ADAC3813149ED5103419 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
 		8EBC9083AB6CFBFD94734F0B /* StateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateMachine.swift; sourceTree = "<group>"; };
@@ -119,6 +121,7 @@
 			isa = PBXGroup;
 			children = (
 				7CF8ADAC3813149ED5103419 /* L10n.swift */,
+				6B63A120A6F3CD1EB9B5518B /* RestQuoteProvider.swift */,
 				C7420247C36273FEE7137939 /* Settings.swift */,
 				8EBC9083AB6CFBFD94734F0B /* StateMachine.swift */,
 				AB0D58E2B068E0FA90C27C4F /* StatsManager.swift */,
@@ -247,6 +250,7 @@
 				7802780B81A0ADE9E4BAA905 /* LoginItemManager.swift in Sources */,
 				F8367868D28767109FE048E1 /* NotificationManager.swift in Sources */,
 				F4CE3CE8D746CB01802EF8DC /* OnboardingWindowController.swift in Sources */,
+				DA9D7C64877A092C909451F5 /* RestQuoteProvider.swift in Sources */,
 				FAA442CB7E5E6349A872A469 /* RestWindowController.swift in Sources */,
 				D0580FE46E482C183A2E9754 /* Settings.swift in Sources */,
 				179F2929C1280C86B3E266A6 /* SettingsWindowController.swift in Sources */,

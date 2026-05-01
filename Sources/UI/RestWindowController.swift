@@ -7,6 +7,7 @@ class RestWindowController: NSObject {
     private var panel: NSPanel!
     private var countdownLabel: NSTextField!
     private var subtitleLabel: NSTextField!
+    private var quoteLabel: NSTextField!
     private var skipButton: NSButton!
     private var ringLayer: CAShapeLayer!
     private var trackLayer: CAShapeLayer!
@@ -47,7 +48,7 @@ class RestWindowController: NSObject {
 
     private func setupPanel() {
         let w: CGFloat = 360
-        let h: CGFloat = 320
+        let h: CGFloat = 392
 
         panel = RestPanel(
             contentRect: NSRect(x: 0, y: 0, width: w, height: h),
@@ -105,8 +106,8 @@ class RestWindowController: NSObject {
     private func setupUI() {
         guard let contentView = panel.contentView else { return }
 
-        let cx: CGFloat = 180
-        let cy: CGFloat = 160
+        let cx = contentView.bounds.midX
+        let cy = contentView.bounds.midY
         let radius: CGFloat = 90
 
         // Track ring (background arc)
@@ -163,6 +164,16 @@ class RestWindowController: NSObject {
         countdownLabel.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(countdownLabel)
 
+        // Random motivational line (below countdown area)
+        quoteLabel = NSTextField(wrappingLabelWithString: "")
+        quoteLabel.font = NSFont.systemFont(ofSize: 11, weight: .regular)
+        quoteLabel.textColor = NSColor.white.withAlphaComponent(0.52)
+        quoteLabel.alignment = .center
+        quoteLabel.maximumNumberOfLines = 0
+        quoteLabel.preferredMaxLayoutWidth = 312
+        quoteLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(quoteLabel)
+
         // "BREAK" label above countdown
         let breakLabel = NSTextField(labelWithString: "BREAK")
         breakLabel.font = NSFont.systemFont(ofSize: 9, weight: .semibold)
@@ -198,6 +209,12 @@ class RestWindowController: NSObject {
             // Subtitle near top
             subtitleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
             subtitleLabel.topAnchor.constraint(equalTo: contentView.topAnchor, constant: 26),
+
+            // Quote between countdown / skip — wrap long Chinese lines
+            quoteLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 24),
+            quoteLabel.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -24),
+            quoteLabel.topAnchor.constraint(greaterThanOrEqualTo: countdownLabel.bottomAnchor, constant: 10),
+            quoteLabel.bottomAnchor.constraint(equalTo: skipButton.topAnchor, constant: -12),
 
             // Skip near bottom
             skipButton.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -252,6 +269,7 @@ class RestWindowController: NSObject {
     // MARK: - Show / Close
 
     func show() {
+        quoteLabel.stringValue = RestQuoteProvider.randomQuote()
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
         startCountdown()
