@@ -93,13 +93,16 @@ echo "清空本地 Release DerivedData ($DERIVED_RELEASE) ..."
 rm -rf "$DERIVED_RELEASE"
 xcodegen generate -q
 BUILD_LOG=$(mktemp)
+# 覆盖 MARKETING_VERSION / CURRENT_PROJECT_VERSION，使 Bundle 版本与本次 Release（v${VERSION}）一致
 xcodebuild -project EyeGuard.xcodeproj \
   -scheme EyeGuard \
   -configuration Release \
   -derivedDataPath "$DERIVED_RELEASE" \
   clean build \
   CODE_SIGN_IDENTITY="-" \
-  CODE_SIGNING_REQUIRED=NO 2>&1 | tee "$BUILD_LOG"
+  CODE_SIGNING_REQUIRED=NO \
+  MARKETING_VERSION="$VERSION" \
+  CURRENT_PROJECT_VERSION="$VERSION" 2>&1 | tee "$BUILD_LOG"
 if grep -qE " error:" "$BUILD_LOG"; then
   echo "xcodebuild 失败，详见上方日志" >&2
   rm -f "$BUILD_LOG"
