@@ -29,3 +29,4 @@ build/
 # EyeGuard runtime files
 /tmp/eyeguard.lock
 /tmp/eyeguard.sock
+.idea

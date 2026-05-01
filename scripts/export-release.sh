@@ -5,50 +5,58 @@ set -e
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 RELEASE_DIR="$PROJECT_DIR/Release"
+CLI_SRC="$PROJECT_DIR/eyeguard"
 BUILD_DATE="$(date +"%Y-%m-%d %H:%M:%S")"
 
-echo "==> Clean Release/"
-mkdir -p "$RELEASE_DIR"
-rm -rf "$RELEASE_DIR"/*
+# ── 0. Save CLI path before cleaning ─────────────────────────
+CLI_BACKUP="/tmp/eyeguard_cli_backup"
+if [[ -f "$CLI_SRC" ]]; then
+    cp "$CLI_SRC" "$CLI_BACKUP"
+fi
 
-# 1. Build App
+# ── 1. Clean & Build ───────────────────────────────────────
+echo "==> Clean Release/"
+rm -rf "$RELEASE_DIR"/*
+mkdir -p "$RELEASE_DIR"
+
 echo "==> Building EyeGuard.app..."
-APP_PATH=$(cd "$PROJECT_DIR" && xcodebuild -project EyeGuard.xcodeproj -scheme EyeGuard -configuration Release -showBuildSettings 2>/dev/null | grep -m1 "BUILT_PRODUCTS_DIR" | awk '{print $3}')
-EYEGUARD_APP="$(find "$APP_PATH" -name "EyeGuard.app" -type d 2>/dev/null | head -1)"
-if [[ -z "$EYEGUARD_APP" ]]; then
-    echo "Error: EyeGuard.app not found in $APP_PATH"
+cd "$PROJECT_DIR"
+xcodebuild -project EyeGuard.xcodeproj -scheme EyeGuard -configuration Release build \
+    CODE_SIGN_IDENTITY="-" CODE_SIGNING_REQUIRED=NO > /dev/null 2>&1
+
+APP_PATH=$(find ~/Library/Developer/Xcode/DerivedData/EyeGuard-* -name "EyeGuard.app" -type d 2>/dev/null | grep -v "Intermediate" | head -1)
+if [[ -z "$APP_PATH" ]] || [[ ! -d "$APP_PATH" ]]; then
+    echo "Error: EyeGuard.app not found after build"
     exit 1
 fi
-echo "    Found: $EYEGUARD_APP"
-cp -R "$EYEGUARD_APP" "$RELEASE_DIR/EyeGuard.app"
+echo "    Found: $APP_PATH"
+cp -R "$APP_PATH" "$RELEASE_DIR/EyeGuard.app"
 echo "    Copied to $RELEASE_DIR/EyeGuard.app"
 
-# 2. Copy CLI (from Release/ which is already in the repo)
-if [[ -f "$PROJECT_DIR/Release/eyeguard" ]]; then
+# ── 2. Copy CLI ─────────────────────────────────────────────
+if [[ -f "$CLI_BACKUP" ]]; then
     echo "==> Copying eyeguard CLI..."
-    cp "$PROJECT_DIR/Release/eyeguard" "$RELEASE_DIR/eyeguard"
+    cp "$CLI_BACKUP" "$RELEASE_DIR/eyeguard"
     chmod +x "$RELEASE_DIR/eyeguard"
     echo "    Copied to $RELEASE_DIR/eyeguard"
+    rm -f "$CLI_BACKUP"
 fi
 
-# 3. Compress App
+# ── 3. Compress App ────────────────────────────────────────
 echo "==> Compressing EyeGuard.app..."
 (cd "$RELEASE_DIR" && zip -r "EyeGuard.app.zip" "EyeGuard.app" -x "*.DS_Store" && rm -rf "EyeGuard.app")
-APP_ZIP="$RELEASE_DIR/EyeGuard.app.zip"
-APP_ZIP_SIZE=$(du -h "$APP_ZIP" | cut -f1)
-echo "    Created EyeGuard.app.zip (${APP_ZIP_SIZE})"
+echo "    Created EyeGuard.app.zip"
 
-# 4. Generate README
+# ── 4. Generate README ─────────────────────────────────────
 echo "==> Generating README..."
-cat > "$RELEASE_DIR/README.md" << README_EOF
+cat > "$RELEASE_DIR/README.md" << 'README_EOF'
 # EyeGuard 护眼卫士 — Release
 
 ## 目录结构
 
 ```
 EyeGuard.app.zip/  macOS App（解压后安装）
-eyeguard           命令行工具
-eyeguard-cli.SKILL.md  CLI 使用说明（可选）
+eyeguard           命令行工具（位于项目根目录）
 README.md          本文件
 ```
 
@@ -98,8 +106,11 @@ eyeguard bright      # 亮屏
 classic | minimal | emoji | compact | bracket | star | dots | progressBar
 
 ---
-Built: $BUILD_DATE
+Built: BUILD_DATE_PLACEHOLDER
 README_EOF
+
+# 替换 BUILD_DATE_PLACEHOLDER 为实际日期
+sed -i '' "s/BUILD_DATE_PLACEHOLDER/$BUILD_DATE/g" "$RELEASE_DIR/README.md"
 
 echo ""
 echo "==> Done. Release/ contents:"
