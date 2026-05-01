@@ -3,7 +3,7 @@
 #
 # 仓库内：`./scripts/install.sh [version]`（default: latest）。
 #
-# `scripts/release.sh` 打出的 vX.zip 根目录仍含 `install.sh` / `eyeguard`（扁平布局）；
+# `scripts/publish.sh` 打出的 vX.zip 根目录仍含 `install.sh` / `eyeguard`（扁平布局）；
 # 本脚本下载并解压后期望：**./EyeGuard.app.zip**、**./eyeguard**、**./install.sh**、**./skills/**。
 
 set -e
@@ -70,7 +70,7 @@ unzip -o eyeguard.zip
 
 # ── Install App ────────────────────────────────────────────────────────────
 if [ ! -f "./EyeGuard.app.zip" ]; then
-  log_error "解压包缺少 EyeGuard.app.zip（根目录）。请下载由本仓库 scripts/release.sh 构建的 Release。"
+  log_error "解压包缺少 EyeGuard.app.zip（根目录）。请下载由本仓库 scripts/publish.sh 构建的 Release。"
   exit 1
 fi
 log_info "Installing EyeGuard.app to /Applications/ ..."

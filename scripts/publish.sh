@@ -1,8 +1,8 @@
 #!/bin/bash
-# EyeGuard Release Script
+# EyeGuard Publish Script — 构建产物、打 vX.zip、`gh release create`
 # Usage:
-#   ./scripts/release.sh <version>   (e.g. ./scripts/release.sh 0.1.6 或 v0.1.6)
-#   ./scripts/release.sh             # 从 GitHub latest release 的 tag_name（须为 vx.y.z）取上一版后 patch +1
+#   ./scripts/publish.sh <version>   (e.g. ./scripts/publish.sh 0.1.6 或 v0.1.6)
+#   ./scripts/publish.sh             # 从 GitHub latest release 的 tag_name（须为 vx.y.z）取上一版后 patch +1
 #
 # 产物 vX.zip 根布局：EyeGuard.app.zip、eyeguard、install.sh、skills/（扁平，无 Release/）。
 
@@ -80,12 +80,12 @@ PROJECT_DIR=$(cd "$(dirname "$0")/.." && pwd)
 ARCHIVE_DIR="$PROJECT_DIR/Archive"
 ZIP_NAME="v${VERSION}.zip"
 DERIVED_RELEASE="$PROJECT_DIR/.build/ReleaseDerivedData"
-BUNDLE_STAGE="$PROJECT_DIR/.build/release_bundle"
+BUNDLE_STAGE="$PROJECT_DIR/.build/publish_bundle"
 BUILD_PRODUCTS="$DERIVED_RELEASE/Build/Products/Release"
 
 cd "$PROJECT_DIR"
 
-echo "=== EyeGuard Release v${VERSION} ==="
+echo "=== EyeGuard Publish v${VERSION} ==="
 echo ""
 
 echo "[1/4] Building EyeGuard.app ..."

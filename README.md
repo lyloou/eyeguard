@@ -232,7 +232,7 @@ xcodebuild -project EyeGuard.xcodeproj -scheme EyeGuard -configuration Release b
 ### 发布
 
 ```bash
-./scripts/release.sh <version>   # 例如：./scripts/release.sh 0.1.5
+./scripts/publish.sh <version>   # 例如：./scripts/publish.sh 0.1.5
 ```
 
 发布产物 `Archive/v{x.x.x}.zip` 根目录包含：**`EyeGuard.app.zip`**、**`eyeguard`**、`install.sh` 以及 **`skills/eyeguard-cli/`**（供 Agent Skill 使用）。

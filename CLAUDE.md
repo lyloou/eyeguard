@@ -21,14 +21,14 @@ xcodebuild -project EyeGuard.xcodeproj -scheme EyeGuard -configuration Release b
 
 Build output: `~/Library/Developer/Xcode/DerivedData/EyeGuard-*/Build/Products/Release/EyeGuard.app`
 
-## Release
+## Publish (GitHub Release)
 
 ```bash
-./scripts/release.sh <version>   # e.g. ./scripts/release.sh 0.1.9
+./scripts/publish.sh <version>   # e.g. ./scripts/publish.sh 0.1.9
 # Auto-bumps patch from latest GitHub release if version omitted
 ```
 
-The release script builds, then packs `Archive/v{X}.zip` with a **flat root**: `EyeGuard.app.zip`, `eyeguard`, `install.sh`, `skills/` (no `Release/` folder), then uploads via `gh release create`.
+`publish.sh` builds, then packs `Archive/v{X}.zip` with a **flat root**: `EyeGuard.app.zip`, `eyeguard`, `install.sh`, `skills/` (no `Release/` folder), then uploads via `gh release create`.
 
 ## Architecture
 
@@ -49,7 +49,7 @@ idle → working → resting → working (loop)
 | `Sources/Core/` | `TimerManager` (DispatchSourceTimer, 1 s ticks), `StateMachine`, `Settings` (UserDefaults), `StatsManager`, `L10n` |
 | `Sources/UI/` | `StatusBarController` (NSStatusItem + menu), `RestWindowController` (NSPanel shown on rest), `SettingsWindowController`, `OnboardingWindowController`, `AboutWindowController` |
 | `Sources/System/` | `SocketBridge` (Unix Domain Socket IPC), `LockScreenMonitor`, `HotkeyManager` (Carbon), `SoundManager` (AudioToolbox), `NotificationManager` |
-| `scripts/` | `eyeguard` (shell CLI → `/tmp/eyeguard.sock`), `install.sh` (packaged flat into `v{X}.zip` root), `release.sh`, `restart.sh` |
+| `scripts/` | `eyeguard` (shell CLI → `/tmp/eyeguard.sock`), `install.sh` (packaged flat into `v{X}.zip` root), `publish.sh`, `restart.sh` |
 
 ### CLI ↔ App IPC
 
