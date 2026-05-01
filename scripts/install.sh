@@ -1,9 +1,10 @@
 #!/bin/bash
 # EyeGuard install script
-# Usage: ./install.sh [version]  (default: latest)
 #
-# 期望 vX.zip 根布局：./EyeGuard.app.zip、./eyeguard、./install.sh、./skills/
-#（与 scripts/release.sh 产物一致）。
+# 仓库内：`./scripts/install.sh [version]`（default: latest）。
+#
+# `scripts/release.sh` 打出的 vX.zip 根目录仍含 `install.sh` / `eyeguard`（扁平布局）；
+# 本脚本下载并解压后期望：**./EyeGuard.app.zip**、**./eyeguard**、**./install.sh**、**./skills/**。
 
 set -e
 

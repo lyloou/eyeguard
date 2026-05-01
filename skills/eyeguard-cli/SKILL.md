@@ -6,7 +6,7 @@ platforms: [macos]
 
 # eyeguard — 护眼卫士命令行工具
 
-通过 `~/.eyeguard/bin/eyeguard` 或直接用项目里的 `eyeguard` 脚本控制护眼卫士 App。
+通过 `~/.eyeguard/bin/eyeguard`，或克隆仓库后使用 **`scripts/eyeguard`**，控制护眼卫士 App。
 
 ## 命令
 

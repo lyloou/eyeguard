@@ -199,10 +199,10 @@ Sources/
 
 ```bash
 # 方式一：自动获取最新版
-curl -fsSL https://raw.githubusercontent.com/lyloou/eyeguard/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/lyloou/eyeguard/main/scripts/install.sh | bash
 
 # 方式二：指定版本
-curl -fsSL https://raw.githubusercontent.com/lyloou/eyeguard/main/install.sh | bash -s -- 0.1.8
+curl -fsSL https://raw.githubusercontent.com/lyloou/eyeguard/main/scripts/install.sh | bash -s -- 0.1.8
 ```
 
 然后运行 `source ~/.zshrc`，输入 `eyeguard status` 验证。
@@ -210,7 +210,7 @@ curl -fsSL https://raw.githubusercontent.com/lyloou/eyeguard/main/install.sh | b
 ### 手动安装
 
 1. 下载 [最新 Release](https://github.com/lyloou/eyeguard/releases/latest)
-2. 解压 `v{x.x.x}.zip`：根目录有 **`EyeGuard.app.zip`**，执行 `unzip -o EyeGuard.app.zip -d /Applications/` 安装 App；将根目录 **`eyeguard`** 拷贝到 **`~/.eyeguard/bin/eyeguard`**（或直接用上文 **curl … install.sh**，会重新下载同版本 zip 并写入 CLI）。
+2. 解压 `v{x.x.x}.zip`：根目录有 **`EyeGuard.app.zip`**，执行 `unzip -o EyeGuard.app.zip -d /Applications/` 安装 App；将根目录 **`eyeguard`** 拷贝到 **`~/.eyeguard/bin/eyeguard`**（或通过 **curl …/main/scripts/install.sh \| bash**，会重新下载同版本 zip 并写入 CLI）。
 
 ## 构建（开发者）
 

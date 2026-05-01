@@ -281,7 +281,7 @@ CLI (shell + nc)                  App (Swift)
 - **Socket 路径**：`/tmp/eyeguard.sock`
 - **协议**：JSON over Unix Domain Socket（行分隔）
 - **单实例锁**：`/tmp/eyeguard.lock`（flock）
-- **CLI 二进制**：`~/.eyeguard/bin/eyeguard`（纯 shell + netcat）
+- **CLI 二进制**：`~/.eyeguard/bin/eyeguard`（纯 shell + netcat）；仓库源码为 **`scripts/eyeguard`**
 
 ---
 

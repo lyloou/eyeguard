@@ -113,8 +113,8 @@ rm -rf "$BUNDLE_STAGE"
 mkdir -p "$BUNDLE_STAGE"
 cp -R "$BUILD_PRODUCTS/EyeGuard.app" "$BUNDLE_STAGE/EyeGuard.app"
 ( cd "$BUNDLE_STAGE" && zip -rq EyeGuard.app.zip EyeGuard.app && rm -rf EyeGuard.app )
-install -m 0755 "$PROJECT_DIR/eyeguard" "$BUNDLE_STAGE/eyeguard"
-install -m 0755 "$PROJECT_DIR/install.sh" "$BUNDLE_STAGE/install.sh"
+install -m 0755 "$PROJECT_DIR/scripts/eyeguard" "$BUNDLE_STAGE/eyeguard"
+install -m 0755 "$PROJECT_DIR/scripts/install.sh" "$BUNDLE_STAGE/install.sh"
 cp -R "$PROJECT_DIR/skills" "$BUNDLE_STAGE/"
 
 echo ""

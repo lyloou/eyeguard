@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What This Is
 
-EyeGuard (护眼卫士) is a macOS menu-bar app that enforces work/rest cycles (20-20-20 / Pomodoro style). It ships as an `.app` bundle + a shell CLI (`eyeguard`) that talks to the app over a Unix Domain Socket.
+EyeGuard (护眼卫士) is a macOS menu-bar app that enforces work/rest cycles (20-20-20 / Pomodoro style). It ships as an `.app` bundle + a shell CLI in **`scripts/eyeguard`** (installed to `~/.eyeguard/bin/eyeguard` via **`scripts/install.sh`** / the release zip flow) that talks to the app over a Unix Domain Socket.
 
 ## Build
 
@@ -49,7 +49,7 @@ idle → working → resting → working (loop)
 | `Sources/Core/` | `TimerManager` (DispatchSourceTimer, 1 s ticks), `StateMachine`, `Settings` (UserDefaults), `StatsManager`, `L10n` |
 | `Sources/UI/` | `StatusBarController` (NSStatusItem + menu), `RestWindowController` (NSPanel shown on rest), `SettingsWindowController`, `OnboardingWindowController`, `AboutWindowController` |
 | `Sources/System/` | `SocketBridge` (Unix Domain Socket IPC), `LockScreenMonitor`, `HotkeyManager` (Carbon), `SoundManager` (AudioToolbox), `NotificationManager` |
-| `eyeguard` | Shell CLI; sends text commands to `/tmp/eyeguard.sock`, parses JSON responses |
+| `scripts/` | `eyeguard` (shell CLI → `/tmp/eyeguard.sock`), `install.sh` (packaged flat into `v{X}.zip` root), `release.sh`, `restart.sh` |
 
 ### CLI ↔ App IPC
 
