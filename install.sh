@@ -51,12 +51,21 @@ if [ -f "Release/EyeGuard.app.zip" ]; then
 fi
 
 # ── Install CLI ─────────────────────────────────────────────────────────────
-if [ -f "Release/eyeguard" ]; then
-  log_info "Installing eyeguard CLI ..."
+# 优先包根目录的 eyeguard，其次 Release/（与 release 打包布局一致）；cp -f 强制覆盖旧脚本。
+CLI_SRC=""
+if [ -f "./eyeguard" ]; then
+  CLI_SRC="./eyeguard"
+elif [ -f "Release/eyeguard" ]; then
+  CLI_SRC="Release/eyeguard"
+fi
+if [ -n "$CLI_SRC" ]; then
+  log_info "Installing eyeguard CLI (overwrite) ..."
   mkdir -p ~/.eyeguard/bin
-  cp Release/eyeguard ~/.eyeguard/bin/
+  cp -f "$CLI_SRC" ~/.eyeguard/bin/eyeguard
   chmod +x ~/.eyeguard/bin/eyeguard
   log_ok "CLI installed to ~/.eyeguard/bin/eyeguard"
+else
+  log_warn "未找到 eyeguard CLI（跳过）。请确认解压包内含 ./eyeguard 或 Release/eyeguard"
 fi
 
 # ── Configure PATH ─────────────────────────────────────────────────────────

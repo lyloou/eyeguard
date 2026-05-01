@@ -17,6 +17,7 @@ xcuserdata/
 DerivedData/
 
 # Build
+.build/
 build/
 *.app
 *.appex

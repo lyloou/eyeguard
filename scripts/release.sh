@@ -78,28 +78,42 @@ PROJECT_DIR=$(cd "$(dirname "$0")/.." && pwd)
 RELEASE_DIR="$PROJECT_DIR/Release"
 ARCHIVE_DIR="$PROJECT_DIR/Archive"
 ZIP_NAME="v${VERSION}.zip"
-BUILD_PRODUCTS="$HOME/Library/Developer/Xcode/DerivedData/EyeGuard-cgpwcqmjssschbghvdincznbhyro/Build/Products/Release"
+DERIVED_RELEASE="$PROJECT_DIR/.build/ReleaseDerivedData"
+BUILD_PRODUCTS="$DERIVED_RELEASE/Build/Products/Release"
 
 cd "$PROJECT_DIR"
 
 echo "=== EyeGuard Release v${VERSION} ==="
 echo ""
 
-# 1. Build App
+# 1. Build App（独立 DerivedData，每次发布前清空，避免旧缓存）
 echo "[1/5] Building EyeGuard.app ..."
+echo "清空本地 Release DerivedData ($DERIVED_RELEASE) ..."
+rm -rf "$DERIVED_RELEASE"
+xcodegen generate -q
+BUILD_LOG=$(mktemp)
 xcodebuild -project EyeGuard.xcodeproj \
   -scheme EyeGuard \
   -configuration Release \
-  build \
+  -derivedDataPath "$DERIVED_RELEASE" \
+  clean build \
   CODE_SIGN_IDENTITY="-" \
-  CODE_SIGNING_REQUIRED=NO 2>&1 | tail -3
+  CODE_SIGNING_REQUIRED=NO 2>&1 | tee "$BUILD_LOG"
+if grep -qE " error:" "$BUILD_LOG"; then
+  echo "xcodebuild 失败，详见上方日志" >&2
+  rm -f "$BUILD_LOG"
+  exit 1
+fi
+rm -f "$BUILD_LOG"
 
 # 2. Prepare Release dir
 echo ""
 echo "[2/5] Preparing Release directory ..."
 mkdir -p "$RELEASE_DIR"
-rm -rf "$RELEASE_DIR/EyeGuard.app" "$RELEASE_DIR/EyeGuard.app.zip"
+rm -rf "$RELEASE_DIR/EyeGuard.app" "$RELEASE_DIR/EyeGuard.app.zip" "$RELEASE_DIR/eyeguard"
 cp -r "$BUILD_PRODUCTS/EyeGuard.app" "$RELEASE_DIR/"
+cp -f "$PROJECT_DIR/eyeguard" "$RELEASE_DIR/eyeguard"
+chmod +x "$RELEASE_DIR/eyeguard"
 
 # 3. Package App zip
 echo ""
@@ -113,7 +127,7 @@ echo ""
 echo "[4/5] Creating $ZIP_NAME ..."
 mkdir -p "$ARCHIVE_DIR"
 rm -f "$ARCHIVE_DIR/$ZIP_NAME"
-zip -r "$ARCHIVE_DIR/$ZIP_NAME" Release/ install.sh skills/
+zip -r "$ARCHIVE_DIR/$ZIP_NAME" Release/ install.sh eyeguard skills/
 
 # 5. Upload to GitHub
 echo ""
