@@ -281,7 +281,7 @@ CLI (shell + nc)                  App (Swift)
 - **Socket 路径**：`/tmp/eyeguard.sock`
 - **协议**：JSON over Unix Domain Socket（行分隔）
 - **单实例锁**：`/tmp/eyeguard.lock`（flock）
-- **CLI 二进制**：`~/.hermes/bin/eyeguard`（纯 shell + netcat）
+- **CLI 二进制**：`~/.eyeguard/bin/eyeguard`（纯 shell + netcat）
 
 ---
 
@@ -296,7 +296,7 @@ CLI (shell + nc)                  App (Swift)
 - [x] 设置面板（SettingsWindowController + UserDefaults）
 - [x] 单例保护（/tmp/eyeguard.lock）
 - [x] Unix Domain Socket IPC（SocketBridge.swift）
-- [x] CLI 工具（~/.hermes/bin/eyeguard + skill）
+- [x] CLI 工具（~/.eyeguard/bin/eyeguard + skill）
 - [x] 系统通知（NotificationManager + UNUserNotificationCenter）
 - [x] 音效提示（SoundManager + AudioToolbox）
 - [x] 登录启动（LoginItemManager + SMAppService）

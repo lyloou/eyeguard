@@ -17,8 +17,8 @@ README.md          本文件
 
 ### CLI（可选）
 ```bash
-cp eyeguard ~/.hermes/bin/eyeguard
-chmod +x ~/.hermes/bin/eyeguard
+cp eyeguard ~/.eyeguard/bin/eyeguard
+chmod +x ~/.eyeguard/bin/eyeguard
 ```
 
 ## 快捷键
@@ -49,7 +49,7 @@ eyeguard bright     # 亮屏
 
 ## 状态栏样式
 
-classic | minimal | emoji | compact | bracket | star
+classic | minimal | emoji | compact | bracket | star | dots | progressBar
 
 ---
 Built: $BUILD_DATE

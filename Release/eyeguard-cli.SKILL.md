@@ -2,15 +2,11 @@
 name: eyeguard-cli
 description: 护眼卫士命令行工具 — 查看和控制 EyeGuard 状态栏计时器
 platforms: [macos]
-prerequisites:
-  binaries:
-    - path: ~/.hermes/bin/eyeguard
-      note: EyeGuard App 端通过 Unix Domain Socket /tmp/eyeguard.sock 接收命令，App 必须在运行
 ---
 
 # eyeguard — 护眼卫士命令行工具
 
-通过 `~/.hermes/bin/eyeguard` 控制护眼卫士 App，支持以下命令：
+通过 `~/.eyeguard/bin/eyeguard` 或直接用项目里的 `eyeguard` 脚本控制护眼卫士 App，支持以下命令：
 
 ## 命令
 
