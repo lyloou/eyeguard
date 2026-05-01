@@ -34,48 +34,17 @@ jobs:
           cd /tmp
           cp -R "${{ steps.app.outputs.path }}" EyeGuard.app
           zip -r EyeGuard.app.zip EyeGuard.app -x "*.DS_Store"
-          echo "PACKAGED=true" >> $GITHUB_ENV
 
-      - name: Set Tag Version
-        id: version
+      - name: Prepare release files
         run: |
+          cp /tmp/EyeGuard.app.zip .
+          cp eyeguard eyeguard
+          cp eyeguard-cli.SKILL.md eyeguard-cli.SKILL.md
+          cp scripts/install.sh install.sh
+
+          # Generate README
           VERSION="${GITHUB_REF#refs/tags/v}"
-          echo "version=$VERSION" >> $GITHUB_OUTPUT
-
-      - name: Create Release
-        uses: softprops/action-gh-release@v2
-        with:
-          draft: false
-          prerelease: false
-          generate_release_notes: true
-          tag_name: ${{ github.ref_name }}
-          name: EyeGuard v${{ steps.version.outputs.version }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload App
-        uses: softprops/action-gh-release@v2
-        with:
-          files: /tmp/EyeGuard.app.zip
-
-      - name: Upload CLI
-        uses: softprops/action-gh-release@v2
-        with:
-          files: eyeguard
-
-      - name: Upload SKILL
-        uses: softprops/action-gh-release@v2
-        with:
-          files: eyeguard-cli.SKILL.md
-
-      - name: Upload install.sh
-        uses: softprops/action-gh-release@v2
-        with:
-          files: scripts/install.sh
-
-      - name: Generate & Upload README
-        run: |
-          cat > /tmp/README.md << 'README_EOF'
+          cat > README.md << 'README_EOF'
 # EyeGuard 护眼卫士
 
 macOS 菜单栏护眼提醒 App，帮助你养成健康的工作节奏。
@@ -146,9 +115,23 @@ eyeguard set-style <name>  # 切换样式
 ---
 Built by GitHub Actions
 README_EOF
-          sed -i "s/vVERSION/${{ steps.version.outputs.version }}/g" /tmp/README.md
+          sed -i "s/vVERSION/v${VERSION}/g" README.md
 
-      - name: Upload README
+          ls -la
+
+      - name: Create Release & Upload All
         uses: softprops/action-gh-release@v2
         with:
-          files: /tmp/README.md
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          tag_name: ${{ github.ref_name }}
+          name: EyeGuard ${{ github.ref_name }}
+          files: |
+            EyeGuard.app.zip
+            eyeguard
+            eyeguard-cli.SKILL.md
+            install.sh
+            README.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
