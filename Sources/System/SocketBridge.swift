@@ -96,7 +96,11 @@ class SocketBridge {
             return "{\"ok\":false,\"error\":\"no app delegate or timer\"}"
         }
 
-        switch command {
+        let parts = command.split(separator: " ", maxSplits: 1).map(String.init)
+        let cmd = parts[0]
+        let args = parts.count > 1 ? parts[1].split(separator: " ").map(String.init) : []
+
+        switch cmd {
         case "status":
             return jsonify([
                 "ok": true,
@@ -155,8 +159,22 @@ class SocketBridge {
                 "notifyOnWorkEnd": s.notifyOnWorkEnd,
                 "notifyOnRestEnd": s.notifyOnRestEnd,
                 "soundEnabled": s.soundEnabled,
-                "launchAtLogin": LoginItemManager.shared.isEnabled
+                "launchAtLogin": LoginItemManager.shared.isEnabled,
+                "statusBarStyle": s.statusBarStyle.rawValue
             ])
+
+        case "set-style":
+            guard args.count >= 1 else {
+                return "{\"ok\":false,\"error\":\"usage: set-style <name>\"}"
+            }
+            let styleName = args[0]
+            guard let style = Settings.StatusBarStyle(rawValue: styleName) else {
+                let valid = Settings.StatusBarStyle.allCases.map { $0.rawValue }.joined(separator: ", ")
+                return "{\"ok\":false,\"error\":\"unknown style: \\(styleName). valid: \\(valid)\"}"
+            }
+            Settings.shared.statusBarStyle = style
+            NotificationCenter.default.post(name: .settingsDidChange, object: nil)
+            return jsonify(["ok": true, "statusBarStyle": style.rawValue])
 
         default:
             return "{\"ok\":false,\"error\":\"unknown command: \(command)\"}"

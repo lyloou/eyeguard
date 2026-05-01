@@ -238,6 +238,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     @objc private func statusBarStyleChanged() {
         let index = statusBarStylePopup.indexOfSelectedItem
         Settings.shared.statusBarStyle = Settings.StatusBarStyle.allCases[index]
+        NotificationCenter.default.post(name: .settingsDidChange, object: nil)
     }
 
     // MARK: - Show

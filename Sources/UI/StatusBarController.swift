@@ -23,6 +23,21 @@ class StatusBarController: NSObject {
         super.init()
         setupStatusItem()
         setupMenu()
+        setupNotificationObserver()
+    }
+
+    private func setupNotificationObserver() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(settingsDidChange),
+            name: .settingsDidChange,
+            object: nil
+        )
+    }
+
+    @objc private func settingsDidChange() {
+        guard let manager = timerManager else { return }
+        updateState(manager.state, remaining: manager.remainingSeconds)
     }
 
     // MARK: - Setup

@@ -94,4 +94,5 @@ class L10n {
 
 extension Notification.Name {
     static let showAboutWindow = Notification.Name("showAboutWindow")
+    static let settingsDidChange = Notification.Name("settingsDidChange")
 }
