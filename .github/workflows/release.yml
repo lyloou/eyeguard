@@ -8,20 +8,18 @@ on:
 
 jobs:
   release:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Build EyeGuard.app
+      - name: Test
         run: |
-          xcodebuild -project EyeGuard.xcodeproj \
-            -scheme EyeGuard \
-            -configuration Release \
-            build \
-            CODE_SIGN_IDENTITY="-" \
-            CODE_SIGNING_REQUIRED=NO
+          echo "Testing workflow..."
+          ls -la
+          echo "VERSION=${GITHUB_REF#refs/tags/v}" >> $GITHUB_OUTPUT
+          echo "ref=${{ github.ref }}"
 
       - name: Locate built app
         id: app

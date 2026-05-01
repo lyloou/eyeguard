@@ -179,7 +179,23 @@ Sources/
 
 ---
 
-## 安装 / 构建
+## 安装
+
+### 一键安装（推荐）
+
+```bash
+curl -L https://github.com/lyloou/eyeguard/releases/download/v0.1.4/v0.1.4.zip | funzip | bash
+```
+
+然后重启终端或运行 `source ~/.zshrc`，输入 `eyeguard --help` 验证。
+
+### 手动安装
+
+1. 下载 [最新 Release](https://github.com/lyloou/eyeguard/releases/latest)
+2. 解压 `v{x.x.x}.zip`，将 `Release/EyeGuard.app` 拷贝到 `/Applications/`
+3. （可选）将 `Release/eyeguard` 拷贝到 `~/.eyeguard/bin/eyeguard`，并确认 PATH 包含该目录
+
+## 构建（开发者）
 
 ### 前置依赖
 
@@ -194,43 +210,13 @@ xcodegen generate
 xcodebuild -project EyeGuard.xcodeproj -scheme EyeGuard -configuration Release build
 ```
 
-> ⚠️ **发布前**需将 build 产物复制到 /Applications：
-> ```bash
-> cp -R ~/Library/Developer/Xcode/DerivedData/EyeGuard-*/Build/Products/Debug/EyeGuard.app /Applications/
-> ```
-
 产物：`~/Library/Developer/Xcode/DerivedData/EyeGuard-*/Build/Products/Release/EyeGuard.app`
 
-### 首次运行后，CLI 即可使用
+### 发布
 
 ```bash
-~/.eyeguard/bin/eyeguard status
+./scripts/release.sh <version>   # 例如：./scripts/release.sh 0.1.5
 ```
-
----
-
-## 发布
-
-发布前准备产物（所有文件汇集到 `Release/`）：
-
-```bash
-./scripts/export-release.sh
-```
-
-产物：
-
-```
-Release/
-├── EyeGuard.app.zip   # App 压缩包
-├── eyeguard           # CLI 工具
-├── eyeguard-cli.SKILL.md  # CLI 使用说明
-└── README.md          # 发布说明
-```
-
-安装方式：
-
-1. 解压 `EyeGuard.app.zip`，将 `EyeGuard.app` 拷贝到 `/Applications/`
-2. （可选）`cp eyeguard ~/.eyeguard/bin/eyeguard && chmod +x ~/.eyeguard/bin/eyeguard`
 
 ---
 
