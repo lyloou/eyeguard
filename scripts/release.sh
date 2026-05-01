@@ -113,7 +113,7 @@ echo ""
 echo "[4/5] Creating $ZIP_NAME ..."
 mkdir -p "$ARCHIVE_DIR"
 rm -f "$ARCHIVE_DIR/$ZIP_NAME"
-zip -r "$ARCHIVE_DIR/$ZIP_NAME" Release/ install.sh eyeguard-cli.SKILL.md
+zip -r "$ARCHIVE_DIR/$ZIP_NAME" Release/ install.sh skills/
 
 # 5. Upload to GitHub
 echo ""
