@@ -1,5 +1,8 @@
 # EyeGuard 护眼卫士
 
+![Latest Release](https://img.shields.io/github/v/release/lyloou/eyeguard?color=green&label=Latest)
+
+
 macOS 菜单栏倒计时工具。工作 30 分钟 → 休息 5 分钟，循环往复，守护视力。
 
 无 Dock 图标，运行在状态栏，轻量安静。
@@ -184,7 +187,8 @@ Sources/
 ### 一键安装（推荐）
 
 ```bash
-curl -L https://github.com/lyloou/eyeguard/releases/download/v0.1.4/v0.1.4.zip | funzip | bash
+VER=$(curl -s https://api.github.com/repos/lyloou/eyeguard/releases/latest | grep '"tag_name"' | sed 's/.*"v\?\([^"]*\)".*/\1/')
+curl -L "https://github.com/lyloou/eyeguard/releases/download/v${VER}/v${VER}.zip" | funzip | bash
 ```
 
 然后重启终端或运行 `source ~/.zshrc`，输入 `eyeguard --help` 验证。
