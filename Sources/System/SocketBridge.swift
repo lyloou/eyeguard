@@ -170,11 +170,15 @@ class SocketBridge {
             let styleName = args[0]
             guard let style = Settings.StatusBarStyle(rawValue: styleName) else {
                 let valid = Settings.StatusBarStyle.allCases.map { $0.rawValue }.joined(separator: ", ")
-                return "{\"ok\":false,\"error\":\"unknown style: \\(styleName). valid: \\(valid)\"}"
+                return "{\"ok\":false,\"error\":\"unknown style: \(styleName). valid: \(valid)\"}"
             }
             Settings.shared.statusBarStyle = style
             NotificationCenter.default.post(name: .settingsDidChange, object: nil)
             return jsonify(["ok": true, "statusBarStyle": style.rawValue])
+
+        case "quit":
+            NSApp.terminate(nil)
+            return jsonify(["ok": true])
 
         default:
             return "{\"ok\":false,\"error\":\"unknown command: \(command)\"}"

@@ -14,6 +14,11 @@ class RestWindowController: NSObject {
     init(manager: TimerManager) {
         self.manager = manager
         super.init()
+        #if DEBUG
+        if !Thread.isMainThread {
+            fatalError("RestWindowController must be created on main thread")
+        }
+        #endif
         setupPanel()
         setupUI()
         setupNotificationObserver()

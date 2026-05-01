@@ -174,8 +174,11 @@ class TimerManager {
 
     private func showRestWindow() {
         closeRestWindow()
-        restWindowController = RestWindowController(manager: self)
-        restWindowController?.show()
+        DispatchQueue.main.async { [weak self] in
+            guard let self = self else { return }
+            self.restWindowController = RestWindowController(manager: self)
+            self.restWindowController?.show()
+        }
     }
 
     private func closeRestWindow() {
