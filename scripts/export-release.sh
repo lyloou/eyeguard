@@ -33,13 +33,19 @@ echo "    Found: $APP_PATH"
 cp -R "$APP_PATH" "$RELEASE_DIR/EyeGuard.app"
 echo "    Copied to $RELEASE_DIR/EyeGuard.app"
 
-# ── 2. Copy CLI ─────────────────────────────────────────────
+# ── 2. Copy CLI & SKILL ────────────────────────────────────
 if [[ -f "$CLI_BACKUP" ]]; then
     echo "==> Copying eyeguard CLI..."
     cp "$CLI_BACKUP" "$RELEASE_DIR/eyeguard"
     chmod +x "$RELEASE_DIR/eyeguard"
     echo "    Copied to $RELEASE_DIR/eyeguard"
     rm -f "$CLI_BACKUP"
+fi
+
+if [[ -f "$PROJECT_DIR/eyeguard-cli.SKILL.md" ]]; then
+    echo "==> Copying eyeguard-cli.SKILL.md..."
+    cp "$PROJECT_DIR/eyeguard-cli.SKILL.md" "$RELEASE_DIR/"
+    echo "    Copied to $RELEASE_DIR/eyeguard-cli.SKILL.md"
 fi
 
 # ── 3. Compress App ────────────────────────────────────────
@@ -103,7 +109,18 @@ eyeguard bright      # 亮屏
 
 ## 状态栏样式
 
-classic | minimal | emoji | compact | bracket | star | dots | progressBar
+可用 `eyeguard set-style <name>` 切换，idle 时均显示 `护眼卫士`：
+
+| 名称 | 工作 | 暂停 | 休息 |
+|------|------|------|------|
+| `classic` | Working 29:59 | Paused 29:59 | Resting 29:59 |
+| `minimal` | 29:59 | 29:59 | 29:59 |
+| `emoji` | 💼 29:59 | ⏸ 29:59 | 🌿 29:59 |
+| `compact` | W 29:59 | P 29:59 | R 29:59 |
+| `bracket` | [工作中] 29:59 | [已暂停] 29:59 | [休息中] 29:59 |
+| `star` | ☆工作中☆ 29:59 | ☆已暂停☆ 29:59 | ☆休息中☆ 29:59 |
+| `dots` | ◐ 29:59 | ⏸ 29:59 | ◐ 29:59 |
+| `progressBar` | ████░░░░ 29:59 | ⏸ 29:59 | ████░░░░ 29:59 |
 
 ---
 Built: BUILD_DATE_PLACEHOLDER
