@@ -23,6 +23,8 @@ class L10n {
     static var menuPause: String { ns("⏸ Pause") }
     static var menuReset: String { ns("🔄 Reset") }
     static var menuRestNow: String { ns("⏰ Rest Now") }
+    static var menuDimScreen: String { ns("🌑 Dim Screen") }
+    static var menuBrightScreen: String { ns("☀️ Bright Screen") }
     static var menuSettings: String { ns("⚙ Settings...") }
     static var menuAbout: String { ns("About EyeGuard") }
     static var menuQuit: String { ns("❌ Quit") }

@@ -51,7 +51,7 @@ class StatusBarController: NSObject {
                 button.image = image.withSymbolConfiguration(config)
                 button.image?.isTemplate = true
             } else {
-                button.title = L10n.appName
+                applyStatusBarTitle(L10n.appName, state: .idle)
             }
             button.font = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)
             button.target = self
@@ -87,6 +87,17 @@ class StatusBarController: NSObject {
         restNowMenuItem = NSMenuItem(title: L10n.menuRestNow, action: #selector(restNowClicked), keyEquivalent: "")
         restNowMenuItem.target = self
         menu.addItem(restNowMenuItem)
+
+        menu.addItem(NSMenuItem.separator())
+
+        // 屏幕亮度
+        let dimItem = NSMenuItem(title: L10n.menuDimScreen, action: #selector(dimScreenClicked), keyEquivalent: "")
+        dimItem.target = self
+        menu.addItem(dimItem)
+
+        let brightItem = NSMenuItem(title: L10n.menuBrightScreen, action: #selector(brightScreenClicked), keyEquivalent: "")
+        brightItem.target = self
+        menu.addItem(brightItem)
 
         menu.addItem(NSMenuItem.separator())
 
@@ -152,6 +163,20 @@ class StatusBarController: NSObject {
         timerManager?.restNow()
     }
 
+    @objc private func dimScreenClicked() {
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/Users/lilou/.hermes/bin/set_brightness")
+        task.arguments = ["0.0"]
+        try? task.run()
+    }
+
+    @objc private func brightScreenClicked() {
+        let task = Process()
+        task.executableURL = URL(fileURLWithPath: "/Users/lilou/.hermes/bin/set_brightness")
+        task.arguments = ["0.8"]
+        try? task.run()
+    }
+
     @objc private func settingsClicked() {
         SettingsWindowController.shared.show()
     }
@@ -184,7 +209,7 @@ class StatusBarController: NSObject {
             pauseMenuItem.isEnabled = false
             resetMenuItem.isEnabled = false
             restNowMenuItem.isEnabled = false
-            statusItem.button?.title = L10n.appName
+            applyStatusBarTitle(L10n.appName, state: .idle)
 
         case .working:
             statusMenuItem.title = L10n.statusWorking(timeStr)
@@ -194,7 +219,7 @@ class StatusBarController: NSObject {
             pauseMenuItem.isEnabled = true
             resetMenuItem.isEnabled = true
             restNowMenuItem.isEnabled = true
-            statusItem.button?.title = formatStatusBarText(state: .working, timeStr: timeStr, remaining: remaining)
+            applyStatusBarTitle(formatStatusBarText(state: .working, timeStr: timeStr, remaining: remaining), state: .working)
 
         case .paused(let frozen):
             statusMenuItem.title = L10n.statusPaused(formatTime(frozen))
@@ -204,7 +229,7 @@ class StatusBarController: NSObject {
             pauseMenuItem.isEnabled = false
             resetMenuItem.isEnabled = true
             restNowMenuItem.isEnabled = true
-            statusItem.button?.title = formatStatusBarText(state: .paused(remaining: frozen), timeStr: formatTime(frozen), remaining: frozen)
+            applyStatusBarTitle(formatStatusBarText(state: .paused(remaining: frozen), timeStr: formatTime(frozen), remaining: frozen), state: .paused(remaining: frozen))
 
         case .resting:
             statusMenuItem.title = L10n.statusResting(timeStr)
@@ -212,7 +237,7 @@ class StatusBarController: NSObject {
             pauseMenuItem.isEnabled = false
             resetMenuItem.isEnabled = false
             restNowMenuItem.isEnabled = false
-            statusItem.button?.title = formatStatusBarText(state: .resting, timeStr: timeStr, remaining: remaining)
+            applyStatusBarTitle(formatStatusBarText(state: .resting, timeStr: timeStr, remaining: remaining), state: .resting)
         }
     }
 
@@ -293,6 +318,30 @@ class StatusBarController: NSObject {
             case .resting: return "\(bar) \(timeStr)"
             }
         }
+    }
+
+    /// 根据状态获取状态栏文字颜色
+    private func statusBarColor(for state: EyeState) -> NSColor {
+        switch state {
+        case .idle, .working:
+            return .labelColor
+        case .paused:
+            return .systemYellow
+        case .resting:
+            return .systemGreen
+        }
+    }
+
+    /// 设置状态栏按钮的着色文字
+    private func applyStatusBarTitle(_ title: String, state: EyeState) {
+        guard let button = statusItem.button else { return }
+        let color = statusBarColor(for: state)
+        let font = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)
+        let attrs: [NSAttributedString.Key: Any] = [
+            .foregroundColor: color,
+            .font: font
+        ]
+        button.attributedTitle = NSAttributedString(string: title, attributes: attrs)
     }
 
     /// 根据状态获取总时长（秒）
