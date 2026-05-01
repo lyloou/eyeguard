@@ -47,46 +47,53 @@ class RestWindowController: NSObject {
     private func setupPanel() {
         panel = NSPanel(
             contentRect: NSRect(x: 0, y: 0, width: 280, height: 160),
-            styleMask: [.titled, .closable, .nonactivatingPanel, .fullSizeContentView],
+            styleMask: [.closable, .nonactivatingPanel],
             backing: .buffered,
             defer: false
         )
 
-        panel.title = L10n.restTitle
         panel.level = .floating
         panel.collectionBehavior = [.canJoinAllSpaces, .fullScreenAuxiliary]
         panel.isMovableByWindowBackground = true
         panel.hidesOnDeactivate = false
         panel.becomesKeyOnlyIfNeeded = true
+        panel.hasShadow = false
 
-        // 透明背景 + 模糊效果（自动适配深浅色）
+        // 透明背景
         panel.backgroundColor = .clear
         panel.isOpaque = false
 
-        // 使用 NSVisualEffectView 作为内容背景
+        // 使用 NSVisualEffectView 作为内容背景（带圆角）
         let visualEffect = NSVisualEffectView(frame: NSRect(x: 0, y: 0, width: 280, height: 160))
         visualEffect.material = .hudWindow
         visualEffect.state = .active
         visualEffect.wantsLayer = true
         visualEffect.layer?.cornerRadius = 12
         visualEffect.layer?.masksToBounds = true
+        visualEffect.layer?.backgroundColor = NSColor.windowBackgroundColor.cgColor
         panel.contentView = visualEffect
 
-        positionToTopRight()
+        positionWindow()
     }
 
-    private func positionToTopRight() {
-        // 跟随鼠标所在屏幕的右上角
+    private func positionWindow() {
         let mouseLocation = NSEvent.mouseLocation
         let screenWithMouse = NSScreen.screens.first { $0.frame.contains(mouseLocation) } ?? NSScreen.main
         guard let screen = screenWithMouse else { return }
         let screenFrame = screen.visibleFrame
         let panelSize = panel.frame.size
-        let padding: CGFloat = 20
 
-        let x = screenFrame.maxX - panelSize.width - padding
-        let y = screenFrame.maxY - panelSize.height - padding
-        panel.setFrameOrigin(NSPoint(x: x, y: y))
+        switch Settings.shared.restWindowPosition {
+        case .center:
+            let x = screenFrame.midX - panelSize.width / 2
+            let y = screenFrame.midY - panelSize.height / 2
+            panel.setFrameOrigin(NSPoint(x: x, y: y))
+        case .topRight:
+            let padding: CGFloat = 20
+            let x = screenFrame.maxX - panelSize.width - padding
+            let y = screenFrame.maxY - panelSize.height - padding
+            panel.setFrameOrigin(NSPoint(x: x, y: y))
+        }
     }
 
     private func setupUI() {
@@ -193,6 +200,7 @@ class RestWindowController: NSObject {
             return
         }
         remainingSeconds -= 1
+        manager?.updateRestRemaining(remainingSeconds)
         updateCountdownLabel()
     }
 

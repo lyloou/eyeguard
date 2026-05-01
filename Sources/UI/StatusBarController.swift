@@ -12,10 +12,9 @@ class StatusBarController: NSObject {
 
     // 菜单项
     private var statusMenuItem: NSMenuItem!
-    private var startMenuItem: NSMenuItem!
-    private var pauseMenuItem: NSMenuItem!
-    private var resetMenuItem: NSMenuItem!
+    private var toggleMenuItem: NSMenuItem!
     private var restNowMenuItem: NSMenuItem!
+    private var styleSubmenuItem: NSMenuItem!
 
     // MARK: - Init
 
@@ -45,14 +44,7 @@ class StatusBarController: NSObject {
     private func setupStatusItem() {
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         if let button = statusItem.button {
-            // 使用 SF Symbol 作为状态栏图标（template 模式，自动适配深浅色）
-            if let image = NSImage(systemSymbolName: "eye.fill", accessibilityDescription: "EyeGuard") {
-                let config = NSImage.SymbolConfiguration(pointSize: 14, weight: .medium)
-                button.image = image.withSymbolConfiguration(config)
-                button.image?.isTemplate = true
-            } else {
-                applyStatusBarTitle(L10n.appName, state: .idle)
-            }
+            button.image = nil
             button.font = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)
             button.target = self
             button.action = #selector(statusItemClicked(_:))
@@ -70,18 +62,10 @@ class StatusBarController: NSObject {
 
         menu.addItem(NSMenuItem.separator())
 
-        // 开始/暂停
-        startMenuItem = NSMenuItem(title: L10n.menuStart, action: #selector(startClicked), keyEquivalent: "")
-        startMenuItem.target = self
-        menu.addItem(startMenuItem)
-
-        pauseMenuItem = NSMenuItem(title: L10n.menuPause, action: #selector(pauseClicked), keyEquivalent: "")
-        pauseMenuItem.target = self
-        menu.addItem(pauseMenuItem)
-
-        resetMenuItem = NSMenuItem(title: L10n.menuReset, action: #selector(resetClicked), keyEquivalent: "")
-        resetMenuItem.target = self
-        menu.addItem(resetMenuItem)
+        // Toggle（暂停/继续）
+        toggleMenuItem = NSMenuItem(title: L10n.menuStart, action: #selector(toggleClicked), keyEquivalent: "")
+        toggleMenuItem.target = self
+        menu.addItem(toggleMenuItem)
 
         // 立即休息
         restNowMenuItem = NSMenuItem(title: L10n.menuRestNow, action: #selector(restNowClicked), keyEquivalent: "")
@@ -98,6 +82,25 @@ class StatusBarController: NSObject {
         let brightItem = NSMenuItem(title: L10n.menuBrightScreen, action: #selector(brightScreenClicked), keyEquivalent: "")
         brightItem.target = self
         menu.addItem(brightItem)
+
+        menu.addItem(NSMenuItem.separator())
+
+        // 状态栏皮肤
+        styleSubmenuItem = NSMenuItem(title: L10n.statusBarStyle, action: nil, keyEquivalent: "")
+        let submenu = NSMenu()
+        for style in Settings.StatusBarStyle.allCases {
+            let item = NSMenuItem(title: styleDisplayName(style), action: #selector(styleSelected(_:)), keyEquivalent: "")
+            item.target = self
+            item.tag = style.index
+            if style == Settings.shared.statusBarStyle {
+                item.state = .on
+            }
+            submenu.addItem(item)
+        }
+        styleSubmenuItem.submenu = submenu
+        menu.addItem(styleSubmenuItem)
+
+        updateStyleSubmenuPreviews()
 
         menu.addItem(NSMenuItem.separator())
 
@@ -142,21 +145,18 @@ class StatusBarController: NSObject {
         statusItem.button?.performClick(nil)
     }
 
-    @objc private func startClicked() {
-        timerManager?.start()
-    }
-
-    @objc private func pauseClicked() {
+    @objc private func toggleClicked() {
         guard let manager = timerManager else { return }
-        if case .paused = manager.currentState {
-            manager.resume()
-        } else {
+        switch manager.state {
+        case .idle:
+            manager.start()
+        case .working:
             manager.pause()
+        case .paused:
+            manager.resume()
+        case .resting:
+            break // 休息中不可操作
         }
-    }
-
-    @objc private func resetClicked() {
-        timerManager?.reset()
     }
 
     @objc private func restNowClicked() {
@@ -175,6 +175,82 @@ class StatusBarController: NSObject {
         task.executableURL = URL(fileURLWithPath: "/Users/lilou/.hermes/bin/set_brightness")
         task.arguments = ["0.8"]
         try? task.run()
+    }
+
+    @objc private func styleSelected(_ sender: NSMenuItem) {
+        let style = Settings.StatusBarStyle.allCases[sender.tag]
+        Settings.shared.statusBarStyle = style
+        updateStyleSubmenuCheckmark()
+        updateStyleSubmenuPreviews()
+        NotificationCenter.default.post(name: .settingsDidChange, object: "statusBarStyle")
+    }
+
+    private func updateStyleSubmenuCheckmark() {
+        guard let submenu = styleSubmenuItem.submenu else { return }
+        let current = Settings.shared.statusBarStyle
+        for item in submenu.items {
+            item.state = (Settings.StatusBarStyle.allCases[item.tag] == current) ? .on : .off
+        }
+    }
+
+    /// 更新子菜单中每个样式的预览文字
+    private func updateStyleSubmenuPreviews() {
+        guard let submenu = styleSubmenuItem.submenu else { return }
+        for item in submenu.items {
+            let style = Settings.StatusBarStyle.allCases[item.tag]
+            let preview = previewText(for: style)
+            let displayName = styleDisplayName(style)
+            let attributedTitle = buildMenuItemTitle(name: displayName, preview: preview)
+            item.attributedTitle = attributedTitle
+        }
+        print("[EyeGuard] updateStyleSubmenuPreviews called, item count: \(submenu.items.count)")
+        if let first = submenu.items.first {
+            print("[EyeGuard] first item title: \(first.title), attributedTitle: \(first.attributedTitle?.string ?? "nil")")
+        }
+    }
+
+    /// 构建带预览的菜单项标题
+    private func buildMenuItemTitle(name: String, preview: String) -> NSAttributedString {
+        let font = NSFont.systemFont(ofSize: 13)
+        let grayColor = NSColor(white: 0.5, alpha: 1.0)
+
+        let namePart = NSMutableAttributedString(string: name, attributes: [
+            .font: font,
+            .foregroundColor: NSColor.labelColor
+        ])
+
+        let previewPart = NSMutableAttributedString(string: "  " + preview, attributes: [
+            .font: font,
+            .foregroundColor: grayColor
+        ])
+
+        let result = NSMutableAttributedString()
+        result.append(namePart)
+        result.append(previewPart)
+        return result
+    }
+
+    /// 生成指定样式的预览文字（工作中状态，30:00）
+    private func previewText(for style: Settings.StatusBarStyle) -> String {
+        let timeStr = "30:00"
+        switch style {
+        case .classic:
+            return "\"Working 30:00\""
+        case .minimal:
+            return "\"30:00\""
+        case .emoji:
+            return "\"💼 30:00\""
+        case .compact:
+            return "\"W 30:00\""
+        case .bracket:
+            return "\"[工作中] 30:00\""
+        case .star:
+            return "\"☆工作中☆ 30:00\""
+        case .dots:
+            return "\"◐ 30:00\""
+        case .progressBar:
+            return "\"████████ 30:00\""
+        }
     }
 
     @objc private func settingsClicked() {
@@ -203,39 +279,28 @@ class StatusBarController: NSObject {
         switch state {
         case .idle:
             statusMenuItem.title = L10n.statusIdle
-            startMenuItem.title = L10n.menuStart
-            startMenuItem.isEnabled = true
-            pauseMenuItem.title = L10n.menuPause
-            pauseMenuItem.isEnabled = false
-            resetMenuItem.isEnabled = false
+            toggleMenuItem.title = L10n.menuStart
+            toggleMenuItem.isEnabled = true
             restNowMenuItem.isEnabled = false
             applyStatusBarTitle(L10n.appName, state: .idle)
 
         case .working:
             statusMenuItem.title = L10n.statusWorking(timeStr)
-            startMenuItem.title = L10n.menuStart
-            startMenuItem.isEnabled = false
-            pauseMenuItem.title = L10n.menuPause
-            pauseMenuItem.isEnabled = true
-            resetMenuItem.isEnabled = true
+            toggleMenuItem.title = L10n.menuPause
+            toggleMenuItem.isEnabled = true
             restNowMenuItem.isEnabled = true
             applyStatusBarTitle(formatStatusBarText(state: .working, timeStr: timeStr, remaining: remaining), state: .working)
 
         case .paused(let frozen):
             statusMenuItem.title = L10n.statusPaused(formatTime(frozen))
-            startMenuItem.title = L10n.menuResume
-            startMenuItem.isEnabled = true
-            pauseMenuItem.title = L10n.menuPause
-            pauseMenuItem.isEnabled = false
-            resetMenuItem.isEnabled = true
+            toggleMenuItem.title = L10n.menuResume
+            toggleMenuItem.isEnabled = true
             restNowMenuItem.isEnabled = true
             applyStatusBarTitle(formatStatusBarText(state: .paused(remaining: frozen), timeStr: formatTime(frozen), remaining: frozen), state: .paused(remaining: frozen))
 
         case .resting:
             statusMenuItem.title = L10n.statusResting(timeStr)
-            startMenuItem.isEnabled = false
-            pauseMenuItem.isEnabled = false
-            resetMenuItem.isEnabled = false
+            toggleMenuItem.isEnabled = false
             restNowMenuItem.isEnabled = false
             applyStatusBarTitle(formatStatusBarText(state: .resting, timeStr: timeStr, remaining: remaining), state: .resting)
         }
@@ -254,16 +319,16 @@ class StatusBarController: NSObject {
         case .minimal:
             switch state {
             case .idle:    return L10n.appName
-            case .working: return "工作中 \(timeStr)"
-            case .paused:  return "已暂停 \(timeStr)"
-            case .resting: return "休息中 \(timeStr)"
+            case .working: return "\(timeStr)"
+            case .paused:  return "\(timeStr)"
+            case .resting: return "\(timeStr)"
             }
         case .emoji:
             switch state {
             case .idle:    return L10n.appName
-            case .working: return "💼工作中 \(timeStr)"
-            case .paused:  return "⏸已暂停 \(timeStr)"
-            case .resting: return "🌿休息中 \(timeStr)"
+            case .working: return "💼 \(timeStr)"
+            case .paused:  return "⏸ \(timeStr)"
+            case .resting: return "🌿 \(timeStr)"
             }
         case .compact:
             switch state {
@@ -286,14 +351,6 @@ class StatusBarController: NSObject {
             case .paused:  return "☆已暂停☆ \(timeStr)"
             case .resting: return "☆休息中☆ \(timeStr)"
             }
-        case .pureTime:
-            // 纯时间：只有倒计时，无状态前缀
-            switch state {
-            case .idle:    return L10n.appName
-            case .working: return timeStr
-            case .paused:  return timeStr
-            case .resting: return timeStr
-            }
         case .dots:
             // 进度点：◐◔◑◕ 动态圆弧表示进度
             let total = totalSeconds(for: state)
@@ -301,9 +358,9 @@ class StatusBarController: NSObject {
             let dots = ["◐", "◔", "◑", "◕"]
             switch state {
             case .idle:    return L10n.appName
-            case .working: return "\(dots[min(filled, 3)])工作中 \(timeStr)"
+            case .working: return "\(dots[min(filled, 3)]) \(timeStr)"
             case .paused:  return "⏸ \(timeStr)"
-            case .resting: return "\(dots[min(filled, 3)])休息中 \(timeStr)"
+            case .resting: return "\(dots[min(filled, 3)]) \(timeStr)"
             }
         case .progressBar:
             // 进度条：███░░░░░ 表示进度
@@ -335,6 +392,7 @@ class StatusBarController: NSObject {
     /// 设置状态栏按钮的着色文字
     private func applyStatusBarTitle(_ title: String, state: EyeState) {
         guard let button = statusItem.button else { return }
+        button.image = nil
         let color = statusBarColor(for: state)
         let font = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)
         let attrs: [NSAttributedString.Key: Any] = [
@@ -358,6 +416,19 @@ class StatusBarController: NSObject {
         let m = seconds / 60
         let s = seconds % 60
         return String(format: "%02d:%02d", m, s)
+    }
+
+    private func styleDisplayName(_ style: Settings.StatusBarStyle) -> String {
+        switch style {
+        case .classic:     return "Classic"
+        case .minimal:     return "Minimal"
+        case .emoji:       return "Emoji"
+        case .compact:     return "Compact"
+        case .bracket:     return "Bracket"
+        case .star:        return "Star"
+        case .dots:        return "Dots"
+        case .progressBar: return "Progress Bar"
+        }
     }
 }
 

@@ -1,0 +1,227 @@
+#!/bin/bash
+# eyeguard — 护眼卫士命令行工具
+# 通过 Unix Domain Socket 与 EyeGuard App 通信
+
+SOCK="/tmp/eyeguard.sock"
+TIMEOUT=2
+
+# ── 工具函数 ────────────────────────────────────────────
+
+die() {
+    echo "Error: $*" >&2
+    exit 1
+}
+
+is_app_running() {
+    pgrep -x "EyeGuard" > /dev/null 2>&1
+}
+
+# 发送命令到 socket，返回原始输出
+send() {
+    local cmd="$1"
+    if ! is_app_running; then
+        echo "Error: EyeGuard 未运行。请先启动护眼卫士 App。" >&2
+        exit 1
+    fi
+    local out
+    # 优先用 Python（跨平台可靠），其次 nc
+    if command -v python3 > /dev/null 2>&1; then
+        out=$(python3 -c "
+import socket, sys
+s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+s.settimeout($TIMEOUT)
+try:
+    s.connect('$SOCK')
+    s.sendall(b'$cmd\n')
+    sys.stdout.write(s.recv(4096).decode())
+finally:
+    s.close()
+" 2>/dev/null)
+    else
+        out=$(printf '%s\n' "$cmd" | nc -U -w "$TIMEOUT" "$SOCK" 2>/dev/null)
+    fi
+    echo "$out"
+}
+
+# JSON 解析：jq 优先，Python 次之，Perl 兜底
+parse_json() {
+    local key="$1"
+    local json="$2"
+    if command -v jq > /dev/null 2>&1; then
+        echo "$json" | jq -r ".$key // empty" 2>/dev/null
+    elif command -v python3 > /dev/null 2>&1; then
+        python3 -c "import json,sys; d=json.load(sys.stdin); print(d.get('$key',''))" <<< "$json"
+    elif command -v perl > /dev/null 2>&1; then
+        echo "$json" | perl -MJSON -ne "print decode_json(\$_)->{$key}" 2>/dev/null
+    else
+        # 纯 shell 兜底：简单 KV 正则
+        echo "$json" | tr ',' '\n' | grep "\"$key\"" | sed 's/.*"\('$key'\)": *"\([^"]*\)".*/\2/'
+    fi
+}
+
+is_json() {
+    local txt="$1"
+    echo "$txt" | grep -q '^{'
+}
+
+# ── 帮助 ────────────────────────────────────────────────
+
+usage() {
+    cat << 'EOF'
+eyeguard — 护眼卫士命令行工具
+
+用法: eyeguard <command>
+
+命令:
+  status       查看当前状态（含剩余时间）
+  start        开始工作
+  pause        暂停
+  resume       继续（从暂停恢复）
+  reset        重置当前计时
+  rest-now     立即进入休息
+  skip         跳过休息（需处于休息中）
+  stats        今日统计（轮次+累计休息）
+  settings     查看当前配置
+  set-style    设置状态栏样式（classic/minimal/emoji/compact/bracket/star）
+  launch       启动护眼卫士 App
+  quit         退出护眼卫士 App
+  dim          暗屏（亮度=0%）
+  bright       亮屏（亮度=80%）
+  toggle       暂停/继续（切换）
+  help         显示帮助
+
+示例:
+  eyeguard status       → 工作中 29:55
+  eyeguard stats        → 今日完成 3 轮，休息 15 分钟
+  eyeguard settings     → 显示所有配置项
+EOF
+}
+
+# ── 命令处理 ────────────────────────────────────────────
+
+cmd_status() {
+    local out=$(send "status")
+    if is_json "$out"; then
+        local state=$(parse_json "state" "$out")
+        local remaining=$(parse_json "remaining" "$out")
+        local enforce=$(parse_json "enforceRest" "$out")
+
+        case "$state" in
+            idle)    echo "空闲" ;;
+            working) echo "工作中 $(format_seconds "$remaining")" ;;
+            paused)  echo "已暂停 $(format_seconds "$remaining")" ;;
+            resting) echo "休息中 $(format_seconds "$remaining")" ;;
+            *)       echo "$out" ;;
+        esac
+    else
+        echo "$out"
+    fi
+}
+
+cmd_stats() {
+    local out=$(send "stats")
+    if is_json "$out"; then
+        local rounds=$(parse_json "rounds" "$out")
+        local rest_min=$(parse_json "restMinutes" "$out")
+        echo "今日完成 $rounds 轮，休息 $rest_min 分钟"
+    else
+        echo "$out"
+    fi
+}
+
+cmd_settings() {
+    local out=$(send "settings")
+    if is_json "$out"; then
+        local work=$(parse_json "workDuration" "$out")
+        local rest=$(parse_json "restDuration" "$out")
+        local enforce=$(parse_json "enforceRest" "$out")
+        local pause=$(parse_json "pauseOnLock" "$out")
+        local notify_work=$(parse_json "notifyOnWorkEnd" "$out")
+        local notify_rest=$(parse_json "notifyOnRestEnd" "$out")
+        local sound=$(parse_json "soundEnabled" "$out")
+        local login=$(parse_json "launchAtLogin" "$out")
+
+        echo "工作时长:   $((work / 60)) 分钟"
+        echo "休息时长:   $((rest / 60)) 分钟"
+        echo "强制休息:   $(fmt_bool "$enforce")"
+        echo "锁屏暂停:   $(fmt_bool "$pause")"
+        echo "工作通知:   $(fmt_bool "$notify_work")"
+        echo "休息通知:   $(fmt_bool "$notify_rest")"
+        echo "音效提示:   $(fmt_bool "$sound")"
+        echo "开机启动:   $(fmt_bool "$login")"
+        echo "状态栏样式: $(parse_json "statusBarStyle" "$out")"
+    else
+        echo "$out"
+    fi
+}
+
+cmd_help() {
+    usage
+}
+
+cmd_set-style() {
+    local style="${1:-}"
+    [[ -z "$style" ]] && { echo "用法: eyeguard set-style <样式名>"; echo "可用: classic minimal emoji compact bracket star"; return 1; }
+    local out=$(send "set-style $style")
+    if is_json "$out"; then
+        local ok=$(parse_json "ok" "$out")
+        if [[ "$ok" == "true" ]]; then
+            echo "状态栏样式已切换为: $(parse_json "statusBarStyle" "$out")"
+        else
+            echo "Error: $(parse_json "error" "$out")" >&2
+            return 1
+        fi
+    else
+        echo "$out"
+    fi
+}
+
+# ── 辅助 ────────────────────────────────────────────────
+
+format_seconds() {
+    local s=${1:-0}
+    printf '%02d:%02d\n' $((s / 60)) $((s % 60))
+}
+
+fmt_bool() {
+    case "$1" in
+        true|1|yes)  echo "开" ;;
+        false|0|no)   echo "关" ;;
+        *)            echo "$1" ;;
+    esac
+}
+
+# ── 主入口 ───────────────────────────────────────────────
+
+CMD="${1:-help}"
+
+case "$CMD" in
+    status)     cmd_status ;;
+    stats)      cmd_stats ;;
+    settings)   cmd_settings ;;
+    set-style)
+        shift
+        cmd_set-style "$@"
+        ;;
+    help|--help|-h)
+        cmd_help ;;
+    quit)
+        send "quit"
+        ;;
+    launch)
+        open -a "EyeGuard"
+        ;;
+    dim|bright)
+        ~/.hermes/bin/set_brightness $([ "$CMD" = "dim" ] && echo "0.0" || echo "0.8")
+        ;;
+    *)
+        # start/pause/resume/reset/rest-now/skip/toggle → 直接透传
+        if [[ "$CMD" =~ ^(start|pause|resume|reset|rest-now|skip|toggle)$ ]]; then
+            send "$CMD"
+        else
+            echo "未知命令: $CMD" >&2
+            usage >&2
+            exit 1
+        fi
+        ;;
+esac

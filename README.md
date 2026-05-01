@@ -195,6 +195,11 @@ xcodegen generate
 xcodebuild -project EyeGuard.xcodeproj -scheme EyeGuard -configuration Release build
 ```
 
+> ⚠️ **发布前**需将 build 产物复制到 /Applications：
+> ```bash
+> cp -R ~/Library/Developer/Xcode/DerivedData/EyeGuard-*/Build/Products/Debug/EyeGuard.app /Applications/
+> ```
+
 产物：`~/Library/Developer/Xcode/DerivedData/EyeGuard-*/Build/Products/Release/EyeGuard.app`
 
 ### 首次运行后，CLI 即可使用
@@ -202,6 +207,31 @@ xcodebuild -project EyeGuard.xcodeproj -scheme EyeGuard -configuration Release b
 ```bash
 ~/.hermes/bin/eyeguard status
 ```
+
+---
+
+## 发布
+
+发布前准备产物（所有文件汇集到 `Release/`）：
+
+```bash
+./scripts/export-release.sh
+```
+
+产物：
+
+```
+Release/
+├── EyeGuard.app.zip   # App 压缩包
+├── eyeguard           # CLI 工具
+├── eyeguard-cli.SKILL.md  # CLI 使用说明
+└── README.md          # 发布说明
+```
+
+安装方式：
+
+1. 解压 `EyeGuard.app.zip`，将 `EyeGuard.app` 拷贝到 `/Applications/`
+2. （可选）`cp eyeguard ~/.hermes/bin/eyeguard && chmod +x ~/.hermes/bin/eyeguard`
 
 ---
 

@@ -17,6 +17,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     private var soundEnabledCheckbox: NSButton!
     private var loginItemCheckbox: NSButton!
     private var statusBarStylePopup: NSPopUpButton!
+    private var restWindowPositionPopup: NSPopUpButton!
 
     private override init() {
         super.init()
@@ -27,7 +28,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
     private func setupWindow() {
         window = NSWindow(
-            contentRect: NSRect(x: 0, y: 0, width: 360, height: 340),
+            contentRect: NSRect(x: 0, y: 0, width: 360, height: 390),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
@@ -145,6 +146,21 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         statusBarStylePopup.action = #selector(statusBarStyleChanged)
         contentView.addSubview(statusBarStylePopup)
 
+        y -= 30
+
+        // 休息弹窗位置
+        let positionLabel = makeLabel(L10n.restWindowPosition, at: NSPoint(x: 20, y: y))
+        contentView.addSubview(positionLabel)
+
+        restWindowPositionPopup = NSPopUpButton(frame: NSRect(x: 140, y: y - 2, width: 200, height: 22))
+        restWindowPositionPopup.addItems(withTitles: [
+            L10n.positionCenter,
+            L10n.positionTopRight
+        ])
+        restWindowPositionPopup.target = self
+        restWindowPositionPopup.action = #selector(restWindowPositionChanged)
+        contentView.addSubview(restWindowPositionPopup)
+
         y -= 40
 
         // 保存按钮
@@ -188,6 +204,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         soundEnabledCheckbox.state = s.soundEnabled ? .on : .off
         loginItemCheckbox.state = LoginItemManager.shared.isEnabled ? .on : .off
         statusBarStylePopup.selectItem(at: s.statusBarStyle.index)
+        restWindowPositionPopup.selectItem(at: s.restWindowPosition.index)
     }
 
     @objc private func saveClicked() {
@@ -243,6 +260,12 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         let index = statusBarStylePopup.indexOfSelectedItem
         Settings.shared.statusBarStyle = Settings.StatusBarStyle.allCases[index]
         NotificationCenter.default.post(name: .settingsDidChange, object: "statusBarStyle")
+    }
+
+    @objc private func restWindowPositionChanged() {
+        let index = restWindowPositionPopup.indexOfSelectedItem
+        Settings.shared.restWindowPosition = Settings.RestWindowPosition.allCases[index]
+        NotificationCenter.default.post(name: .settingsDidChange, object: "restWindowPosition")
     }
 
     // MARK: - Show

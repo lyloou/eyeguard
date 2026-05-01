@@ -186,6 +186,12 @@ class TimerManager {
         restWindowController = nil
     }
 
+    /// 休息弹窗计时器每秒回调，更新状态栏倒计时
+    func updateRestRemaining(_ seconds: Int) {
+        remainingSeconds = seconds
+        updateUI()
+    }
+
     /// 休息弹窗中用户按 Space/ESC 或点跳过
     func dismissRestWindow() {
         let elapsedRest = Settings.shared.restDuration - remainingSeconds

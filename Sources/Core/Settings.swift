@@ -18,22 +18,32 @@ class Settings {
         static let soundEnabled   = "soundEnabled"
         static let hasLaunchedBefore = "hasLaunchedBefore"
         static let statusBarStyle = "statusBarStyle"
+        static let restWindowPosition = "restWindowPosition"
     }
 
     /// 状态栏样式
     enum StatusBarStyle: String, CaseIterable {
         case classic    = "classic"    // Working 29:59
         case minimal    = "minimal"    // 工作中 29:59
-        case emoji      = "emoji"      // 💼工作中 29:59
+        case emoji      = "emoji"      // 💼 29:59
         case compact    = "compact"    // W 29:59
         case bracket    = "bracket"    // [工作中] 29:59
         case star       = "star"       // ☆工作中☆ 29:59
-        case pureTime   = "pureTime"   // 29:59
         case dots       = "dots"       // ◐◔◑◕
         case progressBar = "progressBar" // ████░░░░
 
         var index: Int {
             Settings.StatusBarStyle.allCases.firstIndex(of: self) ?? 0
+        }
+    }
+
+    /// 休息弹窗位置
+    enum RestWindowPosition: String, CaseIterable {
+        case center    = "center"
+        case topRight  = "topRight"
+
+        var index: Int {
+            Settings.RestWindowPosition.allCases.firstIndex(of: self) ?? 0
         }
     }
 
@@ -50,7 +60,8 @@ class Settings {
             Keys.notifyOnWorkEnd: true,
             Keys.notifyOnRestEnd: false,
             Keys.soundEnabled: true,
-            Keys.statusBarStyle: StatusBarStyle.classic.rawValue
+            Keys.statusBarStyle: StatusBarStyle.classic.rawValue,
+            Keys.restWindowPosition: RestWindowPosition.center.rawValue
         ])
     }
 
@@ -109,5 +120,14 @@ class Settings {
             return StatusBarStyle(rawValue: raw) ?? .classic
         }
         set { defaults.set(newValue.rawValue, forKey: Keys.statusBarStyle) }
+    }
+
+    /// 休息弹窗位置
+    var restWindowPosition: RestWindowPosition {
+        get {
+            let raw = defaults.string(forKey: Keys.restWindowPosition) ?? RestWindowPosition.center.rawValue
+            return RestWindowPosition(rawValue: raw) ?? .center
+        }
+        set { defaults.set(newValue.rawValue, forKey: Keys.restWindowPosition) }
     }
 }

@@ -82,13 +82,19 @@ class L10n {
     static var statusBarStyle: String { ns("Status Bar Style:") }
     static var styleClassic: String { ns("Classic (Working 29:59)") }
     static var styleMinimal: String { ns("Minimal (工作中 29:59)") }
-    static var styleEmoji: String { ns("Emoji (💼工作中 29:59)") }
+    static var styleEmoji: String { ns("Emoji (💼 29:59)") }
     static var styleCompact: String { ns("Compact (W 29:59)") }
     static var styleBracket: String { ns("Bracket ([工作中] 29:59)") }
     static var styleStar: String { ns("Star (☆工作中☆ 29:59)") }
     static var stylePureTime: String { ns("Pure Time (29:59)") }
     static var styleDots: String { ns("Dots (◐◔◑◕)") }
     static var styleProgressBar: String { ns("Progress Bar (████░░░░)") }
+
+    // MARK: - 休息弹窗位置选项
+
+    static var restWindowPosition: String { ns("Rest Window Position:") }
+    static var positionCenter: String { ns("Center") }
+    static var positionTopRight: String { ns("Top Right") }
 
     // MARK: - Helper
 
