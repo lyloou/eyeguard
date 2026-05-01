@@ -83,6 +83,7 @@ eyeguard — 护眼卫士命令行工具
   stats        今日统计（轮次+累计休息）
   settings     查看当前配置
   set-style    设置状态栏样式（classic/minimal/emoji/compact/bracket/star/dots/progressBar）
+  set-theme    设置外观主题（system/light/dark）
   launch       启动护眼卫士 App
   quit         退出护眼卫士 App
   dim          暗屏（亮度=0%）
@@ -140,6 +141,7 @@ cmd_settings() {
         local notify_rest=$(parse_json "notifyOnRestEnd" "$out")
         local sound=$(parse_json "soundEnabled" "$out")
         local login=$(parse_json "launchAtLogin" "$out")
+        local theme=$(parse_json "themeMode" "$out")
 
         echo "工作时长:   $((work / 60)) 分钟"
         echo "休息时长:   $((rest / 60)) 分钟"
@@ -150,6 +152,7 @@ cmd_settings() {
         echo "音效提示:   $(fmt_bool "$sound")"
         echo "开机启动:   $(fmt_bool "$login")"
         echo "状态栏样式: $(parse_json "statusBarStyle" "$out")"
+        echo "外观主题:   $theme"
     else
         echo "$out"
     fi
@@ -167,6 +170,23 @@ cmd_set-style() {
         local ok=$(parse_json "ok" "$out")
         if [[ "$ok" == "true" ]]; then
             echo "状态栏样式已切换为: $(parse_json "statusBarStyle" "$out")"
+        else
+            echo "Error: $(parse_json "error" "$out")" >&2
+            return 1
+        fi
+    else
+        echo "$out"
+    fi
+}
+
+cmd_set-theme() {
+    local theme="${1:-}"
+    [[ -z "$theme" ]] && { echo "用法: eyeguard set-theme <system|light|dark>"; return 1; }
+    local out=$(send "set-theme $theme")
+    if is_json "$out"; then
+        local ok=$(parse_json "ok" "$out")
+        if [[ "$ok" == "true" ]]; then
+            echo "外观主题已切换为: $(parse_json "themeMode" "$out")"
         else
             echo "Error: $(parse_json "error" "$out")" >&2
             return 1
@@ -202,6 +222,10 @@ case "$CMD" in
     set-style)
         shift
         cmd_set-style "$@"
+        ;;
+    set-theme)
+        shift
+        cmd_set-theme "$@"
         ;;
     help|--help|-h)
         cmd_help ;;

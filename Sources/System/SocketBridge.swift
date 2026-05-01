@@ -160,7 +160,8 @@ class SocketBridge {
                 "notifyOnRestEnd": s.notifyOnRestEnd,
                 "soundEnabled": s.soundEnabled,
                 "launchAtLogin": LoginItemManager.shared.isEnabled,
-                "statusBarStyle": s.statusBarStyle.rawValue
+                "statusBarStyle": s.statusBarStyle.rawValue,
+                "themeMode": s.themeMode.rawValue
             ])
 
         case "set-style":
@@ -175,6 +176,19 @@ class SocketBridge {
             Settings.shared.statusBarStyle = style
             NotificationCenter.default.post(name: .settingsDidChange, object: nil)
             return jsonify(["ok": true, "statusBarStyle": style.rawValue])
+
+        case "set-theme":
+            guard args.count >= 1 else {
+                return "{\"ok\":false,\"error\":\"usage: set-theme <system|light|dark>\"}"
+            }
+            guard let mode = Settings.ThemeMode(rawValue: args[0]) else {
+                return "{\"ok\":false,\"error\":\"unknown theme: \(args[0]). valid: system, light, dark\"}"
+            }
+            Settings.shared.themeMode = mode
+            DispatchQueue.main.async {
+                NotificationCenter.default.post(name: .settingsDidChange, object: "themeMode")
+            }
+            return jsonify(["ok": true, "themeMode": mode.rawValue])
 
         case "quit":
             NSApp.terminate(nil)
