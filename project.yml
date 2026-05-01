@@ -34,6 +34,14 @@ targets:
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         LD_RUNPATH_SEARCH_PATHS: "$(inherited) @executable_path/../Frameworks"
         COMBINE_HIDPI_IMAGES: YES
+        OTHER_LDFLAGS:
+          - "-F"
+          - "/System/Library/PrivateFrameworks"
+          - "-framework"
+          - "DisplayServices"
     dependencies:
       - framework: UserNotifications.framework
         embed: false
+      - framework: DisplayServices.framework
+        embed: false
+        path: /System/Library/PrivateFrameworks

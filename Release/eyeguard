@@ -82,7 +82,7 @@ eyeguard — 护眼卫士命令行工具
   skip         跳过休息（需处于休息中）
   stats        今日统计（轮次+累计休息）
   settings     查看当前配置
-  set-style    设置状态栏样式（classic/minimal/emoji/compact/bracket/star）
+  set-style    设置状态栏样式（classic/minimal/emoji/compact/bracket/star/dots/progressBar）
   launch       启动护眼卫士 App
   quit         退出护眼卫士 App
   dim          暗屏（亮度=0%）
@@ -211,8 +211,11 @@ case "$CMD" in
     launch)
         open -a "EyeGuard"
         ;;
-    dim|bright)
-        ~/.hermes/bin/set_brightness $([ "$CMD" = "dim" ] && echo "0.0" || echo "0.8")
+    dim)
+        send "dim"
+        ;;
+    bright)
+        send "bright"
         ;;
     *)
         # start/pause/resume/reset/rest-now/skip/toggle → 直接透传

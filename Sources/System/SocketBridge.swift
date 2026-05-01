@@ -180,6 +180,14 @@ class SocketBridge {
             NSApp.terminate(nil)
             return jsonify(["ok": true])
 
+        case "dim":
+            BrightnessManager.shared.dim()
+            return jsonify(["ok": true])
+
+        case "bright":
+            BrightnessManager.shared.bright()
+            return jsonify(["ok": true])
+
         default:
             return "{\"ok\":false,\"error\":\"unknown command: \(command)\"}"
         }

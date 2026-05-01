@@ -164,17 +164,11 @@ class StatusBarController: NSObject {
     }
 
     @objc private func dimScreenClicked() {
-        let task = Process()
-        task.executableURL = URL(fileURLWithPath: "/Users/lilou/.hermes/bin/set_brightness")
-        task.arguments = ["0.0"]
-        try? task.run()
+        BrightnessManager.shared.dim()
     }
 
     @objc private func brightScreenClicked() {
-        let task = Process()
-        task.executableURL = URL(fileURLWithPath: "/Users/lilou/.hermes/bin/set_brightness")
-        task.arguments = ["0.8"]
-        try? task.run()
+        BrightnessManager.shared.bright()
     }
 
     @objc private func styleSelected(_ sender: NSMenuItem) {
