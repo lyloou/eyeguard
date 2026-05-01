@@ -27,6 +27,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     private var loginSwitch: NSSwitch!
     private var statusBarStylePopup: NSPopUpButton!
     private var restWindowPositionPopup: NSPopUpButton!
+    private var themeSegment: NSSegmentedControl!
 
     private override init() {
         super.init()
@@ -195,6 +196,17 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
             action: #selector(positionChanged)
         )
         sysStack.addArrangedSubview(makePopupRow(label: "Break Window Position", popup: restWindowPositionPopup))
+        sysStack.addArrangedSubview(cardDivider())
+
+        themeSegment = NSSegmentedControl(
+            labels: ["System", "Light", "Dark"],
+            trackingMode: .selectOne,
+            target: self,
+            action: #selector(themeChanged)
+        )
+        themeSegment.segmentStyle = .rounded
+        themeSegment.translatesAutoresizingMaskIntoConstraints = false
+        sysStack.addArrangedSubview(makeSegmentRow(label: "Appearance", segment: themeSegment))
 
         for row in sysStack.arrangedSubviews {
             row.widthAnchor.constraint(equalTo: sysStack.widthAnchor).isActive = true
@@ -377,6 +389,27 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         return row
     }
 
+    private func makeSegmentRow(label: String, segment: NSSegmentedControl) -> NSView {
+        let row = NSView()
+        row.translatesAutoresizingMaskIntoConstraints = false
+        row.heightAnchor.constraint(equalToConstant: 46).isActive = true
+
+        let lbl = rowLabel(label)
+        row.addSubview(lbl)
+        row.addSubview(segment)
+
+        NSLayoutConstraint.activate([
+            lbl.leadingAnchor.constraint(equalTo: row.leadingAnchor, constant: 16),
+            lbl.centerYAnchor.constraint(equalTo: row.centerYAnchor),
+
+            segment.trailingAnchor.constraint(equalTo: row.trailingAnchor, constant: -16),
+            segment.centerYAnchor.constraint(equalTo: row.centerYAnchor),
+            segment.widthAnchor.constraint(equalToConstant: 170),
+        ])
+
+        return row
+    }
+
     private func rowLabel(_ text: String) -> NSTextField {
         let lbl = NSTextField(labelWithString: text)
         lbl.font = NSFont.systemFont(ofSize: 13)
@@ -415,6 +448,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         loginSwitch.state        = LoginItemManager.shared.isEnabled ? .on : .off
         statusBarStylePopup.selectItem(at: s.statusBarStyle.index)
         restWindowPositionPopup.selectItem(at: s.restWindowPosition.index)
+        themeSegment.selectedSegment = s.themeMode.index
     }
 
     // MARK: - Actions
@@ -464,6 +498,12 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         let idx = restWindowPositionPopup.indexOfSelectedItem
         Settings.shared.restWindowPosition = Settings.RestWindowPosition.allCases[idx]
         NotificationCenter.default.post(name: .settingsDidChange, object: "restWindowPosition")
+    }
+
+    @objc private func themeChanged() {
+        let mode = Settings.ThemeMode.allCases[themeSegment.selectedSegment]
+        Settings.shared.themeMode = mode
+        NotificationCenter.default.post(name: .settingsDidChange, object: "themeMode")
     }
 
     // MARK: - Show / NSWindowDelegate

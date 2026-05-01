@@ -19,6 +19,16 @@ class Settings {
         static let hasLaunchedBefore = "hasLaunchedBefore"
         static let statusBarStyle = "statusBarStyle"
         static let restWindowPosition = "restWindowPosition"
+        static let themeMode      = "themeMode"
+    }
+
+    /// 外观主题
+    enum ThemeMode: String, CaseIterable {
+        case system = "system"  // 跟随系统
+        case light  = "light"   // 强制亮色
+        case dark   = "dark"    // 强制暗色
+
+        var index: Int { ThemeMode.allCases.firstIndex(of: self) ?? 0 }
     }
 
     /// 状态栏样式
@@ -61,7 +71,8 @@ class Settings {
             Keys.notifyOnRestEnd: false,
             Keys.soundEnabled: true,
             Keys.statusBarStyle: StatusBarStyle.classic.rawValue,
-            Keys.restWindowPosition: RestWindowPosition.center.rawValue
+            Keys.restWindowPosition: RestWindowPosition.center.rawValue,
+            Keys.themeMode: ThemeMode.system.rawValue,
         ])
     }
 
@@ -129,5 +140,14 @@ class Settings {
             return RestWindowPosition(rawValue: raw) ?? .center
         }
         set { defaults.set(newValue.rawValue, forKey: Keys.restWindowPosition) }
+    }
+
+    /// 外观主题
+    var themeMode: ThemeMode {
+        get {
+            let raw = defaults.string(forKey: Keys.themeMode) ?? ThemeMode.system.rawValue
+            return ThemeMode(rawValue: raw) ?? .system
+        }
+        set { defaults.set(newValue.rawValue, forKey: Keys.themeMode) }
     }
 }

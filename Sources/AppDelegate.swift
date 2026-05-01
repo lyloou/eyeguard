@@ -16,6 +16,18 @@ class AppDelegate: NSObject, NSApplicationDelegate {
 
         // 初始化设置
         Settings.shared.registerDefaults()
+        applyTheme(Settings.shared.themeMode)
+
+        // 监听主题变更
+        NotificationCenter.default.addObserver(
+            forName: .settingsDidChange,
+            object: nil,
+            queue: .main
+        ) { [weak self] note in
+            if let key = note.object as? String, key == "themeMode" {
+                self?.applyTheme(Settings.shared.themeMode)
+            }
+        }
 
         // 初始化状态栏
         statusBarController = StatusBarController()
@@ -75,6 +87,16 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         }
 
         print("EyeGuard 已启动")
+    }
+
+    // MARK: - Theme
+
+    func applyTheme(_ mode: Settings.ThemeMode) {
+        switch mode {
+        case .system: NSApp.appearance = nil
+        case .light:  NSApp.appearance = NSAppearance(named: .aqua)
+        case .dark:   NSApp.appearance = NSAppearance(named: .darkAqua)
+        }
     }
 
     // MARK: - Main Menu
