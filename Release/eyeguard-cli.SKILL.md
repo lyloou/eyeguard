@@ -26,7 +26,7 @@ prerequisites:
 | `eyeguard skip` | 跳过休息（需处于休息中） |
 | `eyeguard stats` | 今日统计（轮次+累计休息） |
 | `eyeguard settings` | 查看当前所有配置 |
-| `eyeguard set-style <name>` | 切换状态栏样式（classic/minimal/emoji/compact/bracket/star/pureTime/dots/progressBar） |
+| `eyeguard set-style <name>` | 切换状态栏样式（classic/minimal/emoji/compact/bracket/star/dots/progressBar） |
 | `eyeguard dim` | 暗屏（亮度=0%） |
 | `eyeguard bright` | 亮屏（亮度=80%） |
 | `eyeguard help` | 显示帮助 |
