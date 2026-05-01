@@ -1,21 +1,21 @@
 #!/bin/bash
 # EyeGuard Release Script
-# Usage: ./scripts/release.sh [version]  (e.g., ./scripts/release.sh 0.1.4)
+# Usage: ./scripts/release.sh <version>  (e.g., ./scripts/release.sh 0.1.6)
 
 set -e
 
 VERSION=${1:-}
 if [ -z "$VERSION" ]; then
   echo "Usage: $0 <version>"
-  echo "Example: $0 0.1.4"
+  echo "Example: $0 0.1.6"
   exit 1
 fi
 
 REPO="lyloou/eyeguard"
-ZIP_NAME="v${VERSION}.zip"
-ARCHIVE_DIR="$PROJECT_DIR/Archive"
 PROJECT_DIR=$(cd "$(dirname "$0")/.." && pwd)
 RELEASE_DIR="$PROJECT_DIR/Release"
+ARCHIVE_DIR="$PROJECT_DIR/Archive"
+ZIP_NAME="v${VERSION}.zip"
 BUILD_PRODUCTS="$HOME/Library/Developer/Xcode/DerivedData/EyeGuard-cgpwcqmjssschbghvdincznbhyro/Build/Products/Release"
 
 cd "$PROJECT_DIR"
@@ -32,6 +32,7 @@ xcodebuild -project EyeGuard.xcodeproj \
   CODE_SIGN_IDENTITY="-" \
   CODE_SIGNING_REQUIRED=NO 2>&1 | tail -3
 
+# 2. Prepare Release dir
 echo ""
 echo "[2/5] Preparing Release directory ..."
 mkdir -p "$RELEASE_DIR"
@@ -52,7 +53,7 @@ mkdir -p "$ARCHIVE_DIR"
 rm -f "$ARCHIVE_DIR/$ZIP_NAME"
 zip -r "$ARCHIVE_DIR/$ZIP_NAME" Release/ install.sh eyeguard-cli.SKILL.md
 
-# 5. Create GitHub Release & upload
+# 5. Upload to GitHub
 echo ""
 echo "[5/5] Uploading to GitHub Release ..."
 gh release create "v${VERSION}" \
