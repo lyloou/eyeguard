@@ -14,6 +14,7 @@ xcodegen generate -q
 echo "正在编译..."
 BUILD_LOG=$(mktemp)
 xcodebuild -scheme EyeGuard -configuration Debug build \
+    -destination 'platform=macOS,arch=arm64' \
     CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO \
     -quiet 2>&1 | tee "$BUILD_LOG"
 if grep -qE " error:" "$BUILD_LOG"; then
