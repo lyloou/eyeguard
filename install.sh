@@ -2,8 +2,8 @@
 # EyeGuard install script
 # Usage: ./install.sh [version]  (default: latest)
 #
-# 从 GitHub 下载 vX.zip 解压后安装：Release/EyeGuard.app.zip（或旧包中的 .app 目录）→ /Applications；
-# CLI 使用包根目录 ./eyeguard（旧包可仍用 Release/eyeguard）。
+# 期望 vX.zip 根布局：./EyeGuard.app.zip、./eyeguard、./install.sh、./skills/
+#（与 scripts/release.sh 产物一致）。
 
 set -e
 
@@ -68,36 +68,24 @@ log_info "Extracting ..."
 unzip -o eyeguard.zip
 
 # ── Install App ────────────────────────────────────────────────────────────
-if [ -f "Release/EyeGuard.app.zip" ]; then
-  log_info "Installing EyeGuard.app to /Applications/ ..."
-  unzip -o "Release/EyeGuard.app.zip" -d /Applications/
-  log_ok "EyeGuard.app installed"
-elif [ -d "Release/EyeGuard.app" ]; then
-  log_info "Installing EyeGuard.app (bundle) to /Applications/ ..."
-  rm -rf "/Applications/EyeGuard.app"
-  ditto "Release/EyeGuard.app" "/Applications/EyeGuard.app"
-  log_ok "EyeGuard.app installed"
-else
-  log_warn "未找到 Release/EyeGuard.app.zip 或 Release/EyeGuard.app，跳过 App 安装"
+if [ ! -f "./EyeGuard.app.zip" ]; then
+  log_error "解压包缺少 EyeGuard.app.zip（根目录）。请下载由本仓库 scripts/release.sh 构建的 Release。"
+  exit 1
 fi
+log_info "Installing EyeGuard.app to /Applications/ ..."
+unzip -o "./EyeGuard.app.zip" -d /Applications/
+log_ok "EyeGuard.app installed"
 
 # ── Install CLI ─────────────────────────────────────────────────────────────
-# 优先包根目录 ./eyeguard；旧发行包可能仅有 Release/eyeguard。cp -f 覆盖本地脚本。
-CLI_SRC=""
-if [ -f "./eyeguard" ]; then
-  CLI_SRC="./eyeguard"
-elif [ -f "Release/eyeguard" ]; then
-  CLI_SRC="Release/eyeguard"
+if [ ! -f "./eyeguard" ]; then
+  log_error "解压包缺少 eyeguard CLI 脚本（根目录）。"
+  exit 1
 fi
-if [ -n "$CLI_SRC" ]; then
-  log_info "Installing eyeguard CLI (overwrite) ..."
-  mkdir -p ~/.eyeguard/bin
-  cp -f "$CLI_SRC" ~/.eyeguard/bin/eyeguard
-  chmod +x ~/.eyeguard/bin/eyeguard
-  log_ok "CLI installed to ~/.eyeguard/bin/eyeguard"
-else
-  log_warn "未找到 eyeguard CLI（跳过）。请确认解压包内含 ./eyeguard 或 Release/eyeguard"
-fi
+log_info "Installing eyeguard CLI (overwrite) ..."
+mkdir -p ~/.eyeguard/bin
+cp -f "./eyeguard" ~/.eyeguard/bin/eyeguard
+chmod +x ~/.eyeguard/bin/eyeguard
+log_ok "CLI installed to ~/.eyeguard/bin/eyeguard"
 
 # ── Configure PATH ─────────────────────────────────────────────────────────
 SHELL_RC="$HOME/.zshrc"

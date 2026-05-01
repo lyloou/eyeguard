@@ -210,8 +210,7 @@ curl -fsSL https://raw.githubusercontent.com/lyloou/eyeguard/main/install.sh | b
 ### 手动安装
 
 1. 下载 [最新 Release](https://github.com/lyloou/eyeguard/releases/latest)
-2. 解压 `v{x.x.x}.zip`：`Release/` 内含 **`EyeGuard.app.zip`**；执行 `unzip -o Release/EyeGuard.app.zip -d /Applications/` 安装 App（一键安装仍用上文 **curl … install.sh**，会重新下载同版本 zip）。
-3. （可选）将包根目录 **`eyeguard`** 拷贝到 **`~/.eyeguard/bin/eyeguard`** 并 `chmod +x`，并把 `~/.eyeguard/bin` 加入 PATH（旧版本包可能仅在 `Release/` 下附带 `eyeguard`）。
+2. 解压 `v{x.x.x}.zip`：根目录有 **`EyeGuard.app.zip`**，执行 `unzip -o EyeGuard.app.zip -d /Applications/` 安装 App；将根目录 **`eyeguard`** 拷贝到 **`~/.eyeguard/bin/eyeguard`**（或直接用上文 **curl … install.sh**，会重新下载同版本 zip 并写入 CLI）。
 
 ## 构建（开发者）
 
@@ -236,7 +235,7 @@ xcodebuild -project EyeGuard.xcodeproj -scheme EyeGuard -configuration Release b
 ./scripts/release.sh <version>   # 例如：./scripts/release.sh 0.1.5
 ```
 
-发布产物 `Archive/v{x.x.x}.zip` 内包含：**`Release/`**（仅 **`EyeGuard.app.zip`**，不含重复 `.app` 目录）、包根目录 **`eyeguard`**、`install.sh` 以及 **`skills/eyeguard-cli/`**（供 Agent Skill 使用）。
+发布产物 `Archive/v{x.x.x}.zip` 根目录包含：**`EyeGuard.app.zip`**、**`eyeguard`**、`install.sh` 以及 **`skills/eyeguard-cli/`**（供 Agent Skill 使用）。
 
 ---
 

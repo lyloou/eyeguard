@@ -28,7 +28,7 @@ Build output: `~/Library/Developer/Xcode/DerivedData/EyeGuard-*/Build/Products/R
 # Auto-bumps patch from latest GitHub release if version omitted
 ```
 
-The release script builds, produces `Release/EyeGuard.app.zip` only (no duplicate `EyeGuard.app` folder in the bundle root), includes root `eyeguard` + `install.sh` + `skills/` in `vX.zip`, then creates a GitHub release via `gh`.
+The release script builds, then packs `Archive/v{X}.zip` with a **flat root**: `EyeGuard.app.zip`, `eyeguard`, `install.sh`, `skills/` (no `Release/` folder), then uploads via `gh release create`.
 
 ## Architecture
 
@@ -133,4 +133,4 @@ eyeguard dim / bright / launch / quit
 
 ## Skills
 
-`skills/eyeguard-cli/` contains an Agent Skill (`SKILL.md`) bundled into every release zip alongside `Release/` and `install.sh`.
+`skills/eyeguard-cli/` is bundled into every release zip alongside `EyeGuard.app.zip`, `install.sh`, and `eyeguard` at the archive root.

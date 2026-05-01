@@ -3,6 +3,8 @@
 # Usage:
 #   ./scripts/release.sh <version>   (e.g. ./scripts/release.sh 0.1.6 或 v0.1.6)
 #   ./scripts/release.sh             # 从 GitHub latest release 的 tag_name（须为 vx.y.z）取上一版后 patch +1
+#
+# 产物 vX.zip 根布局：EyeGuard.app.zip、eyeguard、install.sh、skills/（扁平，无 Release/）。
 
 set -e
 
@@ -75,10 +77,10 @@ else
 fi
 
 PROJECT_DIR=$(cd "$(dirname "$0")/.." && pwd)
-RELEASE_DIR="$PROJECT_DIR/Release"
 ARCHIVE_DIR="$PROJECT_DIR/Archive"
 ZIP_NAME="v${VERSION}.zip"
 DERIVED_RELEASE="$PROJECT_DIR/.build/ReleaseDerivedData"
+BUNDLE_STAGE="$PROJECT_DIR/.build/release_bundle"
 BUILD_PRODUCTS="$DERIVED_RELEASE/Build/Products/Release"
 
 cd "$PROJECT_DIR"
@@ -86,8 +88,7 @@ cd "$PROJECT_DIR"
 echo "=== EyeGuard Release v${VERSION} ==="
 echo ""
 
-# 1. Build App（独立 DerivedData，每次发布前清空，避免旧缓存）
-echo "[1/5] Building EyeGuard.app ..."
+echo "[1/4] Building EyeGuard.app ..."
 echo "清空本地 Release DerivedData ($DERIVED_RELEASE) ..."
 rm -rf "$DERIVED_RELEASE"
 xcodegen generate -q
@@ -106,31 +107,27 @@ if grep -qE " error:" "$BUILD_LOG"; then
 fi
 rm -f "$BUILD_LOG"
 
-# 2. Prepare Release dir
 echo ""
-echo "[2/5] Preparing Release directory ..."
-mkdir -p "$RELEASE_DIR"
-rm -rf "$RELEASE_DIR/EyeGuard.app" "$RELEASE_DIR/EyeGuard.app.zip"
-cp -r "$BUILD_PRODUCTS/EyeGuard.app" "$RELEASE_DIR/"
+echo "[2/4] Staging v${VERSION}.zip root (EyeGuard.app.zip + extras) ..."
+rm -rf "$BUNDLE_STAGE"
+mkdir -p "$BUNDLE_STAGE"
+cp -R "$BUILD_PRODUCTS/EyeGuard.app" "$BUNDLE_STAGE/EyeGuard.app"
+( cd "$BUNDLE_STAGE" && zip -rq EyeGuard.app.zip EyeGuard.app && rm -rf EyeGuard.app )
+install -m 0755 "$PROJECT_DIR/eyeguard" "$BUNDLE_STAGE/eyeguard"
+install -m 0755 "$PROJECT_DIR/install.sh" "$BUNDLE_STAGE/install.sh"
+cp -R "$PROJECT_DIR/skills" "$BUNDLE_STAGE/"
 
-# 3. Package App zip（打完即删 Release 内 .app 目录，避免与 .zip 重复打入 vX.zip）
 echo ""
-echo "[3/5] Packaging EyeGuard.app.zip ..."
-cd "$RELEASE_DIR"
-zip -rq EyeGuard.app.zip EyeGuard.app
-rm -rf EyeGuard.app
-cd "$PROJECT_DIR"
-
-# 4. Create zip bundle
-echo ""
-echo "[4/5] Creating $ZIP_NAME ..."
+echo "[3/4] Creating $ZIP_NAME ..."
 mkdir -p "$ARCHIVE_DIR"
 rm -f "$ARCHIVE_DIR/$ZIP_NAME"
-zip -r "$ARCHIVE_DIR/$ZIP_NAME" Release/ install.sh eyeguard skills/
+(
+  cd "$BUNDLE_STAGE"
+  zip -rq "$ARCHIVE_DIR/$ZIP_NAME" EyeGuard.app.zip eyeguard install.sh skills
+)
 
-# 5. Upload to GitHub
 echo ""
-echo "[5/5] Uploading to GitHub Release ..."
+echo "[4/4] Uploading to GitHub Release ..."
 gh release create "v${VERSION}" \
   --title "EyeGuard v${VERSION}" \
   --notes "Release v${VERSION}" \
