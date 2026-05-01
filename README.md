@@ -188,7 +188,10 @@ Sources/
 
 ```bash
 VER=$(curl -s https://api.github.com/repos/lyloou/eyeguard/releases/latest | grep -o '"tag_name": "[^"]*"' | grep -o 'v[0-9.]*')
-curl -L "https://github.com/lyloou/eyeguard/releases/download/${VER}/${VER}.zip" | funzip | bash
+TMP=$(mktemp -d)
+curl -L "https://github.com/lyloou/eyeguard/releases/download/${VER}/${VER}.zip" -o "$TMP/eyeguard.zip"
+unzip -o "$TMP/eyeguard.zip" -d "$TMP"
+bash "$TMP/install.sh"
 ```
 
 然后重启终端或运行 `source ~/.zshrc`，输入 `eyeguard --help` 验证。
