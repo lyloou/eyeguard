@@ -56,6 +56,11 @@ class RestWindowController: NSObject {
         skipButton.isHidden = Settings.shared.enforceRest
     }
 
+    /// 从休息弹窗打开设置（与系统 ⌘, 打开「设置 / 偏好设置」一致）。
+    private func openSettingsFromRestPanel() {
+        SettingsWindowController.shared.show()
+    }
+
     // MARK: - Setup
 
     private func setupPanel() {
@@ -285,7 +290,7 @@ class RestWindowController: NSObject {
             skipButton.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -20),
         ])
 
-        // Key monitor: ESC/Space → dismiss; ⌘W → dismiss; ⌘Q → quit
+        // Key monitor: ESC/Space → dismiss; ⌘W → dismiss; ⌘Q → quit; ⌘, → 设置
         localMonitor = NSEvent.addLocalMonitorForEvents(matching: .keyDown) { [weak self] event in
             let cmd = event.modifierFlags.contains(.command)
             switch (event.keyCode, cmd) {
@@ -297,6 +302,9 @@ class RestWindowController: NSObject {
                 return nil
             case (12, true):                // ⌘Q
                 NSApp.terminate(nil)
+                return nil
+            case (43, true):                // ⌘, → 设置
+                self?.openSettingsFromRestPanel()
                 return nil
             default:
                 return event
