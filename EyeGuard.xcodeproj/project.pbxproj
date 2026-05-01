@@ -8,11 +8,13 @@
 
 /* Begin PBXBuildFile section */
 		00863D4473F9BEBB2846B9BF /* StateMachine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8EBC9083AB6CFBFD94734F0B /* StateMachine.swift */; };
+		0A89B4E0A945B0CD3CA26E96 /* ThemeColor.swift in Sources */ = {isa = PBXBuildFile; fileRef = E62CDE586EEB16115B0FF9CB /* ThemeColor.swift */; };
 		10BEA6A897A84B5E6A6973B1 /* TimerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9650AF4E93E22526B4A99521 /* TimerManager.swift */; };
 		179F2929C1280C86B3E266A6 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CCB6207267F5C3452324B74 /* SettingsWindowController.swift */; };
 		196B69055964FEBC533E67CE /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BD959AEF323D3FC899EEDC /* AboutWindowController.swift */; };
 		3509368FEC01C29ACADB9E57 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF99384BFC8824F1774C81D5 /* Localizable.strings */; };
 		3ABCC27C7F4B9CA51BBBC906 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB3C76F23D59C8FA85E7C1EA /* Assets.xcassets */; };
+		434AF3D631890B2F827EE709 /* AppPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6984A54FE81A6A4D17E4A887 /* AppPanel.swift */; };
 		4F2C43A7D0C475DC0CFAE44A /* LockScreenMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C384D7842FF70843B032A136 /* LockScreenMonitor.swift */; };
 		59674A9C59AFC20A8335EF13 /* SocketBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EF024B07DCD3D7FA6D4A283 /* SocketBridge.swift */; };
 		7802780B81A0ADE9E4BAA905 /* LoginItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96202C8DB002514B2A08326 /* LoginItemManager.swift */; };
@@ -40,6 +42,7 @@
 		42C385397E83EBD3E5E96CC6 /* RestWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestWindowController.swift; sourceTree = "<group>"; };
 		45A9FDF9BED4048D9CE96627 /* SoundManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SoundManager.swift; sourceTree = "<group>"; };
 		5CCB6207267F5C3452324B74 /* SettingsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsWindowController.swift; sourceTree = "<group>"; };
+		6984A54FE81A6A4D17E4A887 /* AppPanel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppPanel.swift; sourceTree = "<group>"; };
 		69BD959AEF323D3FC899EEDC /* AboutWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutWindowController.swift; sourceTree = "<group>"; };
 		74E3AAF8330651BFB3517313 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UserNotifications.framework; sourceTree = "<group>"; };
 		7CF8ADAC3813149ED5103419 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
@@ -56,6 +59,7 @@
 		D69B95E3CA5DE16846A232EF /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
 		DA5178CEB6B19E580177C356 /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWindowController.swift; sourceTree = "<group>"; };
 		DB3C76F23D59C8FA85E7C1EA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E62CDE586EEB16115B0FF9CB /* ThemeColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColor.swift; sourceTree = "<group>"; };
 		E9CFAB285D60A6606C58BEBF /* EyeGuard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EyeGuard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -118,6 +122,7 @@
 				C7420247C36273FEE7137939 /* Settings.swift */,
 				8EBC9083AB6CFBFD94734F0B /* StateMachine.swift */,
 				AB0D58E2B068E0FA90C27C4F /* StatsManager.swift */,
+				E62CDE586EEB16115B0FF9CB /* ThemeColor.swift */,
 				9650AF4E93E22526B4A99521 /* TimerManager.swift */,
 			);
 			path = Core;
@@ -150,6 +155,7 @@
 			isa = PBXGroup;
 			children = (
 				69BD959AEF323D3FC899EEDC /* AboutWindowController.swift */,
+				6984A54FE81A6A4D17E4A887 /* AppPanel.swift */,
 				DA5178CEB6B19E580177C356 /* OnboardingWindowController.swift */,
 				42C385397E83EBD3E5E96CC6 /* RestWindowController.swift */,
 				5CCB6207267F5C3452324B74 /* SettingsWindowController.swift */,
@@ -233,6 +239,7 @@
 			files = (
 				196B69055964FEBC533E67CE /* AboutWindowController.swift in Sources */,
 				D1853B7CDC5B7559DCBC117C /* AppDelegate.swift in Sources */,
+				434AF3D631890B2F827EE709 /* AppPanel.swift in Sources */,
 				A9B590D946E17E075DC7D502 /* BrightnessManager.swift in Sources */,
 				DCE87AF5F6C7B244A624D2A5 /* HotkeyManager.swift in Sources */,
 				A2D69B84A19DF9A0B2CED74C /* L10n.swift in Sources */,
@@ -248,6 +255,7 @@
 				00863D4473F9BEBB2846B9BF /* StateMachine.swift in Sources */,
 				B441A7B9E9D972F3C09DD218 /* StatsManager.swift in Sources */,
 				E29F1F58C5868B954EC2AE70 /* StatusBarController.swift in Sources */,
+				0A89B4E0A945B0CD3CA26E96 /* ThemeColor.swift in Sources */,
 				10BEA6A897A84B5E6A6973B1 /* TimerManager.swift in Sources */,
 				E13916EF355A03381FD28842 /* main.swift in Sources */,
 			);

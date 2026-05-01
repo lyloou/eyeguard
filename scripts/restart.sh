@@ -3,19 +3,26 @@
 
 set -e
 
-DERIVED_DATA="~/Library/Developer/Xcode/DerivedData/EyeGuard-cgpwcqmjssschbghvdincznbhyro/Build/Products/Debug/EyeGuard.app"
+DERIVED_DATA=$(find "$HOME/Library/Developer/Xcode/DerivedData" -maxdepth 5 \
+    -name "EyeGuard.app" -path "*/Debug/EyeGuard.app" 2>/dev/null | head -1)
 PROJECT_DIR=$(cd "$(dirname "$0")/.." && pwd)
 
-# 1. 编译（若有代码变更才真正重编，xcodebuild 会处理增量）
+# 1. 同步 xcodeproj（确保新增文件被纳入编译）
+xcodegen generate -q
+
+# 2. 编译
 echo "正在编译..."
-if ! xcodebuild -scheme EyeGuard -configuration Debug build \
+BUILD_LOG=$(mktemp)
+xcodebuild -scheme EyeGuard -configuration Debug build \
     CODE_SIGN_IDENTITY=- CODE_SIGNING_REQUIRED=NO \
-    -quiet 2>&1 | grep -E "^error:"; then
-    echo "编译成功"
-else
+    -quiet 2>&1 | tee "$BUILD_LOG"
+if grep -qE " error:" "$BUILD_LOG"; then
     echo "编译失败" >&2
+    rm -f "$BUILD_LOG"
     exit 1
 fi
+rm -f "$BUILD_LOG"
+echo "编译成功"
 
 # 2. 杀掉运行中的实例
 if pgrep -x "EyeGuard" > /dev/null 2>&1; then

@@ -388,11 +388,19 @@ class StatusBarController: NSObject {
         guard let button = statusItem.button else { return }
         button.image = nil
         let color = statusBarColor(for: state)
-        let font = NSFont.monospacedDigitSystemFont(ofSize: 12, weight: .medium)
-        let attrs: [NSAttributedString.Key: Any] = [
+        let weight: NSFont.Weight
+        switch state {
+        case .working: weight = .semibold
+        case .resting: weight = .medium
+        default:       weight = .regular
+        }
+        let font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: weight)
+        let kern: CGFloat = state == .idle ? 0.3 : 0
+        var attrs: [NSAttributedString.Key: Any] = [
             .foregroundColor: color,
             .font: font
         ]
+        if kern > 0 { attrs[.kern] = kern }
         button.attributedTitle = NSAttributedString(string: title, attributes: attrs)
     }
 
