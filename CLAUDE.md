@@ -28,7 +28,7 @@ Build output: `~/Library/Developer/Xcode/DerivedData/EyeGuard-*/Build/Products/R
 # Auto-bumps patch from latest GitHub release if version omitted
 ```
 
-The release script builds, copies to `Release/`, zips with `install.sh` and `skills/`, then creates a GitHub release via `gh`.
+The release script builds, produces `Release/EyeGuard.app.zip` only (no duplicate `EyeGuard.app` folder in the bundle root), includes root `eyeguard` + `install.sh` + `skills/` in `vX.zip`, then creates a GitHub release via `gh`.
 
 ## Architecture
 

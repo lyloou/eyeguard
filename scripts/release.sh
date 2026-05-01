@@ -110,16 +110,15 @@ rm -f "$BUILD_LOG"
 echo ""
 echo "[2/5] Preparing Release directory ..."
 mkdir -p "$RELEASE_DIR"
-rm -rf "$RELEASE_DIR/EyeGuard.app" "$RELEASE_DIR/EyeGuard.app.zip" "$RELEASE_DIR/eyeguard"
+rm -rf "$RELEASE_DIR/EyeGuard.app" "$RELEASE_DIR/EyeGuard.app.zip"
 cp -r "$BUILD_PRODUCTS/EyeGuard.app" "$RELEASE_DIR/"
-cp -f "$PROJECT_DIR/eyeguard" "$RELEASE_DIR/eyeguard"
-chmod +x "$RELEASE_DIR/eyeguard"
 
-# 3. Package App zip
+# 3. Package App zip（打完即删 Release 内 .app 目录，避免与 .zip 重复打入 vX.zip）
 echo ""
 echo "[3/5] Packaging EyeGuard.app.zip ..."
 cd "$RELEASE_DIR"
-zip -r EyeGuard.app.zip EyeGuard.app
+zip -rq EyeGuard.app.zip EyeGuard.app
+rm -rf EyeGuard.app
 cd "$PROJECT_DIR"
 
 # 4. Create zip bundle
