@@ -187,14 +187,14 @@ Sources/
 ### 一键安装（推荐）
 
 ```bash
-VER=$(curl -s https://api.github.com/repos/lyloou/eyeguard/releases/latest | grep -o '"tag_name": "[^"]*"' | grep -o 'v[0-9.]*')
-TMP=$(mktemp -d)
-curl -L "https://github.com/lyloou/eyeguard/releases/download/${VER}/${VER}.zip" -o "$TMP/eyeguard.zip"
-unzip -o "$TMP/eyeguard.zip" -d "$TMP"
-bash "$TMP/install.sh"
+# 方式一：自动获取最新版
+curl -fsSL https://raw.githubusercontent.com/lyloou/eyeguard/main/install.sh | bash
+
+# 方式二：指定版本
+curl -fsSL https://raw.githubusercontent.com/lyloou/eyeguard/main/install.sh | bash -s -- 0.1.8
 ```
 
-然后重启终端或运行 `source ~/.zshrc`，输入 `eyeguard --help` 验证。
+然后运行 `source ~/.zshrc`，输入 `eyeguard status` 验证。
 
 ### 手动安装
 
@@ -212,7 +212,7 @@ bash "$TMP/install.sh"
 ### 构建
 
 ```bash
-cd /Users/lilou/t/eyefoocopy
+cd eyeguard
 xcodegen generate
 xcodebuild -project EyeGuard.xcodeproj -scheme EyeGuard -configuration Release build
 ```

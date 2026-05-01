@@ -3,8 +3,8 @@
 
 set -e
 
-DERIVED_DATA="/Users/lilou/Library/Developer/Xcode/DerivedData/EyeGuard-cgpwcqmjssschbghvdincznbhyro/Build/Products/Debug/EyeGuard.app"
-PROJECT_DIR="/Users/lilou/t/eyefoocopy"
+DERIVED_DATA="~/Library/Developer/Xcode/DerivedData/EyeGuard-cgpwcqmjssschbghvdincznbhyro/Build/Products/Debug/EyeGuard.app"
+PROJECT_DIR=$(cd "$(dirname "$0")/.." && pwd)
 
 # 1. 编译（若有代码变更才真正重编，xcodebuild 会处理增量）
 echo "正在编译..."
