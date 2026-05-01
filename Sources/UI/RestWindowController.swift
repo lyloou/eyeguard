@@ -8,12 +8,19 @@ class RestWindowController: NSObject {
     private var countdownLabel: NSTextField!
     private var subtitleLabel: NSTextField!
     private var quoteLabel: NSTextField!
+    /// 「BREAK」角标，浅色外观需更高对比的强调色。
+    private var breakBadgeLabel: NSTextField!
     private var skipButton: NSButton!
     private var ringLayer: CAShapeLayer!
     private var trackLayer: CAShapeLayer!
     private var pulseLayer: CAShapeLayer!
     private var timer: Timer?
     private var localMonitor: Any?
+
+    /// 毛玻璃底板（随系统外观切换材质）
+    private var blurBacking: NSVisualEffectView!
+    /// 色调叠加层（浅色提亮、深色压暗）
+    private var toneOverlay: NSView!
 
     private weak var manager: TimerManager?
     private var totalSeconds: Int = 0
@@ -33,6 +40,11 @@ class RestWindowController: NSObject {
             name: .settingsDidChange,
             object: nil
         )
+    }
+
+    /// 响应毛玻璃视图有效外观变化，刷新休息窗材质与对比色。
+    private func restBackingEffectiveAppearanceChanged() {
+        applyRestPanelTone()
     }
 
     @objc private func settingsDidChange(_ notification: Notification) {
@@ -67,24 +79,76 @@ class RestWindowController: NSObject {
         panel.titlebarAppearsTransparent = true
         panel.titleVisibility = .hidden
 
-        // 毛玻璃底板
-        let blur = NSVisualEffectView(frame: NSRect(x: 0, y: 0, width: w, height: h))
-        blur.material = .hudWindow
+        // 毛玻璃底板（浅色外观下使用更亮、适配的材质）
+        let blur = RestVisualEffectView(frame: NSRect(x: 0, y: 0, width: w, height: h))
         blur.blendingMode = .behindWindow
         blur.state = .active
         blur.wantsLayer = true
         blur.layer?.cornerRadius = 20
         blur.layer?.masksToBounds = true
+        blur.onEffectiveAppearanceChange = { [weak self] in
+            self?.restBackingEffectiveAppearanceChanged()
+        }
         panel.contentView = blur
+        blurBacking = blur
 
-        // 深色叠加层
         let overlay = NSView(frame: blur.bounds)
         overlay.wantsLayer = true
-        overlay.layer?.backgroundColor = NSColor.black.withAlphaComponent(0.35).cgColor
         overlay.layer?.cornerRadius = 20
         blur.addSubview(overlay)
+        toneOverlay = overlay
 
+        applyRestPanelTone()
         positionWindow()
+    }
+
+    /// 根据当前外观应用休息窗材质、叠色与标签/圆环对比度（浅色偏亮、深色保持 HUD 沉浸感）。
+    ///
+    /// 在 `setupUI` 完成前仅更新毛玻璃与叠色；控件与图层就绪后会同步文字与圆环颜色。
+    private func applyRestPanelTone() {
+        guard let blur = blurBacking, let toneLayer = toneOverlay.layer else { return }
+
+        let isDark = blur.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+
+        if isDark {
+            blur.material = .hudWindow
+            toneLayer.backgroundColor = NSColor.black.withAlphaComponent(0.35).cgColor
+        } else {
+            blur.material = .popover
+            toneLayer.backgroundColor = NSColor.white.withAlphaComponent(0.22).cgColor
+        }
+
+        guard let track = trackLayer, let pulse = pulseLayer,
+              let subtitle = subtitleLabel, let countdown = countdownLabel,
+              let quote = quoteLabel, let skip = skipButton,
+              let breakBadge = breakBadgeLabel else { return }
+
+        if isDark {
+            track.strokeColor = NSColor.white.withAlphaComponent(0.08).cgColor
+            pulse.strokeColor = jadeColor.withAlphaComponent(0.15).cgColor
+            subtitle.textColor = NSColor.white.withAlphaComponent(0.45)
+            countdown.textColor = NSColor.white.withAlphaComponent(0.92)
+            quote.textColor = NSColor.white.withAlphaComponent(0.52)
+            breakBadge.textColor = jadeColor.withAlphaComponent(0.85)
+            skip.attributedTitle = NSAttributedString(string: "Skip Rest", attributes: [
+                .font: NSFont.systemFont(ofSize: 11, weight: .regular),
+                .foregroundColor: NSColor.white.withAlphaComponent(0.30),
+                .underlineStyle: NSUnderlineStyle.single.rawValue,
+            ])
+        } else {
+            track.strokeColor = NSColor.black.withAlphaComponent(0.10).cgColor
+            pulse.strokeColor = jadeColor.withAlphaComponent(0.22).cgColor
+            subtitle.textColor = NSColor.secondaryLabelColor
+            countdown.textColor = NSColor.labelColor
+            quote.textColor = NSColor.secondaryLabelColor
+            // 浅色 + 毛玻璃上 tertiary 过淡，用主标签色降透明度保证可读性。
+            breakBadge.textColor = jadeDarkenedForLightUI
+            skip.attributedTitle = NSAttributedString(string: "Skip Rest", attributes: [
+                .font: NSFont.systemFont(ofSize: 11, weight: .regular),
+                .foregroundColor: NSColor.labelColor.withAlphaComponent(0.62),
+                .underlineStyle: NSUnderlineStyle.single.rawValue,
+            ])
+        }
     }
 
     private func positionWindow() {
@@ -175,12 +239,12 @@ class RestWindowController: NSObject {
         contentView.addSubview(quoteLabel)
 
         // "BREAK" label above countdown
-        let breakLabel = NSTextField(labelWithString: "BREAK")
-        breakLabel.font = NSFont.systemFont(ofSize: 9, weight: .semibold)
-        breakLabel.textColor = jadeColor.withAlphaComponent(0.85)
-        breakLabel.alignment = .center
-        breakLabel.translatesAutoresizingMaskIntoConstraints = false
-        contentView.addSubview(breakLabel)
+        breakBadgeLabel = NSTextField(labelWithString: "BREAK")
+        breakBadgeLabel.font = NSFont.systemFont(ofSize: 9, weight: .semibold)
+        breakBadgeLabel.textColor = jadeColor.withAlphaComponent(0.85)
+        breakBadgeLabel.alignment = .center
+        breakBadgeLabel.translatesAutoresizingMaskIntoConstraints = false
+        contentView.addSubview(breakBadgeLabel)
 
         // Skip button
         skipButton = NSButton(title: "", target: self, action: #selector(skipClicked))
@@ -199,8 +263,8 @@ class RestWindowController: NSObject {
 
         NSLayoutConstraint.activate([
             // Break label — just above countdown center
-            breakLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
-            breakLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -28),
+            breakBadgeLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            breakBadgeLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor, constant: -28),
 
             // Countdown at center
             countdownLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
@@ -238,10 +302,17 @@ class RestWindowController: NSObject {
                 return event
             }
         }
+
+        applyRestPanelTone()
     }
 
     private var jadeColor: NSColor {
         NSColor(red: 0.22, green: 0.78, blue: 0.55, alpha: 1.0)
+    }
+
+    /// 浅色界面上使用的略深翡翠绿，避免半透明 jade 在亮底 + 模糊上发虚。
+    private var jadeDarkenedForLightUI: NSColor {
+        NSColor(red: 0.12, green: 0.52, blue: 0.38, alpha: 1.0)
     }
 
     // MARK: - Animations
@@ -269,6 +340,7 @@ class RestWindowController: NSObject {
     // MARK: - Show / Close
 
     func show() {
+        applyRestPanelTone()
         quoteLabel.stringValue = RestQuoteProvider.randomQuote()
         NSApp.activate(ignoringOtherApps: true)
         panel.makeKeyAndOrderFront(nil)
@@ -358,6 +430,17 @@ private class RestPanel: NSPanel {
         super.mouseDown(with: event)
         NSApp.activate(ignoringOtherApps: true)
         makeKeyAndOrderFront(nil)
+    }
+}
+
+/// 在有效外观变化时通知宿主，用于同步毛玻璃材质与前景对比色。
+private final class RestVisualEffectView: NSVisualEffectView {
+    var onEffectiveAppearanceChange: (() -> Void)?
+
+    /// 转发系统浅色/深色切换，便于更新材质与标签颜色。
+    override func viewDidChangeEffectiveAppearance() {
+        super.viewDidChangeEffectiveAppearance()
+        onEffectiveAppearanceChange?()
     }
 }
 
