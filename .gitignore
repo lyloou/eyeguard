@@ -30,3 +30,6 @@ build/
 /tmp/eyeguard.lock
 /tmp/eyeguard.sock
 .idea
+
+# Release (build artifacts — use GitHub Releases instead)
+Release/
