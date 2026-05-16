@@ -163,7 +163,8 @@ class SocketBridge {
                 "soundEnabled": s.soundEnabled,
                 "launchAtLogin": LoginItemManager.shared.isEnabled,
                 "statusBarStyle": s.statusBarStyle.rawValue,
-                "themeMode": s.themeMode.rawValue
+                "themeMode": s.themeMode.rawValue,
+                "appLanguage": s.appLanguage.rawValue
             ])
 
         case "set-style":

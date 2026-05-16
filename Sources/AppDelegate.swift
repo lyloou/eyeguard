@@ -24,8 +24,11 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             object: nil,
             queue: .main
         ) { [weak self] note in
-            if let key = note.object as? String, key == "themeMode" {
+            guard let key = note.object as? String else { return }
+            if key == "themeMode" {
                 self?.applyTheme(Settings.shared.themeMode)
+            } else if key == "appLanguage" {
+                self?.refreshLocalizedUI()
             }
         }
 
@@ -90,6 +93,15 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     // MARK: - Theme
+
+    /// 语言变更后刷新可见界面文案。
+    func refreshLocalizedUI() {
+        timerManager?.refreshLocalizedUI()
+        statusBarController?.refreshLocalizedUI()
+        SettingsWindowController.shared.applyLocalization()
+        onboardingWindowController?.applyLocalization()
+        aboutWindowController?.applyLocalization()
+    }
 
     func applyTheme(_ mode: Settings.ThemeMode) {
         switch mode {

@@ -10,11 +10,11 @@ enum EyeState: Equatable {
 
     var displayText: String {
         switch self {
-        case .idle:        return "护眼卫士"
-        case .working:     return "工作中"
-        case .paused:      return "已暂停"
-        case .resting:     return "休息中"
-        case .awaitingActivity: return "Awaiting activity"
+        case .idle:             return L10n.stateDisplayIdle
+        case .working:          return L10n.stateDisplayWorking
+        case .paused:           return L10n.stateDisplayPaused
+        case .resting:          return L10n.stateDisplayResting
+        case .awaitingActivity: return L10n.stateDisplayAwaiting
         }
     }
 

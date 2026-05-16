@@ -6,7 +6,7 @@ enum RestQuoteProvider {
     /// 用户自定义文件名，位于用户主目录下 `.eyeguard` 文件夹。
     private static let customFileName = "rest-quotes.txt"
 
-    private static let builtIn: [String] = [
+    private static let builtInZh: [String] = [
         "别等局面推着你走，自己先动起来。",
         "与其被动承受，不如主动破局。",
         "不要困在原地，先去找新的出路。",
@@ -40,6 +40,46 @@ enum RestQuoteProvider {
         "与其等外部给机会，不如主动创造条件。",
         "面对当前局面，继续被动消耗不是办法，必须主动求变。",
     ]
+
+    private static let builtInEn: [String] = [
+        "Don't wait for the situation to push you—move first.",
+        "Instead of enduring passively, break the pattern.",
+        "Don't stay stuck; look for a new path.",
+        "Don't hand choices to circumstance—adjust on purpose.",
+        "Don't wait for problems; create turning points early.",
+        "Respond with a new route instead of passive reaction.",
+        "When things are tough, action beats waiting.",
+        "Don't let the present bind you; seek new options.",
+        "Situations rarely fix themselves—you earn the change.",
+        "Open the door yourself instead of waiting for chance.",
+        "Don't grind in drain—change how you play.",
+        "Real exits are found, not waited for.",
+        "Leave the passive spot; choose actively sooner.",
+        "If it's not ideal, stop only bearing it—start adjusting.",
+        "Change usually needs a push; it won't arrive alone.",
+        "Passive waiting solves little; active tuning works.",
+        "Step out of the corner where you only take hits.",
+        "Loosen your grip on the status quo; try another walk.",
+        "Don't wait for others to fix your place—you move first.",
+        "To get unstuck, stop just enduring; start searching.",
+        "In a tight spot, waiting fails; adjusting creates odds.",
+        "Rather than trapped passivity, pursue deliberate change.",
+        "When the environment is stuck, rebuild your choices.",
+        "To change the scene, stop passively absorbing it.",
+        "Stop dumb-waiting—find your own road.",
+        "You can't keep taking hits; find a way to shift.",
+        "Waiting idle won't help—change how you live it.",
+        "Don't guard a bad layout; swap when you can.",
+        "We can't only catch what comes—hunt for breaks.",
+        "Don't let problems shrink your space—adjust ahead.",
+        "Create conditions yourself instead of waiting outside.",
+        "Facing this layout, passive burn isn't the way—shift.",
+    ]
+
+    /// 当前语言下的内置语录列表。
+    private static var builtIn: [String] {
+        Localization.isChinese ? builtInZh : builtInEn
+    }
 
     /// 展开后的自定义语录文件路径（`~/...`）。
     private static func customFileURL() -> URL {

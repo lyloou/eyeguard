@@ -4,11 +4,13 @@ import AppKit
 class OnboardingWindowController: NSWindowController {
 
     private var currentStep = 0
-    private let steps = [
-        (L10n.guideStep1, "step1"),
-        (L10n.guideStep2, "step2"),
-        (L10n.guideStep3, "step3")
-    ]
+    private var steps: [(String, String)] {
+        [
+            (L10n.guideStep1, "step1"),
+            (L10n.guideStep2, "step2"),
+            (L10n.guideStep3, "step3"),
+        ]
+    }
 
     private var iconView: NSImageView!
     private var stepLabel: NSTextField!
@@ -76,7 +78,7 @@ class OnboardingWindowController: NSWindowController {
         }
 
         // Buttons
-        let skipButton = NSButton(title: "Skip", target: self, action: #selector(skipClicked))
+        let skipButton = NSButton(title: L10n.guideSkip, target: self, action: #selector(skipClicked))
         skipButton.bezelStyle = .rounded
         skipButton.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(skipButton)
@@ -118,7 +120,13 @@ class OnboardingWindowController: NSWindowController {
             view.layer?.backgroundColor = (i == index ? NSColor.systemGreen.cgColor : NSColor.systemGray.cgColor)
         }
 
-        nextButton.title = index == steps.count - 1 ? L10n.guideGotIt : "Next →"
+        nextButton.title = index == steps.count - 1 ? L10n.guideGotIt : L10n.guideNext
+    }
+
+    /// 语言切换后刷新引导文案。
+    func applyLocalization() {
+        window?.title = L10n.guideTitle
+        showStep(currentStep)
     }
 
     @objc private func nextClicked() {

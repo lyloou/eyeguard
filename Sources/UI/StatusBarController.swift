@@ -14,7 +14,15 @@ class StatusBarController: NSObject {
     private var statusMenuItem: NSMenuItem!
     private var toggleMenuItem: NSMenuItem!
     private var restNowMenuItem: NSMenuItem!
+    private var dimMenuItem: NSMenuItem!
+    private var brightMenuItem: NSMenuItem!
     private var styleSubmenuItem: NSMenuItem!
+    private var statsMenuItem: NSMenuItem!
+    private var roundsMenuItem: NSMenuItem!
+    private var restStatsMenuItem: NSMenuItem!
+    private var settingsMenuItem: NSMenuItem!
+    private var aboutMenuItem: NSMenuItem!
+    private var quitMenuItem: NSMenuItem!
 
     // MARK: - Init
 
@@ -34,8 +42,12 @@ class StatusBarController: NSObject {
         )
     }
 
-    @objc private func settingsDidChange() {
+    @objc private func settingsDidChange(_ notification: Notification) {
         guard let manager = timerManager else { return }
+        if let key = notification.object as? String, key == "appLanguage" {
+            refreshLocalizedUI()
+            return
+        }
         updateState(manager.state, remaining: manager.remainingSeconds)
     }
 
@@ -75,13 +87,13 @@ class StatusBarController: NSObject {
         menu.addItem(NSMenuItem.separator())
 
         // 屏幕亮度
-        let dimItem = NSMenuItem(title: L10n.menuDimScreen, action: #selector(dimScreenClicked), keyEquivalent: "")
-        dimItem.target = self
-        menu.addItem(dimItem)
+        dimMenuItem = NSMenuItem(title: L10n.menuDimScreen, action: #selector(dimScreenClicked), keyEquivalent: "")
+        dimMenuItem.target = self
+        menu.addItem(dimMenuItem)
 
-        let brightItem = NSMenuItem(title: L10n.menuBrightScreen, action: #selector(brightScreenClicked), keyEquivalent: "")
-        brightItem.target = self
-        menu.addItem(brightItem)
+        brightMenuItem = NSMenuItem(title: L10n.menuBrightScreen, action: #selector(brightScreenClicked), keyEquivalent: "")
+        brightMenuItem.target = self
+        menu.addItem(brightMenuItem)
 
         menu.addItem(NSMenuItem.separator())
 
@@ -105,35 +117,35 @@ class StatusBarController: NSObject {
         menu.addItem(NSMenuItem.separator())
 
         // 今日统计
-        let statsItem = NSMenuItem(title: L10n.todayStats, action: nil, keyEquivalent: "")
-        statsItem.isEnabled = false
-        menu.addItem(statsItem)
+        statsMenuItem = NSMenuItem(title: L10n.todayStats, action: nil, keyEquivalent: "")
+        statsMenuItem.isEnabled = false
+        menu.addItem(statsMenuItem)
 
-        let roundsItem = NSMenuItem(title: L10n.roundsCompleted(StatsManager.shared.roundsCompletedToday), action: nil, keyEquivalent: "")
-        roundsItem.isEnabled = false
-        menu.addItem(roundsItem)
+        roundsMenuItem = NSMenuItem(title: L10n.roundsCompleted(StatsManager.shared.roundsCompletedToday), action: nil, keyEquivalent: "")
+        roundsMenuItem.isEnabled = false
+        menu.addItem(roundsMenuItem)
 
-        let restItem = NSMenuItem(title: L10n.totalRest(StatsManager.shared.totalRestMinutesToday), action: nil, keyEquivalent: "")
-        restItem.isEnabled = false
-        menu.addItem(restItem)
+        restStatsMenuItem = NSMenuItem(title: L10n.totalRest(StatsManager.shared.totalRestMinutesToday), action: nil, keyEquivalent: "")
+        restStatsMenuItem.isEnabled = false
+        menu.addItem(restStatsMenuItem)
 
         menu.addItem(NSMenuItem.separator())
 
         // 设置
-        let settingsItem = NSMenuItem(title: L10n.menuSettings, action: #selector(settingsClicked), keyEquivalent: ",")
-        settingsItem.target = self
-        menu.addItem(settingsItem)
+        settingsMenuItem = NSMenuItem(title: L10n.menuSettings, action: #selector(settingsClicked), keyEquivalent: ",")
+        settingsMenuItem.target = self
+        menu.addItem(settingsMenuItem)
 
-        let aboutItem = NSMenuItem(title: L10n.menuAbout, action: #selector(aboutClicked), keyEquivalent: "")
-        aboutItem.target = self
-        menu.addItem(aboutItem)
+        aboutMenuItem = NSMenuItem(title: L10n.menuAbout, action: #selector(aboutClicked), keyEquivalent: "")
+        aboutMenuItem.target = self
+        menu.addItem(aboutMenuItem)
 
         menu.addItem(NSMenuItem.separator())
 
         // 退出
-        let quitItem = NSMenuItem(title: L10n.menuQuit, action: #selector(quitClicked), keyEquivalent: "q")
-        quitItem.target = self
-        menu.addItem(quitItem)
+        quitMenuItem = NSMenuItem(title: L10n.menuQuit, action: #selector(quitClicked), keyEquivalent: "q")
+        quitMenuItem.target = self
+        menu.addItem(quitMenuItem)
 
         statusItem.menu = menu
     }
@@ -228,22 +240,14 @@ class StatusBarController: NSObject {
     private func previewText(for style: Settings.StatusBarStyle) -> String {
         let timeStr = "30:00"
         switch style {
-        case .classic:
-            return "\"Working 30:00\""
-        case .minimal:
-            return "\"30:00\""
-        case .emoji:
-            return "\"💼 30:00\""
-        case .compact:
-            return "\"W 30:00\""
-        case .bracket:
-            return "\"[工作中] 30:00\""
-        case .star:
-            return "\"☆工作中☆ 30:00\""
-        case .dots:
-            return "\"◐ 30:00\""
-        case .progressBar:
-            return "\"████████ 30:00\""
+        case .classic:     return L10n.previewClassic(timeStr)
+        case .minimal:     return L10n.previewMinimal(timeStr)
+        case .emoji:       return L10n.previewEmoji(timeStr)
+        case .compact:     return L10n.previewCompact(timeStr)
+        case .bracket:     return L10n.previewBracket(timeStr)
+        case .star:        return L10n.previewStar(timeStr)
+        case .dots:        return L10n.previewDots(timeStr)
+        case .progressBar: return L10n.previewProgressBar(timeStr)
         }
     }
 
@@ -267,6 +271,40 @@ class StatusBarController: NSObject {
         }
     }
 
+    /// 语言切换后按当前状态重绘菜单与状态栏。
+    func refreshLocalizedUI() {
+        guard let manager = timerManager else { return }
+        DispatchQueue.main.async { [weak self] in
+            self?.rebuildMenuLocalizedStrings()
+            self?.refreshMenu(state: manager.state, remaining: manager.remainingSeconds)
+        }
+    }
+
+    /// 更新菜单中依赖本地化的静态标题（语言切换或统计刷新时调用）。
+    private func rebuildMenuLocalizedStrings() {
+        restNowMenuItem.title = L10n.menuRestNow
+        dimMenuItem.title = L10n.menuDimScreen
+        brightMenuItem.title = L10n.menuBrightScreen
+        styleSubmenuItem.title = L10n.statusBarStyle
+
+        if let submenu = styleSubmenuItem.submenu {
+            for item in submenu.items {
+                guard item.tag < Settings.StatusBarStyle.allCases.count else { continue }
+                let style = Settings.StatusBarStyle.allCases[item.tag]
+                item.title = styleDisplayName(style)
+            }
+        }
+        updateStyleSubmenuPreviews()
+
+        statsMenuItem.title = L10n.todayStats
+        roundsMenuItem.title = L10n.roundsCompleted(StatsManager.shared.roundsCompletedToday)
+        restStatsMenuItem.title = L10n.totalRest(StatsManager.shared.totalRestMinutesToday)
+
+        settingsMenuItem.title = L10n.menuSettings
+        aboutMenuItem.title = L10n.menuAbout
+        quitMenuItem.title = L10n.menuQuit
+    }
+
     private func refreshMenu(state: EyeState, remaining: Int) {
         // 状态文字
         let timeStr = formatTime(remaining)
@@ -282,6 +320,7 @@ class StatusBarController: NSObject {
             statusMenuItem.title = L10n.statusWorking(timeStr)
             toggleMenuItem.title = L10n.menuPause
             toggleMenuItem.isEnabled = true
+            restNowMenuItem.title = L10n.menuRestNow
             restNowMenuItem.isEnabled = true
             applyStatusBarTitle(formatStatusBarText(state: .working, timeStr: timeStr, remaining: remaining), state: .working)
 
@@ -289,6 +328,7 @@ class StatusBarController: NSObject {
             statusMenuItem.title = L10n.statusPaused(formatTime(frozen))
             toggleMenuItem.title = L10n.menuResume
             toggleMenuItem.isEnabled = true
+            restNowMenuItem.title = L10n.menuRestNow
             restNowMenuItem.isEnabled = true
             applyStatusBarTitle(formatStatusBarText(state: .paused(remaining: frozen), timeStr: formatTime(frozen), remaining: frozen), state: .paused(remaining: frozen))
 
@@ -304,6 +344,9 @@ class StatusBarController: NSObject {
             restNowMenuItem.isEnabled = false
             applyStatusBarTitle(formatStatusBarText(state: .awaitingActivity, timeStr: timeStr, remaining: remaining), state: .awaitingActivity)
         }
+
+        roundsMenuItem.title = L10n.roundsCompleted(StatsManager.shared.roundsCompletedToday)
+        restStatsMenuItem.title = L10n.totalRest(StatsManager.shared.totalRestMinutesToday)
     }
 
     private func formatStatusBarText(state: EyeState, timeStr: String, remaining: Int) -> String {
@@ -312,75 +355,73 @@ class StatusBarController: NSObject {
         case .classic:
             switch state {
             case .idle:    return L10n.appName
-            case .working: return "Working \(timeStr)"
-            case .paused:  return "Paused \(timeStr)"
-            case .resting: return "Resting \(timeStr)"
+            case .working: return L10n.statusBarClassicWorking(timeStr)
+            case .paused:  return L10n.statusBarClassicPaused(timeStr)
+            case .resting: return L10n.statusBarClassicResting(timeStr)
             case .awaitingActivity: return L10n.statusBarAwaitingActivity
             }
         case .minimal:
             switch state {
             case .idle:    return L10n.appName
-            case .working: return "\(timeStr)"
-            case .paused:  return "\(timeStr)"
-            case .resting: return "\(timeStr)"
+            case .working, .paused, .resting: return timeStr
             case .awaitingActivity: return L10n.statusBarAwaitingActivity
             }
         case .emoji:
             switch state {
             case .idle:    return L10n.appName
-            case .working: return "💼 \(timeStr)"
-            case .paused:  return "⏸ \(timeStr)"
-            case .resting: return "🌿 \(timeStr)"
-            case .awaitingActivity: return "🌿 \(L10n.statusBarAwaitingActivity)"
+            case .working: return L10n.statusBarEmojiWorking(timeStr)
+            case .paused:  return L10n.statusBarEmojiPaused(timeStr)
+            case .resting: return L10n.statusBarEmojiResting(timeStr)
+            case .awaitingActivity: return L10n.statusBarEmojiAwaiting(timeStr)
             }
         case .compact:
             switch state {
             case .idle:    return L10n.appName
-            case .working: return "W \(timeStr)"
-            case .paused:  return "P \(timeStr)"
-            case .resting: return "R \(timeStr)"
-            case .awaitingActivity: return "R …"
+            case .working: return L10n.statusBarCompactWorking(timeStr)
+            case .paused:  return L10n.statusBarCompactPaused(timeStr)
+            case .resting: return L10n.statusBarCompactResting(timeStr)
+            case .awaitingActivity: return L10n.statusBarCompactAwaiting
             }
         case .bracket:
             switch state {
             case .idle:    return L10n.appName
-            case .working: return "[工作中] \(timeStr)"
-            case .paused:  return "[已暂停] \(timeStr)"
-            case .resting: return "[休息中] \(timeStr)"
-            case .awaitingActivity: return "[\(L10n.statusAwaitingActivity)]"
+            case .working: return L10n.statusBarBracketWorking(timeStr)
+            case .paused:  return L10n.statusBarBracketPaused(timeStr)
+            case .resting: return L10n.statusBarBracketResting(timeStr)
+            case .awaitingActivity: return L10n.statusBarBracketAwaiting
             }
         case .star:
             switch state {
             case .idle:    return L10n.appName
-            case .working: return "☆工作中☆ \(timeStr)"
-            case .paused:  return "☆已暂停☆ \(timeStr)"
-            case .resting: return "☆休息中☆ \(timeStr)"
-            case .awaitingActivity: return "☆\(L10n.statusAwaitingActivity)☆"
+            case .working: return L10n.statusBarStarWorking(timeStr)
+            case .paused:  return L10n.statusBarStarPaused(timeStr)
+            case .resting: return L10n.statusBarStarResting(timeStr)
+            case .awaitingActivity: return L10n.statusBarStarAwaiting
             }
         case .dots:
-            // 进度点：◐◔◑◕ 动态圆弧表示进度
             let total = totalSeconds(for: state)
             let filled = total > 0 ? (total - remaining) * 4 / total : 0
             let dots = ["◐", "◔", "◑", "◕"]
+            let dot = dots[min(filled, 3)]
             switch state {
             case .idle:    return L10n.appName
-            case .working: return "\(dots[min(filled, 3)]) \(timeStr)"
-            case .paused:  return "⏸ \(timeStr)"
-            case .resting: return "\(dots[min(filled, 3)]) \(timeStr)"
-            case .awaitingActivity: return "◯ \(L10n.statusBarAwaitingActivity)"
+            case .working: return L10n.statusBarDotsWorking(dot, timeStr)
+            case .paused:  return L10n.statusBarDotsPaused(timeStr)
+            case .resting: return L10n.statusBarDotsResting(dot, timeStr)
+            case .awaitingActivity: return L10n.statusBarDotsAwaiting
             }
         case .progressBar:
-            // 进度条：███░░░░░ 表示进度
             let total = totalSeconds(for: state)
             let barLength = 8
             let filled = total > 0 ? (total - remaining) * barLength / total : 0
-            let bar = String(repeating: "█", count: min(filled, barLength)) + String(repeating: "░", count: barLength - min(filled, barLength))
+            let bar = String(repeating: "█", count: min(filled, barLength))
+                + String(repeating: "░", count: barLength - min(filled, barLength))
             switch state {
             case .idle:    return L10n.appName
-            case .working: return "\(bar) \(timeStr)"
-            case .paused:  return "⏸ \(timeStr)"
-            case .resting: return "\(bar) \(timeStr)"
-            case .awaitingActivity: return "◯ \(L10n.statusBarAwaitingActivity)"
+            case .working: return L10n.statusBarProgressWorking(bar, timeStr)
+            case .paused:  return L10n.statusBarProgressPaused(timeStr)
+            case .resting: return L10n.statusBarProgressResting(bar, timeStr)
+            case .awaitingActivity: return L10n.statusBarProgressAwaiting
             }
         }
     }
@@ -439,14 +480,14 @@ class StatusBarController: NSObject {
 
     private func styleDisplayName(_ style: Settings.StatusBarStyle) -> String {
         switch style {
-        case .classic:     return "Classic"
-        case .minimal:     return "Minimal"
-        case .emoji:       return "Emoji"
-        case .compact:     return "Compact"
-        case .bracket:     return "Bracket"
-        case .star:        return "Star"
-        case .dots:        return "Dots"
-        case .progressBar: return "Progress Bar"
+        case .classic:     return L10n.styleClassic
+        case .minimal:     return L10n.styleMinimal
+        case .emoji:       return L10n.styleEmoji
+        case .compact:     return L10n.styleCompact
+        case .bracket:     return L10n.styleBracket
+        case .star:        return L10n.styleStar
+        case .dots:        return L10n.styleDots
+        case .progressBar: return L10n.styleProgressBar
         }
     }
 }

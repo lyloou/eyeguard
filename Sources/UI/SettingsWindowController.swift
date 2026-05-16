@@ -30,6 +30,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     private var statusBarStylePopup: NSPopUpButton!
     private var restWindowPositionPopup: NSPopUpButton!
     private var themeSegment: NSSegmentedControl!
+    private var languagePopup: NSPopUpButton!
 
     // Shortcuts section
     private var toggleHotkeyRecordButton: NSButton!
@@ -59,7 +60,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
             backing: .buffered,
             defer: false
         )
-        panel.title = "Settings"
+        panel.title = L10n.settingsTitle
         panel.delegate = self
         panel.isReleasedWhenClosed = false
         panel.hidesOnDeactivate = false
@@ -104,7 +105,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         ])
 
         // ── SYSTEM ─────────────────────────────────
-        stack.addArrangedSubview(sectionHeader("SYSTEM"))
+        stack.addArrangedSubview(sectionHeader("settings.section.system"))
 
         let sysCard = makeCard()
         stack.addArrangedSubview(sysCard)
@@ -114,35 +115,39 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         sysCard.addSubview(sysStack)
         pinCardStack(sysStack, to: sysCard)
 
+        languagePopup = makePopup(items: languagePopupTitles(), action: #selector(languageChanged))
+        sysStack.addArrangedSubview(makePopupRow(labelKey: "settings.language.label", popup: languagePopup))
+        sysStack.addArrangedSubview(cardDivider())
+
         loginSwitch = NSSwitch()
         loginSwitch.target = self
         loginSwitch.action = #selector(loginChanged)
-        sysStack.addArrangedSubview(makeSwitchRow(label: "Launch at Login", subtitle: "Start automatically on boot", sw: loginSwitch))
+        sysStack.addArrangedSubview(makeSwitchRow(labelKey: "settings.launchAtLogin.label", subtitleKey: "settings.launchAtLogin.subtitle", sw: loginSwitch))
         sysStack.addArrangedSubview(cardDivider())
 
         statusBarStylePopup = makePopup(
             items: Settings.StatusBarStyle.allCases.map { styleDisplayName($0) },
             action: #selector(styleChanged)
         )
-        sysStack.addArrangedSubview(makePopupRow(label: "Status Bar Style", popup: statusBarStylePopup))
+        sysStack.addArrangedSubview(makePopupRow(labelKey: "settings.statusBarStyle.label", popup: statusBarStylePopup))
         sysStack.addArrangedSubview(cardDivider())
 
         restWindowPositionPopup = makePopup(
             items: [L10n.positionCenter, L10n.positionTopRight],
             action: #selector(positionChanged)
         )
-        sysStack.addArrangedSubview(makePopupRow(label: "Break Window Position", popup: restWindowPositionPopup))
+        sysStack.addArrangedSubview(makePopupRow(labelKey: "settings.breakWindowPosition.label", popup: restWindowPositionPopup))
         sysStack.addArrangedSubview(cardDivider())
 
         themeSegment = NSSegmentedControl(
-            labels: ["System", "Light", "Dark"],
+            labels: [L10n.themeSystem, L10n.themeLight, L10n.themeDark],
             trackingMode: .selectOne,
             target: self,
             action: #selector(themeChanged)
         )
         themeSegment.segmentStyle = .rounded
         themeSegment.translatesAutoresizingMaskIntoConstraints = false
-        sysStack.addArrangedSubview(makeSegmentRow(label: "Appearance", segment: themeSegment))
+        sysStack.addArrangedSubview(makeSegmentRow(labelKey: "settings.appearance.label", segment: themeSegment))
 
         for row in sysStack.arrangedSubviews {
             row.widthAnchor.constraint(equalTo: sysStack.widthAnchor).isActive = true
@@ -151,7 +156,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         stack.setCustomSpacing(16, after: sysCard)
 
         // ── SHORTCUTS ───────────────────────────────
-        stack.addArrangedSubview(sectionHeader("SHORTCUTS"))
+        stack.addArrangedSubview(sectionHeader("settings.section.shortcuts"))
 
         let shortcutCard = makeCard()
         stack.addArrangedSubview(shortcutCard)
@@ -166,9 +171,9 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         toggleHotkeyClearButton = makeHotkeyClearAccessoryButton(action: #selector(toggleHotkeyClearTapped))
         shortcutStack.addArrangedSubview(
             makeHotkeyPreferenceRow(
-                title: "Timer",
-                subtitle: "Start, pause, or resume",
-                subtitleDetail: "When idle: starts work. When working: pauses. When paused: resumes. Ignored during rest.",
+                titleKey: "settings.hotkey.timer.title",
+                subtitleKey: "settings.hotkey.timer.subtitle",
+                subtitleDetailKey: "settings.hotkey.timer.detail",
                 record: toggleHotkeyRecordButton,
                 clear: toggleHotkeyClearButton
             )
@@ -180,9 +185,9 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         restHotkeyClearButton = makeHotkeyClearAccessoryButton(action: #selector(restHotkeyClearTapped))
         shortcutStack.addArrangedSubview(
             makeHotkeyPreferenceRow(
-                title: "Rest Now",
-                subtitle: "Jump to break now",
-                subtitleDetail: "Starts a rest immediately if you are working or paused.",
+                titleKey: "settings.hotkey.restNow.title",
+                subtitleKey: "settings.hotkey.restNow.subtitle",
+                subtitleDetailKey: "settings.hotkey.restNow.detail",
                 record: restHotkeyRecordButton,
                 clear: restHotkeyClearButton
             )
@@ -195,7 +200,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         stack.setCustomSpacing(16, after: shortcutCard)
 
         // ── TIMER ──────────────────────────────────
-        stack.addArrangedSubview(sectionHeader("TIMER"))
+        stack.addArrangedSubview(sectionHeader("settings.section.timer"))
 
         let timerCard = makeCard()
         stack.addArrangedSubview(timerCard)
@@ -205,7 +210,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         timerCard.addSubview(timerStack)
         pinCardStack(timerStack, to: timerCard)
 
-        let (workRow, wField, wStepper) = makeDurationRow(label: "Work Duration", unit: "min", min: 1, max: 120, action: #selector(workStepperChanged))
+        let (workRow, wField, wStepper) = makeDurationRow(labelKey: "settings.workDuration.label", unitKey: "settings.duration.min", min: 1, max: 120, action: #selector(workStepperChanged))
         workTextField = wField
         workStepper = wStepper
         timerStack.addArrangedSubview(workRow)
@@ -213,7 +218,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
         timerStack.addArrangedSubview(cardDivider())
 
-        let (restRow, rField, rStepper) = makeDurationRow(label: "Rest Duration", unit: "min", min: 1, max: 30, action: #selector(restStepperChanged))
+        let (restRow, rField, rStepper) = makeDurationRow(labelKey: "settings.restDuration.label", unitKey: "settings.duration.min", min: 1, max: 30, action: #selector(restStepperChanged))
         restTextField = rField
         restStepper = rStepper
         timerStack.addArrangedSubview(restRow)
@@ -222,7 +227,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         stack.setCustomSpacing(16, after: timerCard)
 
         // ── BEHAVIOR ───────────────────────────────
-        stack.addArrangedSubview(sectionHeader("BEHAVIOR"))
+        stack.addArrangedSubview(sectionHeader("settings.section.behavior"))
 
         let behaviorCard = makeCard()
         stack.addArrangedSubview(behaviorCard)
@@ -235,7 +240,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         enforceSwitch = NSSwitch()
         enforceSwitch.target = self
         enforceSwitch.action = #selector(enforceChanged)
-        behaviorStack.addArrangedSubview(makeSwitchRow(label: "Enforce Rest", subtitle: "Prevent skipping breaks", sw: enforceSwitch))
+        behaviorStack.addArrangedSubview(makeSwitchRow(labelKey: "settings.enforceRest.label", subtitleKey: "settings.enforceRest.subtitle", sw: enforceSwitch))
         behaviorStack.addArrangedSubview(cardDivider())
 
         restWindowAutoActivateSwitch = NSSwitch()
@@ -243,8 +248,8 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         restWindowAutoActivateSwitch.action = #selector(restWindowAutoActivateChanged)
         behaviorStack.addArrangedSubview(
             makeSwitchRow(
-                label: "Focus Break Window Automatically",
-                subtitle: "Turn off to keep typing elsewhere; Space/ESC work after you click the panel",
+                labelKey: "settings.focusBreakWindow.label",
+                subtitleKey: "settings.focusBreakWindow.subtitle",
                 sw: restWindowAutoActivateSwitch
             )
         )
@@ -255,8 +260,8 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         waitForActivityAfterRestSwitch.action = #selector(waitForActivityAfterRestChanged)
         behaviorStack.addArrangedSubview(
             makeSwitchRow(
-                label: "Wait for Activity After Rest",
-                subtitle: "Start the work timer only after mouse or keyboard input when you are away",
+                labelKey: "settings.waitForActivity.label",
+                subtitleKey: "settings.waitForActivity.subtitle",
                 sw: waitForActivityAfterRestSwitch
             )
         )
@@ -265,7 +270,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         pauseOnLockSwitch = NSSwitch()
         pauseOnLockSwitch.target = self
         pauseOnLockSwitch.action = #selector(pauseOnLockChanged)
-        behaviorStack.addArrangedSubview(makeSwitchRow(label: "Pause on Lock Screen", subtitle: "Freeze timer when Mac locks", sw: pauseOnLockSwitch))
+        behaviorStack.addArrangedSubview(makeSwitchRow(labelKey: "settings.pauseOnLock.label", subtitleKey: "settings.pauseOnLock.subtitle", sw: pauseOnLockSwitch))
 
         for row in behaviorStack.arrangedSubviews {
             row.widthAnchor.constraint(equalTo: behaviorStack.widthAnchor).isActive = true
@@ -274,7 +279,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         stack.setCustomSpacing(16, after: behaviorCard)
 
         // ── NOTIFICATIONS ──────────────────────────
-        stack.addArrangedSubview(sectionHeader("NOTIFICATIONS"))
+        stack.addArrangedSubview(sectionHeader("settings.section.notifications"))
 
         let notifyCard = makeCard()
         stack.addArrangedSubview(notifyCard)
@@ -287,19 +292,19 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         notifyWorkSwitch = NSSwitch()
         notifyWorkSwitch.target = self
         notifyWorkSwitch.action = #selector(notifyWorkChanged)
-        notifyStack.addArrangedSubview(makeSwitchRow(label: "Work End Alert", subtitle: "Banner when work session ends", sw: notifyWorkSwitch))
+        notifyStack.addArrangedSubview(makeSwitchRow(labelKey: "settings.notifyWorkEnd.label", subtitleKey: "settings.notifyWorkEnd.subtitle", sw: notifyWorkSwitch))
         notifyStack.addArrangedSubview(cardDivider())
 
         notifyRestSwitch = NSSwitch()
         notifyRestSwitch.target = self
         notifyRestSwitch.action = #selector(notifyRestChanged)
-        notifyStack.addArrangedSubview(makeSwitchRow(label: "Rest End Alert", subtitle: "Banner when rest ends", sw: notifyRestSwitch))
+        notifyStack.addArrangedSubview(makeSwitchRow(labelKey: "settings.notifyRestEnd.label", subtitleKey: "settings.notifyRestEnd.subtitle", sw: notifyRestSwitch))
         notifyStack.addArrangedSubview(cardDivider())
 
         soundSwitch = NSSwitch()
         soundSwitch.target = self
         soundSwitch.action = #selector(soundChanged)
-        notifyStack.addArrangedSubview(makeSwitchRow(label: "Sound Effects", subtitle: "Play chime on state change", sw: soundSwitch))
+        notifyStack.addArrangedSubview(makeSwitchRow(labelKey: "settings.sound.label", subtitleKey: "settings.sound.subtitle", sw: soundSwitch))
 
         for row in notifyStack.arrangedSubviews {
             row.widthAnchor.constraint(equalTo: notifyStack.widthAnchor).isActive = true
@@ -340,8 +345,9 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         ])
     }
 
-    private func sectionHeader(_ text: String) -> NSView {
-        let label = NSTextField(labelWithString: text)
+    private func sectionHeader(_ key: String) -> NSView {
+        let label = NSTextField(labelWithString: L10n.string(forKey: key))
+        label.identifier = NSUserInterfaceItemIdentifier(key)
         label.font = NSFont.systemFont(ofSize: 10, weight: .semibold)
         label.textColor = NSColor.secondaryLabelColor
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -368,14 +374,15 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         return line
     }
 
-    private func makeDurationRow(label: String, unit: String, min: Int, max: Int, action: Selector)
+    private func makeDurationRow(labelKey: String, unitKey: String, min: Int, max: Int, action: Selector)
         -> (NSView, NSTextField, NSStepper) {
 
         let row = NSView()
         row.translatesAutoresizingMaskIntoConstraints = false
         row.heightAnchor.constraint(equalToConstant: 50).isActive = true
 
-        let lbl = rowLabel(label)
+        let lbl = rowLabel(L10n.string(forKey: labelKey))
+        lbl.identifier = NSUserInterfaceItemIdentifier(labelKey)
         row.addSubview(lbl)
 
         let field = NSTextField(frame: .zero)
@@ -398,7 +405,8 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         stepper.translatesAutoresizingMaskIntoConstraints = false
         row.addSubview(stepper)
 
-        let unitLbl = NSTextField(labelWithString: unit)
+        let unitLbl = NSTextField(labelWithString: L10n.string(forKey: unitKey))
+        unitLbl.identifier = NSUserInterfaceItemIdentifier(unitKey)
         unitLbl.font = NSFont.systemFont(ofSize: 11)
         unitLbl.textColor = .tertiaryLabelColor
         unitLbl.translatesAutoresizingMaskIntoConstraints = false
@@ -422,15 +430,17 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         return (row, field, stepper)
     }
 
-    private func makeSwitchRow(label: String, subtitle: String, sw: NSSwitch) -> NSView {
+    private func makeSwitchRow(labelKey: String, subtitleKey: String, sw: NSSwitch) -> NSView {
         let row = NSView()
         row.translatesAutoresizingMaskIntoConstraints = false
         row.heightAnchor.constraint(equalToConstant: 52).isActive = true
 
-        let lbl = rowLabel(label)
+        let lbl = rowLabel(L10n.string(forKey: labelKey))
+        lbl.identifier = NSUserInterfaceItemIdentifier(labelKey)
         row.addSubview(lbl)
 
-        let sub = NSTextField(labelWithString: subtitle)
+        let sub = NSTextField(labelWithString: L10n.string(forKey: subtitleKey))
+        sub.identifier = NSUserInterfaceItemIdentifier(subtitleKey)
         sub.font = NSFont.systemFont(ofSize: 11)
         sub.textColor = .secondaryLabelColor
         sub.translatesAutoresizingMaskIntoConstraints = false
@@ -463,12 +473,13 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         return popup
     }
 
-    private func makePopupRow(label: String, popup: NSPopUpButton) -> NSView {
+    private func makePopupRow(labelKey: String, popup: NSPopUpButton) -> NSView {
         let row = NSView()
         row.translatesAutoresizingMaskIntoConstraints = false
         row.heightAnchor.constraint(equalToConstant: 46).isActive = true
 
-        let lbl = rowLabel(label)
+        let lbl = rowLabel(L10n.string(forKey: labelKey))
+        lbl.identifier = NSUserInterfaceItemIdentifier(labelKey)
         row.addSubview(lbl)
         row.addSubview(popup)
 
@@ -484,12 +495,13 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         return row
     }
 
-    private func makeSegmentRow(label: String, segment: NSSegmentedControl) -> NSView {
+    private func makeSegmentRow(labelKey: String, segment: NSSegmentedControl) -> NSView {
         let row = NSView()
         row.translatesAutoresizingMaskIntoConstraints = false
         row.heightAnchor.constraint(equalToConstant: 46).isActive = true
 
-        let lbl = rowLabel(label)
+        let lbl = rowLabel(L10n.string(forKey: labelKey))
+        lbl.identifier = NSUserInterfaceItemIdentifier(labelKey)
         row.addSubview(lbl)
         row.addSubview(segment)
 
@@ -523,7 +535,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         clear.setButtonType(.momentaryPushIn)
         clear.font = NSFont.systemFont(ofSize: 15, weight: .medium)
         clear.contentTintColor = .secondaryLabelColor
-        clear.toolTip = "Clear shortcut"
+        clear.toolTip = L10n.hotkeyClearTooltip
         clear.focusRingType = .none
         clear.translatesAutoresizingMaskIntoConstraints = false
         clear.widthAnchor.constraint(equalToConstant: 24).isActive = true
@@ -533,9 +545,9 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
     /// 快捷键行：标题 + 简短说明（过长省略，详情见 `subtitleDetail` 的 tooltip）+ 组合框
     private func makeHotkeyPreferenceRow(
-        title: String,
-        subtitle: String,
-        subtitleDetail: String,
+        titleKey: String,
+        subtitleKey: String,
+        subtitleDetailKey: String,
         record: NSButton,
         clear: NSButton
     ) -> NSView {
@@ -543,17 +555,20 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         row.translatesAutoresizingMaskIntoConstraints = false
         row.heightAnchor.constraint(equalToConstant: 56).isActive = true
 
-        let lbl = rowLabel(title)
-        let sub = NSTextField(labelWithString: subtitle)
+        let detail = L10n.string(forKey: subtitleDetailKey)
+        let lbl = rowLabel(L10n.string(forKey: titleKey))
+        lbl.identifier = NSUserInterfaceItemIdentifier(titleKey)
+        let sub = NSTextField(labelWithString: L10n.string(forKey: subtitleKey))
+        sub.identifier = NSUserInterfaceItemIdentifier(subtitleKey)
         sub.font = NSFont.systemFont(ofSize: 11)
         sub.textColor = .secondaryLabelColor
         sub.lineBreakMode = .byTruncatingTail
         sub.maximumNumberOfLines = 1
         sub.setContentCompressionResistancePriority(.defaultLow, for: .horizontal)
         sub.translatesAutoresizingMaskIntoConstraints = false
-        sub.toolTip = subtitleDetail
-        lbl.toolTip = subtitleDetail
-        row.toolTip = subtitleDetail
+        sub.toolTip = detail
+        lbl.toolTip = detail
+        row.toolTip = detail
 
         let fieldBox = ShortcutFieldContainer()
         fieldBox.translatesAutoresizingMaskIntoConstraints = false
@@ -616,15 +631,74 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
     private func styleDisplayName(_ style: Settings.StatusBarStyle) -> String {
         switch style {
-        case .classic:     return "Classic"
-        case .minimal:     return "Minimal"
-        case .emoji:       return "Emoji"
-        case .compact:     return "Compact"
-        case .bracket:     return "Bracket"
-        case .star:        return "Star"
-        case .dots:        return "Dots"
-        case .progressBar: return "Progress Bar"
+        case .classic:     return L10n.styleClassic
+        case .minimal:     return L10n.styleMinimal
+        case .emoji:       return L10n.styleEmoji
+        case .compact:     return L10n.styleCompact
+        case .bracket:     return L10n.styleBracket
+        case .star:        return L10n.styleStar
+        case .dots:        return L10n.styleDots
+        case .progressBar: return L10n.styleProgressBar
         }
+    }
+
+    private func languagePopupTitles() -> [String] {
+        [L10n.languageSystem, L10n.languageEnglish, L10n.languageChinese]
+    }
+
+    private func reloadLanguagePopupItems() {
+        let selected = languagePopup.indexOfSelectedItem
+        languagePopup.removeAllItems()
+        languagePopup.addItems(withTitles: languagePopupTitles())
+        if selected >= 0, selected < languagePopup.numberOfItems {
+            languagePopup.selectItem(at: selected)
+        }
+    }
+
+    private func reloadStylePopupItems() {
+        let selected = statusBarStylePopup.indexOfSelectedItem
+        statusBarStylePopup.removeAllItems()
+        statusBarStylePopup.addItems(withTitles: Settings.StatusBarStyle.allCases.map { styleDisplayName($0) })
+        if selected >= 0, selected < statusBarStylePopup.numberOfItems {
+            statusBarStylePopup.selectItem(at: selected)
+        }
+    }
+
+    private func reloadPositionPopupItems() {
+        let selected = restWindowPositionPopup.indexOfSelectedItem
+        restWindowPositionPopup.removeAllItems()
+        restWindowPositionPopup.addItems(withTitles: [L10n.positionCenter, L10n.positionTopRight])
+        if selected >= 0, selected < restWindowPositionPopup.numberOfItems {
+            restWindowPositionPopup.selectItem(at: selected)
+        }
+    }
+
+    /// 遍历设置窗控件树，按 `identifier` 刷新本地化文案。
+    private func localizeViewTree(_ view: NSView?) {
+        guard let view else { return }
+        if let key = view.identifier?.rawValue, !key.isEmpty,
+           let field = view as? NSTextField {
+            field.stringValue = L10n.string(forKey: key)
+        }
+        for sub in view.subviews {
+            localizeViewTree(sub)
+        }
+    }
+
+    /// 语言切换后刷新设置界面文案（窗口已构建时调用）。
+    func applyLocalization() {
+        window.title = L10n.settingsTitle
+        localizeViewTree(window.contentView)
+        themeSegment.setLabel(L10n.themeSystem, forSegment: 0)
+        themeSegment.setLabel(L10n.themeLight, forSegment: 1)
+        themeSegment.setLabel(L10n.themeDark, forSegment: 2)
+        reloadLanguagePopupItems()
+        reloadStylePopupItems()
+        reloadPositionPopupItems()
+        toggleHotkeyClearButton.toolTip = L10n.hotkeyClearTooltip
+        restHotkeyClearButton.toolTip = L10n.hotkeyClearTooltip
+        refreshHotkeyButtons()
+        loadSettings()
     }
 
     // MARK: - Load Settings
@@ -647,6 +721,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         statusBarStylePopup.selectItem(at: s.statusBarStyle.index)
         restWindowPositionPopup.selectItem(at: s.restWindowPosition.index)
         themeSegment.selectedSegment = s.themeMode.index
+        languagePopup.selectItem(at: s.appLanguage.index)
         refreshHotkeyButtons()
     }
 
@@ -654,25 +729,25 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     private func refreshHotkeyButtons() {
         let s = Settings.shared
         if hotkeyRecordingSlot == .toggle {
-            toggleHotkeyRecordButton.title = "Press keys…"
+            toggleHotkeyRecordButton.title = L10n.hotkeyPressKeys
         } else if s.isGlobalHotkeyToggleEnabled {
             toggleHotkeyRecordButton.title = HotkeyDisplayFormatter.displayString(
                 keyCode: s.globalHotkeyToggleKeyCode,
                 carbonModifiers: s.globalHotkeyToggleCarbonModifiers
             )
         } else {
-            toggleHotkeyRecordButton.title = "Click to set"
+            toggleHotkeyRecordButton.title = L10n.hotkeyClickToSet
         }
 
         if hotkeyRecordingSlot == .restNow {
-            restHotkeyRecordButton.title = "Press keys…"
+            restHotkeyRecordButton.title = L10n.hotkeyPressKeys
         } else if s.isGlobalHotkeyRestNowEnabled {
             restHotkeyRecordButton.title = HotkeyDisplayFormatter.displayString(
                 keyCode: s.globalHotkeyRestNowKeyCode,
                 carbonModifiers: s.globalHotkeyRestNowCarbonModifiers
             )
         } else {
-            restHotkeyRecordButton.title = "Click to set"
+            restHotkeyRecordButton.title = L10n.hotkeyClickToSet
         }
 
         let showToggleClear = s.isGlobalHotkeyToggleEnabled || hotkeyRecordingSlot == .toggle
@@ -810,9 +885,17 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         NotificationCenter.default.post(name: .settingsDidChange, object: "themeMode")
     }
 
+    @objc private func languageChanged() {
+        let lang = Settings.AppLanguage.allCases[languagePopup.indexOfSelectedItem]
+        guard Settings.shared.appLanguage != lang else { return }
+        Settings.shared.appLanguage = lang
+        NotificationCenter.default.post(name: .settingsDidChange, object: "appLanguage")
+    }
+
     // MARK: - Show / NSWindowDelegate
 
     func show() {
+        applyLocalization()
         loadSettings()
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)

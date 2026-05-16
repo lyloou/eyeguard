@@ -135,7 +135,7 @@ class RestWindowController: NSObject {
             countdown.textColor = NSColor.white.withAlphaComponent(0.92)
             quote.textColor = NSColor.white.withAlphaComponent(0.52)
             breakBadge.textColor = jadeColor.withAlphaComponent(0.85)
-            skip.attributedTitle = NSAttributedString(string: "Skip Rest", attributes: [
+            skip.attributedTitle = NSAttributedString(string: L10n.skipRest, attributes: [
                 .font: NSFont.systemFont(ofSize: 11, weight: .regular),
                 .foregroundColor: NSColor.white.withAlphaComponent(0.30),
                 .underlineStyle: NSUnderlineStyle.single.rawValue,
@@ -148,7 +148,7 @@ class RestWindowController: NSObject {
             quote.textColor = NSColor.secondaryLabelColor
             // 浅色 + 毛玻璃上 tertiary 过淡，用主标签色降透明度保证可读性。
             breakBadge.textColor = jadeDarkenedForLightUI
-            skip.attributedTitle = NSAttributedString(string: "Skip Rest", attributes: [
+            skip.attributedTitle = NSAttributedString(string: L10n.skipRest, attributes: [
                 .font: NSFont.systemFont(ofSize: 11, weight: .regular),
                 .foregroundColor: NSColor.labelColor.withAlphaComponent(0.62),
                 .underlineStyle: NSUnderlineStyle.single.rawValue,
@@ -218,7 +218,7 @@ class RestWindowController: NSObject {
         startPulseAnimation()
 
         // Subtitle (top)
-        subtitleLabel = NSTextField(labelWithString: "闭上眼睛 · 好好休息")
+        subtitleLabel = NSTextField(labelWithString: L10n.restSubtitle)
         subtitleLabel.font = NSFont.systemFont(ofSize: 11, weight: .light)
         subtitleLabel.textColor = NSColor.white.withAlphaComponent(0.45)
         subtitleLabel.alignment = .center
@@ -244,7 +244,7 @@ class RestWindowController: NSObject {
         contentView.addSubview(quoteLabel)
 
         // "BREAK" label above countdown
-        breakBadgeLabel = NSTextField(labelWithString: "BREAK")
+        breakBadgeLabel = NSTextField(labelWithString: L10n.restBreakBadge)
         breakBadgeLabel.font = NSFont.systemFont(ofSize: 9, weight: .semibold)
         breakBadgeLabel.textColor = jadeColor.withAlphaComponent(0.85)
         breakBadgeLabel.alignment = .center
@@ -256,7 +256,7 @@ class RestWindowController: NSObject {
         skipButton.isBordered = false
         skipButton.wantsLayer = true
         skipButton.layer?.cornerRadius = 8
-        let skipTitle = NSAttributedString(string: "Skip Rest", attributes: [
+        let skipTitle = NSAttributedString(string: L10n.skipRest, attributes: [
             .font: NSFont.systemFont(ofSize: 11, weight: .regular),
             .foregroundColor: NSColor.white.withAlphaComponent(0.3),
             .underlineStyle: NSUnderlineStyle.single.rawValue
@@ -349,8 +349,34 @@ class RestWindowController: NSObject {
 
     /// 呈现休息浮动窗：`Settings.shared.restWindowAutoActivate` 为 `true` 时激活 EyeGuard 并使其成为 key window；
     /// 为 `false` 时仅用 `orderFrontRegardless` 显示窗体，不改变当前前台应用的键盘焦点。用户可随时点击面板以重新激活。
+    /// 语言切换后刷新休息窗可见文案。
+    func applyLocalization() {
+        subtitleLabel?.stringValue = L10n.restSubtitle
+        breakBadgeLabel?.stringValue = L10n.restBreakBadge
+        updateSkipButtonTitle()
+        quoteLabel?.stringValue = RestQuoteProvider.randomQuote()
+        applyRestPanelTone()
+    }
+
+    private func updateSkipButtonTitle() {
+        guard let skip = skipButton else { return }
+        let isDark = blurBacking?.effectiveAppearance.bestMatch(from: [.aqua, .darkAqua]) == .darkAqua
+        let color: NSColor
+        if isDark {
+            color = NSColor.white.withAlphaComponent(0.30)
+        } else {
+            color = NSColor.labelColor.withAlphaComponent(0.62)
+        }
+        skip.attributedTitle = NSAttributedString(string: L10n.skipRest, attributes: [
+            .font: NSFont.systemFont(ofSize: 11, weight: .regular),
+            .foregroundColor: color,
+            .underlineStyle: NSUnderlineStyle.single.rawValue,
+        ])
+    }
+
     func show() {
         applyRestPanelTone()
+        applyLocalization()
         quoteLabel.stringValue = RestQuoteProvider.randomQuote()
         if Settings.shared.restWindowAutoActivate {
             NSApp.activate(ignoringOtherApps: true)

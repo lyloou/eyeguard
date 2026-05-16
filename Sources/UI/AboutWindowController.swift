@@ -5,6 +5,8 @@ import QuartzCore
 class AboutWindowController: NSWindowController {
 
     private var keyMonitor: Any?
+    private var taglineLabel: NSTextField!
+    private var descLabel: NSTextField!
 
     init() {
         let panel = AppPanel(
@@ -80,7 +82,7 @@ class AboutWindowController: NSWindowController {
         blur.addSubview(nameLabel)
 
         // 副标题
-        let taglineLabel = NSTextField(labelWithString: "护眼卫士")
+        taglineLabel = NSTextField(labelWithString: L10n.aboutTagline)
         taglineLabel.font = NSFont.systemFont(ofSize: 12, weight: .light)
         taglineLabel.textColor = .secondaryLabelColor
         taglineLabel.alignment = .center
@@ -94,7 +96,7 @@ class AboutWindowController: NSWindowController {
         blur.addSubview(versionBadge)
 
         // Description
-        let descLabel = NSTextField(wrappingLabelWithString: "Work 30 min · Rest 5 min\nGuard your eyes with timed, mindful breaks.")
+        descLabel = NSTextField(wrappingLabelWithString: L10n.aboutDescription)
         descLabel.font = NSFont.systemFont(ofSize: 12, weight: .light)
         descLabel.textColor = .secondaryLabelColor
         descLabel.alignment = .center
@@ -165,6 +167,13 @@ class AboutWindowController: NSWindowController {
         if let url = URL(string: "https://github.com/lyloou/eyeguard") {
             NSWorkspace.shared.open(url)
         }
+    }
+
+    /// 语言切换后刷新关于窗口文案。
+    func applyLocalization() {
+        window?.title = L10n.aboutTitle
+        taglineLabel?.stringValue = L10n.aboutTagline
+        descLabel?.stringValue = L10n.aboutDescription
     }
 
     func show() {

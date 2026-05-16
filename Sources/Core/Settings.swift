@@ -23,12 +23,31 @@ class Settings {
         static let statusBarStyle = "statusBarStyle"
         static let restWindowPosition = "restWindowPosition"
         static let themeMode      = "themeMode"
+        static let appLanguage    = "appLanguage"
         static let globalHotkeyToggleEnabled = "globalHotkeyToggleEnabled"
         static let globalHotkeyToggleKeyCode = "globalHotkeyToggleKeyCode"
         static let globalHotkeyToggleCarbonModifiers = "globalHotkeyToggleCarbonModifiers"
         static let globalHotkeyRestNowEnabled = "globalHotkeyRestNowEnabled"
         static let globalHotkeyRestNowKeyCode = "globalHotkeyRestNowKeyCode"
         static let globalHotkeyRestNowCarbonModifiers = "globalHotkeyRestNowCarbonModifiers"
+    }
+
+    /// 应用界面语言
+    enum AppLanguage: String, CaseIterable {
+        case system = "system"
+        case en = "en"
+        case zhHans = "zh-Hans"
+
+        var index: Int { AppLanguage.allCases.firstIndex(of: self) ?? 0 }
+
+        /// 对应 `.lproj` 目录名；跟随系统时为 `nil`。
+        var localeIdentifier: String? {
+            switch self {
+            case .system: return nil
+            case .en: return "en"
+            case .zhHans: return "zh-Hans"
+            }
+        }
     }
 
     /// 外观主题
@@ -90,6 +109,7 @@ class Settings {
             Keys.statusBarStyle: StatusBarStyle.classic.rawValue,
             Keys.restWindowPosition: RestWindowPosition.center.rawValue,
             Keys.themeMode: ThemeMode.system.rawValue,
+            Keys.appLanguage: AppLanguage.system.rawValue,
             Keys.globalHotkeyToggleEnabled: true,
             Keys.globalHotkeyToggleKeyCode: Int(Self.defaultToggleKeyCode),
             Keys.globalHotkeyToggleCarbonModifiers: Int(Self.defaultHotkeyCarbonMods),
@@ -177,6 +197,15 @@ class Settings {
             return RestWindowPosition(rawValue: raw) ?? .center
         }
         set { defaults.set(newValue.rawValue, forKey: Keys.restWindowPosition) }
+    }
+
+    /// 应用界面语言（`system` 跟随 macOS 首选语言）
+    var appLanguage: AppLanguage {
+        get {
+            let raw = defaults.string(forKey: Keys.appLanguage) ?? AppLanguage.system.rawValue
+            return AppLanguage(rawValue: raw) ?? .system
+        }
+        set { defaults.set(newValue.rawValue, forKey: Keys.appLanguage) }
     }
 
     /// 外观主题

@@ -277,6 +277,12 @@ class TimerManager {
         startWorking()
     }
 
+    /// 语言切换后刷新休息窗与状态栏展示。
+    func refreshLocalizedUI() {
+        restWindowController?.applyLocalization()
+        updateUI()
+    }
+
     // MARK: - Helpers
 
     var formattedTime: String {
@@ -288,15 +294,15 @@ class TimerManager {
     var statusBarText: String {
         switch state {
         case .idle:
-            return "护眼卫士"
+            return L10n.appName
         case .working:
-            return "工作中 \(formattedTime)"
+            return L10n.statusWorking(formattedTime)
         case .paused(let seconds):
             let m = seconds / 60
             let s = seconds % 60
-            return "已暂停 \(String(format: "%02d:%02d", m, s))"
+            return L10n.statusPaused(String(format: "%02d:%02d", m, s))
         case .resting:
-            return "休息中 \(formattedTime)"
+            return L10n.statusResting(formattedTime)
         case .awaitingActivity:
             return L10n.statusAwaitingActivity
         }

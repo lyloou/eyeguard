@@ -1,0 +1,179 @@
+/* App */
+"app.name" = "护眼卫士";
+
+/* Status bar */
+"Idle" = "空闲";
+"Working" = "工作中";
+"Paused" = "已暂停";
+"Resting" = "休息中";
+"Working %@" = "工作中 %@";
+"Paused %@" = "已暂停 %@";
+"Resting %@" = "休息中 %@";
+"Awaiting activity" = "等待活动";
+"Resume: move or type" = "动一下鼠标或键盘继续";
+
+"state.idle" = "空闲";
+"state.working" = "工作中";
+"state.paused" = "已暂停";
+"state.resting" = "休息中";
+"state.awaiting" = "等待活动";
+
+"status.classic.working" = "工作中 %@";
+"status.classic.paused" = "已暂停 %@";
+"status.classic.resting" = "休息中 %@";
+"status.bracket.working" = "[工作中] %@";
+"status.bracket.paused" = "[已暂停] %@";
+"status.bracket.resting" = "[休息中] %@";
+"status.bracket.awaiting" = "[等待活动]";
+"status.star.working" = "☆工作中☆ %@";
+"status.star.paused" = "☆已暂停☆ %@";
+"status.star.resting" = "☆休息中☆ %@";
+"status.star.awaiting" = "☆等待活动☆";
+"status.emoji.working" = "💼 %@";
+"status.emoji.paused" = "⏸ %@";
+"status.emoji.resting" = "🌿 %@";
+"status.emoji.awaiting" = "🌿 %@";
+"status.compact.working" = "W %@";
+"status.compact.paused" = "P %@";
+"status.compact.resting" = "R %@";
+"status.compact.awaiting" = "R …";
+"status.dots.paused" = "⏸ %@";
+"status.dots.working" = "%@ %@";
+"status.dots.resting" = "%@ %@";
+"status.dots.awaiting" = "◯ %@";
+"status.progress.working" = "%@ %@";
+"status.progress.paused" = "⏸ %@";
+"status.progress.resting" = "%@ %@";
+"status.progress.awaiting" = "◯ %@";
+
+"preview.classic" = "\"工作中 %@\"";
+"preview.minimal" = "\"%@\"";
+"preview.emoji" = "\"💼 %@\"";
+"preview.compact" = "\"W %@\"";
+"preview.bracket" = "\"[工作中] %@\"";
+"preview.star" = "\"☆工作中☆ %@\"";
+"preview.dots" = "\"◐ %@\"";
+"preview.progressBar" = "\"████████ %@\"";
+
+/* Menu */
+"▶ Start" = "▶ 开始";
+"▶ Resume" = "▶ 继续";
+"⏸ Pause" = "⏸ 暂停";
+"🔄 Reset" = "🔄 重置";
+"⏰ Rest Now" = "⏰ 立即休息";
+"🌑 Dim Screen" = "🌑 调暗屏幕";
+"☀️ Bright Screen" = "☀️ 调亮屏幕";
+"⚙ Settings..." = "⚙ 设置...";
+"About EyeGuard" = "关于 EyeGuard";
+"❌ Quit" = "❌ 退出";
+
+/* Settings */
+"settings.title" = "设置";
+"settings.section.system" = "系统";
+"settings.section.shortcuts" = "快捷键";
+"settings.section.timer" = "计时";
+"settings.section.behavior" = "行为";
+"settings.section.notifications" = "通知";
+
+"settings.language.label" = "语言";
+"settings.language.system" = "跟随系统";
+"settings.language.english" = "English";
+"settings.language.chinese" = "简体中文";
+
+"settings.launchAtLogin.label" = "开机启动";
+"settings.launchAtLogin.subtitle" = "登录时自动运行";
+"settings.statusBarStyle.label" = "状态栏样式";
+"settings.breakWindowPosition.label" = "休息窗位置";
+"settings.appearance.label" = "外观";
+"settings.theme.system" = "跟随系统";
+"settings.theme.light" = "浅色";
+"settings.theme.dark" = "深色";
+
+"settings.hotkey.timer.title" = "计时控制";
+"settings.hotkey.timer.subtitle" = "开始、暂停或继续";
+"settings.hotkey.timer.detail" = "空闲时开始工作；工作中暂停；已暂停时继续。休息中不响应。";
+"settings.hotkey.restNow.title" = "立即休息";
+"settings.hotkey.restNow.subtitle" = "马上进入休息";
+"settings.hotkey.restNow.detail" = "在工作或已暂停时立即开始休息。";
+"settings.hotkey.pressKeys" = "请按键…";
+"settings.hotkey.clickToSet" = "点击设置";
+"settings.hotkey.clearTooltip" = "清除快捷键";
+
+"settings.workDuration.label" = "工作时长";
+"settings.restDuration.label" = "休息时长";
+"settings.duration.min" = "分钟";
+
+"settings.enforceRest.label" = "强制休息";
+"settings.enforceRest.subtitle" = "不允许跳过休息";
+"settings.focusBreakWindow.label" = "休息窗自动获取焦点";
+"settings.focusBreakWindow.subtitle" = "关闭后可继续在其它应用输入；需点击休息窗后 Space/ESC 才生效";
+"settings.waitForActivity.label" = "休息后等待活动";
+"settings.waitForActivity.subtitle" = "离开电脑时，检测到鼠标或键盘后再开始工作计时";
+"settings.pauseOnLock.label" = "锁屏时暂停";
+"settings.pauseOnLock.subtitle" = "Mac 锁屏时冻结计时";
+
+"settings.notifyWorkEnd.label" = "工作结束提醒";
+"settings.notifyWorkEnd.subtitle" = "工作时段结束时显示横幅";
+"settings.notifyRestEnd.label" = "休息结束提醒";
+"settings.notifyRestEnd.subtitle" = "休息结束时显示横幅";
+"settings.sound.label" = "音效";
+"settings.sound.subtitle" = "状态切换时播放提示音";
+
+"style.classic" = "经典";
+"style.minimal" = "极简";
+"style.emoji" = "表情";
+"style.compact" = "紧凑";
+"style.bracket" = "方括号";
+"style.star" = "星标";
+"style.dots" = "圆点";
+"style.progressBar" = "进度条";
+
+"EyeGuard Settings" = "EyeGuard 设置";
+"Work Duration:" = "工作时长：";
+"Rest Duration:" = "休息时长：";
+"minutes" = "分钟";
+"Enforce Rest (no skip)" = "强制休息（不可跳过）";
+"Pause on Lock" = "锁屏暂停";
+"Notify on Work End" = "工作结束通知";
+"Notify on Rest End" = "休息结束通知";
+"Sound Effects" = "音效";
+"Launch at Login" = "开机启动";
+"Save" = "保存";
+"Status Bar Style:" = "状态栏样式：";
+
+/* Rest window */
+"Take a Break" = "休息一下";
+"rest.subtitle" = "闭上眼睛 · 好好休息";
+"rest.breakBadge" = "休息";
+"Rest" = "休息";
+"Skip Rest" = "跳过休息";
+
+/* Notifications */
+"Take a Break 🎉" = "该休息了 🎉";
+"Worked %d min, rest %d min" = "已工作 %d 分钟，休息 %d 分钟";
+"Back to Work 💪" = "继续工作 💪";
+"Rest done, start a new session" = "休息结束，开始新一轮";
+
+/* Stats */
+"Today's Stats" = "今日统计";
+"%d rounds completed" = "已完成 %d 轮";
+"%d min rested" = "已休息 %d 分钟";
+
+/* Guide */
+"Welcome to EyeGuard" = "欢迎使用 EyeGuard";
+"Work for 30 min → rest 5 min" = "工作 30 分钟 → 休息 5 分钟";
+"Rest window appears when work ends" = "工作结束后会弹出休息窗";
+"Press Space/ESC or wait to continue" = "按空格/ESC 或等待倒计时继续";
+"Got it!" = "知道了！";
+"guide.next" = "下一步 →";
+"guide.skip" = "跳过";
+"about.description" = "工作 30 分钟 · 休息 5 分钟\n用定时休息守护双眼。";
+
+/* About */
+"about.tagline" = "护眼卫士";
+"Version %@" = "版本 %@";
+
+/* Rest window position */
+"Rest Window Position:" = "休息窗位置：";
+"Center" = "居中";
+"Top Right" = "右上角";

@@ -18,6 +18,7 @@
 		4F2C43A7D0C475DC0CFAE44A /* LockScreenMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C384D7842FF70843B032A136 /* LockScreenMonitor.swift */; };
 		59674A9C59AFC20A8335EF13 /* SocketBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EF024B07DCD3D7FA6D4A283 /* SocketBridge.swift */; };
 		7802780B81A0ADE9E4BAA905 /* LoginItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96202C8DB002514B2A08326 /* LoginItemManager.swift */; };
+		7E5163BD8205C1A653B58489 /* Localization.swift in Sources */ = {isa = PBXBuildFile; fileRef = BECC047FC9C30B733C7DD309 /* Localization.swift */; };
 		8E541B77DE3ECB7529B6B971 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45A9FDF9BED4048D9CE96627 /* SoundManager.swift */; };
 		9531EBC561AC195751BAB89A /* UserActivityDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1F67B0B2057A418D494DE6 /* UserActivityDetector.swift */; };
 		A2D69B84A19DF9A0B2CED74C /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF8ADAC3813149ED5103419 /* L10n.swift */; };
@@ -57,6 +58,7 @@
 		A4226A4FBD912F2956E7A824 /* BrightnessManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrightnessManager.swift; sourceTree = "<group>"; };
 		A96202C8DB002514B2A08326 /* LoginItemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItemManager.swift; sourceTree = "<group>"; };
 		AB0D58E2B068E0FA90C27C4F /* StatsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsManager.swift; sourceTree = "<group>"; };
+		BECC047FC9C30B733C7DD309 /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 		C384D7842FF70843B032A136 /* LockScreenMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenMonitor.swift; sourceTree = "<group>"; };
 		C7420247C36273FEE7137939 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
 		D69B95E3CA5DE16846A232EF /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
@@ -65,6 +67,7 @@
 		DE1F67B0B2057A418D494DE6 /* UserActivityDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityDetector.swift; sourceTree = "<group>"; };
 		E62CDE586EEB16115B0FF9CB /* ThemeColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColor.swift; sourceTree = "<group>"; };
 		E9CFAB285D60A6606C58BEBF /* EyeGuard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EyeGuard.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		FDD23E1B266ADADE891808A3 /* zh-Hans */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hans"; path = "zh-Hans.lproj/Localizable.strings"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -123,6 +126,7 @@
 			isa = PBXGroup;
 			children = (
 				7CF8ADAC3813149ED5103419 /* L10n.swift */,
+				BECC047FC9C30B733C7DD309 /* Localization.swift */,
 				6B63A120A6F3CD1EB9B5518B /* RestQuoteProvider.swift */,
 				C7420247C36273FEE7137939 /* Settings.swift */,
 				8EBC9083AB6CFBFD94734F0B /* StateMachine.swift */,
@@ -213,6 +217,7 @@
 			knownRegions = (
 				Base,
 				en,
+				"zh-Hans",
 			);
 			mainGroup = 45EE2DE05864B2DE921582EB;
 			minimizedProjectReferenceProxies = 1;
@@ -249,6 +254,7 @@
 				A9B590D946E17E075DC7D502 /* BrightnessManager.swift in Sources */,
 				DCE87AF5F6C7B244A624D2A5 /* HotkeyManager.swift in Sources */,
 				A2D69B84A19DF9A0B2CED74C /* L10n.swift in Sources */,
+				7E5163BD8205C1A653B58489 /* Localization.swift in Sources */,
 				4F2C43A7D0C475DC0CFAE44A /* LockScreenMonitor.swift in Sources */,
 				7802780B81A0ADE9E4BAA905 /* LoginItemManager.swift in Sources */,
 				F8367868D28767109FE048E1 /* NotificationManager.swift in Sources */,
@@ -276,6 +282,7 @@
 			isa = PBXVariantGroup;
 			children = (
 				0AFDEE85250C026DB42B9EC1 /* en */,
+				FDD23E1B266ADADE891808A3 /* zh-Hans */,
 			);
 			name = Localizable.strings;
 			sourceTree = "<group>";
