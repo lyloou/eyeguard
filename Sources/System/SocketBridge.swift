@@ -156,6 +156,7 @@ class SocketBridge {
                 "restDuration": s.restDuration,
                 "enforceRest": s.enforceRest,
                 "restWindowAutoActivate": s.restWindowAutoActivate,
+                "waitForActivityAfterRest": s.waitForActivityAfterRest,
                 "pauseOnLock": s.pauseOnLock,
                 "notifyOnWorkEnd": s.notifyOnWorkEnd,
                 "notifyOnRestEnd": s.notifyOnRestEnd,

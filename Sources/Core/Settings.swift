@@ -14,6 +14,7 @@ class Settings {
         static let restDuration   = "restDuration"
         static let enforceRest    = "enforceRest"
         static let restWindowAutoActivate = "restWindowAutoActivate"
+        static let waitForActivityAfterRest = "waitForActivityAfterRest"
         static let pauseOnLock    = "pauseOnLock"
         static let notifyOnWorkEnd = "notifyOnWorkEnd"
         static let notifyOnRestEnd = "notifyOnRestEnd"
@@ -81,6 +82,7 @@ class Settings {
             Keys.restDuration: Self.defaultRest,
             Keys.enforceRest: true,
             Keys.restWindowAutoActivate: true,
+            Keys.waitForActivityAfterRest: false,
             Keys.pauseOnLock: true,
             Keys.notifyOnWorkEnd: true,
             Keys.notifyOnRestEnd: false,
@@ -121,6 +123,12 @@ class Settings {
     var restWindowAutoActivate: Bool {
         get { defaults.bool(forKey: Keys.restWindowAutoActivate) }
         set { defaults.set(newValue, forKey: Keys.restWindowAutoActivate) }
+    }
+
+    /// 休息结束后是否等待键鼠活动再开始工作；为 `false` 时保持立即进入工作状态。
+    var waitForActivityAfterRest: Bool {
+        get { defaults.bool(forKey: Keys.waitForActivityAfterRest) }
+        set { defaults.set(newValue, forKey: Keys.waitForActivityAfterRest) }
     }
 
     /// 锁屏是否自动暂停

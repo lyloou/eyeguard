@@ -15,6 +15,8 @@ class L10n {
     static func statusPaused(_ time: String) -> String { String(format: ns("Paused %@"), time) }
     static func statusResting(_ time: String) -> String { String(format: ns("Resting %@"), time) }
     static var statusIdle: String { ns("Idle") }
+    static var statusAwaitingActivity: String { ns("Awaiting activity") }
+    static var statusBarAwaitingActivity: String { ns("Resume: move or type") }
 
     // MARK: - 菜单项
 

@@ -6,6 +6,8 @@
 "Working %@" = "Working %@";
 "Paused %@" = "Paused %@";
 "Resting %@" = "Resting %@";
+"Awaiting activity" = "Awaiting activity";
+"Resume: move or type" = "Resume: move or type";
 
 /* Menu items */
 "▶ Start" = "▶ Start";

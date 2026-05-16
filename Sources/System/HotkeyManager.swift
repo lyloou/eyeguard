@@ -259,7 +259,7 @@ private let hotkeyCallback: EventHandlerUPP = { _, event, _ in
                 timer.pause()
             case .paused:
                 timer.resume()
-            case .resting:
+            case .resting, .awaitingActivity:
                 break
             }
         case 2:

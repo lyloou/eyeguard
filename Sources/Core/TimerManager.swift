@@ -15,6 +15,11 @@ class TimerManager {
     private weak var statusBarController: StatusBarController?
     private var restWindowController: RestWindowController?
 
+    /// 等待键鼠活动时用于轮询系统空闲时间的定时器
+    private var activityPollTimer: Timer?
+    /// 进入 `.awaitingActivity` 时记录的空闲秒数基线
+    private var activityBaselineIdle: TimeInterval = 0
+
     var onStateChanged: ((EyeState) -> Void)?
 
     // MARK: - Init
@@ -47,6 +52,7 @@ class TimerManager {
     }
 
     func reset() {
+        stopAwaitingActivity()
         stopTimer()
         switch state {
         case .idle:
@@ -57,14 +63,17 @@ class TimerManager {
             remainingSeconds = frozenSeconds
         case .resting:
             remainingSeconds = Settings.shared.restDuration
+        case .awaitingActivity:
+            state = .idle
+            remainingSeconds = 0
         }
         updateUI()
     }
 
     func skipRest() {
         guard state == .resting else { return }
-        closeRestWindow()
-        startWorking()
+        let elapsedRest = Settings.shared.restDuration - remainingSeconds
+        finishRest(elapsedRestSeconds: elapsedRest)
     }
 
     /// 立即进入休息
@@ -108,6 +117,7 @@ class TimerManager {
     // MARK: - Private
 
     private func startWorking() {
+        stopAwaitingActivity()
         remainingSeconds = Settings.shared.workDuration
         state = .working
         startTimer()
@@ -116,6 +126,7 @@ class TimerManager {
     }
 
     private func startResting() {
+        stopAwaitingActivity()
         remainingSeconds = Settings.shared.restDuration
         state = .resting
         stopTimer()
@@ -195,19 +206,74 @@ class TimerManager {
     /// 休息弹窗中用户按 Space/ESC 或点跳过
     func dismissRestWindow() {
         let elapsedRest = Settings.shared.restDuration - remainingSeconds
-        closeRestWindow()
-        NotificationManager.shared.notifyRestEnd()
-        SoundManager.shared.playRestEnd()
-        StatsManager.shared.recordRestSeconds(elapsedRest)
-        startWorking()
+        finishRest(elapsedRestSeconds: elapsedRest)
     }
 
     /// 休息计时耗尽，用户还未按键
     func restTimerExpired() {
+        finishRest(elapsedRestSeconds: Settings.shared.restDuration)
+    }
+
+    /// 结束休息：关窗、通知与统计，再按设置决定立即开工或等待键鼠活动。
+    private func finishRest(elapsedRestSeconds: Int) {
         closeRestWindow()
         NotificationManager.shared.notifyRestEnd()
         SoundManager.shared.playRestEnd()
-        StatsManager.shared.recordRestSeconds(Settings.shared.restDuration)
+        StatsManager.shared.recordRestSeconds(elapsedRestSeconds)
+        transitionToWorkAfterRest()
+    }
+
+    /// 在休息已结束后进入工作计时，或进入等待活动状态。
+    private func transitionToWorkAfterRest() {
+        guard Settings.shared.waitForActivityAfterRest else {
+            startWorking()
+            return
+        }
+        if UserActivityDetector.hasRecentActivity() {
+            startWorking()
+            return
+        }
+        beginAwaitingActivity()
+    }
+
+    /// 进入等待键鼠活动状态并启动轮询。
+    private func beginAwaitingActivity() {
+        stopTimer()
+        activityBaselineIdle = UserActivityDetector.combinedIdleSeconds()
+        state = .awaitingActivity
+        remainingSeconds = Settings.shared.workDuration
+        updateUI()
+        startActivityPolling()
+    }
+
+    /// 每 0.5 秒检查是否出现休息结束后的新键鼠活动。
+    private func startActivityPolling() {
+        stopActivityPolling()
+        activityPollTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: true) { [weak self] _ in
+            self?.pollForActivityAfterRest()
+        }
+    }
+
+    /// 停止活动轮询并清除基线。
+    private func stopAwaitingActivity() {
+        stopActivityPolling()
+        activityBaselineIdle = 0
+    }
+
+    private func stopActivityPolling() {
+        activityPollTimer?.invalidate()
+        activityPollTimer = nil
+    }
+
+    /// 检测到新活动后结束等待并开始工作。
+    private func pollForActivityAfterRest() {
+        guard state == .awaitingActivity else {
+            stopAwaitingActivity()
+            return
+        }
+        guard UserActivityDetector.hasNewActivitySince(baselineIdle: activityBaselineIdle) else {
+            return
+        }
         startWorking()
     }
 
@@ -231,6 +297,8 @@ class TimerManager {
             return "已暂停 \(String(format: "%02d:%02d", m, s))"
         case .resting:
             return "休息中 \(formattedTime)"
+        case .awaitingActivity:
+            return L10n.statusAwaitingActivity
         }
     }
 }

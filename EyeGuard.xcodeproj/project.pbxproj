@@ -19,6 +19,7 @@
 		59674A9C59AFC20A8335EF13 /* SocketBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EF024B07DCD3D7FA6D4A283 /* SocketBridge.swift */; };
 		7802780B81A0ADE9E4BAA905 /* LoginItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96202C8DB002514B2A08326 /* LoginItemManager.swift */; };
 		8E541B77DE3ECB7529B6B971 /* SoundManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 45A9FDF9BED4048D9CE96627 /* SoundManager.swift */; };
+		9531EBC561AC195751BAB89A /* UserActivityDetector.swift in Sources */ = {isa = PBXBuildFile; fileRef = DE1F67B0B2057A418D494DE6 /* UserActivityDetector.swift */; };
 		A2D69B84A19DF9A0B2CED74C /* L10n.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7CF8ADAC3813149ED5103419 /* L10n.swift */; };
 		A9B590D946E17E075DC7D502 /* BrightnessManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4226A4FBD912F2956E7A824 /* BrightnessManager.swift */; };
 		B441A7B9E9D972F3C09DD218 /* StatsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = AB0D58E2B068E0FA90C27C4F /* StatsManager.swift */; };
@@ -61,6 +62,7 @@
 		D69B95E3CA5DE16846A232EF /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
 		DA5178CEB6B19E580177C356 /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWindowController.swift; sourceTree = "<group>"; };
 		DB3C76F23D59C8FA85E7C1EA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		DE1F67B0B2057A418D494DE6 /* UserActivityDetector.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserActivityDetector.swift; sourceTree = "<group>"; };
 		E62CDE586EEB16115B0FF9CB /* ThemeColor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeColor.swift; sourceTree = "<group>"; };
 		E9CFAB285D60A6606C58BEBF /* EyeGuard.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = EyeGuard.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -141,6 +143,7 @@
 				3DB773750B90275492596685 /* NotificationManager.swift */,
 				3EF024B07DCD3D7FA6D4A283 /* SocketBridge.swift */,
 				45A9FDF9BED4048D9CE96627 /* SoundManager.swift */,
+				DE1F67B0B2057A418D494DE6 /* UserActivityDetector.swift */,
 			);
 			path = System;
 			sourceTree = "<group>";
@@ -261,6 +264,7 @@
 				E29F1F58C5868B954EC2AE70 /* StatusBarController.swift in Sources */,
 				0A89B4E0A945B0CD3CA26E96 /* ThemeColor.swift in Sources */,
 				10BEA6A897A84B5E6A6973B1 /* TimerManager.swift in Sources */,
+				9531EBC561AC195751BAB89A /* UserActivityDetector.swift in Sources */,
 				E13916EF355A03381FD28842 /* main.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

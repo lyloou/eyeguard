@@ -154,8 +154,8 @@ class StatusBarController: NSObject {
             manager.pause()
         case .paused:
             manager.resume()
-        case .resting:
-            break // 休息中不可操作
+        case .resting, .awaitingActivity:
+            break
         }
     }
 
@@ -297,6 +297,12 @@ class StatusBarController: NSObject {
             toggleMenuItem.isEnabled = false
             restNowMenuItem.isEnabled = false
             applyStatusBarTitle(formatStatusBarText(state: .resting, timeStr: timeStr, remaining: remaining), state: .resting)
+
+        case .awaitingActivity:
+            statusMenuItem.title = L10n.statusAwaitingActivity
+            toggleMenuItem.isEnabled = false
+            restNowMenuItem.isEnabled = false
+            applyStatusBarTitle(formatStatusBarText(state: .awaitingActivity, timeStr: timeStr, remaining: remaining), state: .awaitingActivity)
         }
     }
 
@@ -309,6 +315,7 @@ class StatusBarController: NSObject {
             case .working: return "Working \(timeStr)"
             case .paused:  return "Paused \(timeStr)"
             case .resting: return "Resting \(timeStr)"
+            case .awaitingActivity: return L10n.statusBarAwaitingActivity
             }
         case .minimal:
             switch state {
@@ -316,6 +323,7 @@ class StatusBarController: NSObject {
             case .working: return "\(timeStr)"
             case .paused:  return "\(timeStr)"
             case .resting: return "\(timeStr)"
+            case .awaitingActivity: return L10n.statusBarAwaitingActivity
             }
         case .emoji:
             switch state {
@@ -323,6 +331,7 @@ class StatusBarController: NSObject {
             case .working: return "💼 \(timeStr)"
             case .paused:  return "⏸ \(timeStr)"
             case .resting: return "🌿 \(timeStr)"
+            case .awaitingActivity: return "🌿 \(L10n.statusBarAwaitingActivity)"
             }
         case .compact:
             switch state {
@@ -330,6 +339,7 @@ class StatusBarController: NSObject {
             case .working: return "W \(timeStr)"
             case .paused:  return "P \(timeStr)"
             case .resting: return "R \(timeStr)"
+            case .awaitingActivity: return "R …"
             }
         case .bracket:
             switch state {
@@ -337,6 +347,7 @@ class StatusBarController: NSObject {
             case .working: return "[工作中] \(timeStr)"
             case .paused:  return "[已暂停] \(timeStr)"
             case .resting: return "[休息中] \(timeStr)"
+            case .awaitingActivity: return "[\(L10n.statusAwaitingActivity)]"
             }
         case .star:
             switch state {
@@ -344,6 +355,7 @@ class StatusBarController: NSObject {
             case .working: return "☆工作中☆ \(timeStr)"
             case .paused:  return "☆已暂停☆ \(timeStr)"
             case .resting: return "☆休息中☆ \(timeStr)"
+            case .awaitingActivity: return "☆\(L10n.statusAwaitingActivity)☆"
             }
         case .dots:
             // 进度点：◐◔◑◕ 动态圆弧表示进度
@@ -355,6 +367,7 @@ class StatusBarController: NSObject {
             case .working: return "\(dots[min(filled, 3)]) \(timeStr)"
             case .paused:  return "⏸ \(timeStr)"
             case .resting: return "\(dots[min(filled, 3)]) \(timeStr)"
+            case .awaitingActivity: return "◯ \(L10n.statusBarAwaitingActivity)"
             }
         case .progressBar:
             // 进度条：███░░░░░ 表示进度
@@ -367,6 +380,7 @@ class StatusBarController: NSObject {
             case .working: return "\(bar) \(timeStr)"
             case .paused:  return "⏸ \(timeStr)"
             case .resting: return "\(bar) \(timeStr)"
+            case .awaitingActivity: return "◯ \(L10n.statusBarAwaitingActivity)"
             }
         }
     }
@@ -380,6 +394,8 @@ class StatusBarController: NSObject {
             return .systemYellow
         case .resting:
             return .systemGreen
+        case .awaitingActivity:
+            return .systemTeal
         }
     }
 
@@ -391,7 +407,7 @@ class StatusBarController: NSObject {
         let weight: NSFont.Weight
         switch state {
         case .working: weight = .semibold
-        case .resting: weight = .medium
+        case .resting, .awaitingActivity: weight = .medium
         default:       weight = .regular
         }
         let font = NSFont.monospacedDigitSystemFont(ofSize: 11, weight: weight)
@@ -411,6 +427,7 @@ class StatusBarController: NSObject {
         case .working: return Settings.shared.workDuration
         case .paused:  return Settings.shared.workDuration  // 暂停时用工作总时长算进度
         case .resting: return Settings.shared.restDuration
+        case .awaitingActivity: return Settings.shared.workDuration
         }
     }
 

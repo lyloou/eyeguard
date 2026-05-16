@@ -6,6 +6,7 @@ enum EyeState: Equatable {
     case working           // 工作中
     case paused(remaining: Int)  // 已暂停（冻结的剩余秒数）
     case resting           // 休息中
+    case awaitingActivity  // 休息已结束，等待键鼠活动后再开始工作
 
     var displayText: String {
         switch self {
@@ -13,6 +14,7 @@ enum EyeState: Equatable {
         case .working:     return "工作中"
         case .paused:      return "已暂停"
         case .resting:     return "休息中"
+        case .awaitingActivity: return "Awaiting activity"
         }
     }
 
@@ -22,6 +24,7 @@ enum EyeState: Equatable {
         case (.working, .working):          return true
         case (.paused(let a), .paused(let b)): return a == b
         case (.resting, .resting):          return true
+        case (.awaitingActivity, .awaitingActivity): return true
         default:                            return false
         }
     }

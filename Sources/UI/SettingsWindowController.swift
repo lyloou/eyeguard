@@ -17,6 +17,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     // Behavior section
     private var enforceSwitch: NSSwitch!
     private var restWindowAutoActivateSwitch: NSSwitch!
+    private var waitForActivityAfterRestSwitch: NSSwitch!
     private var pauseOnLockSwitch: NSSwitch!
 
     // Notification section
@@ -245,6 +246,18 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
                 label: "Focus Break Window Automatically",
                 subtitle: "Turn off to keep typing elsewhere; Space/ESC work after you click the panel",
                 sw: restWindowAutoActivateSwitch
+            )
+        )
+        behaviorStack.addArrangedSubview(cardDivider())
+
+        waitForActivityAfterRestSwitch = NSSwitch()
+        waitForActivityAfterRestSwitch.target = self
+        waitForActivityAfterRestSwitch.action = #selector(waitForActivityAfterRestChanged)
+        behaviorStack.addArrangedSubview(
+            makeSwitchRow(
+                label: "Wait for Activity After Rest",
+                subtitle: "Start the work timer only after mouse or keyboard input when you are away",
+                sw: waitForActivityAfterRestSwitch
             )
         )
         behaviorStack.addArrangedSubview(cardDivider())
@@ -625,6 +638,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
         enforceSwitch.state               = s.enforceRest               ? .on : .off
         restWindowAutoActivateSwitch.state = s.restWindowAutoActivate   ? .on : .off
+        waitForActivityAfterRestSwitch.state = s.waitForActivityAfterRest ? .on : .off
         pauseOnLockSwitch.state           = s.pauseOnLock               ? .on : .off
         notifyWorkSwitch.state   = s.notifyOnWorkEnd  ? .on : .off
         notifyRestSwitch.state   = s.notifyOnRestEnd  ? .on : .off
@@ -751,6 +765,11 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     /// 同步「休息弹窗是否自动获取焦点」到持久化存储。
     @objc private func restWindowAutoActivateChanged() {
         Settings.shared.restWindowAutoActivate = (restWindowAutoActivateSwitch.state == .on)
+    }
+
+    /// 同步「休息结束后等待活动再开工」到持久化存储。
+    @objc private func waitForActivityAfterRestChanged() {
+        Settings.shared.waitForActivityAfterRest = (waitForActivityAfterRestSwitch.state == .on)
     }
 
     @objc private func pauseOnLockChanged() {
