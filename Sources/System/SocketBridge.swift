@@ -155,6 +155,7 @@ class SocketBridge {
                 "workDuration": s.workDuration,
                 "restDuration": s.restDuration,
                 "enforceRest": s.enforceRest,
+                "restWindowAutoActivate": s.restWindowAutoActivate,
                 "pauseOnLock": s.pauseOnLock,
                 "notifyOnWorkEnd": s.notifyOnWorkEnd,
                 "notifyOnRestEnd": s.notifyOnRestEnd,

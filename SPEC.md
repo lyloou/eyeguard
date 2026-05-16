@@ -112,6 +112,7 @@
 | `workDuration` | 30 min | 工作时长，范围 1~120 |
 | `restDuration` | 5 min | 休息时长，范围 1~30 |
 | `enforceRest` | true | 强制休息（不允许跳过） |
+| `restWindowAutoActivate` | true | 休息时弹窗是否自动激活并接受键盘焦点 |
 | `pauseOnLock` | true | 锁屏自动暂停 |
 | `notifyOnWorkEnd` | true | 工作结束时发送通知 |
 | `notifyOnRestEnd` | false | 休息结束时发送通知 |

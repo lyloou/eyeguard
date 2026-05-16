@@ -16,6 +16,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
     // Behavior section
     private var enforceSwitch: NSSwitch!
+    private var restWindowAutoActivateSwitch: NSSwitch!
     private var pauseOnLockSwitch: NSSwitch!
 
     // Notification section
@@ -234,6 +235,18 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         enforceSwitch.target = self
         enforceSwitch.action = #selector(enforceChanged)
         behaviorStack.addArrangedSubview(makeSwitchRow(label: "Enforce Rest", subtitle: "Prevent skipping breaks", sw: enforceSwitch))
+        behaviorStack.addArrangedSubview(cardDivider())
+
+        restWindowAutoActivateSwitch = NSSwitch()
+        restWindowAutoActivateSwitch.target = self
+        restWindowAutoActivateSwitch.action = #selector(restWindowAutoActivateChanged)
+        behaviorStack.addArrangedSubview(
+            makeSwitchRow(
+                label: "Focus Break Window Automatically",
+                subtitle: "Turn off to keep typing elsewhere; Space/ESC work after you click the panel",
+                sw: restWindowAutoActivateSwitch
+            )
+        )
         behaviorStack.addArrangedSubview(cardDivider())
 
         pauseOnLockSwitch = NSSwitch()
@@ -610,8 +623,9 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         restTextField.integerValue = s.restDuration / 60
         restStepper.integerValue   = s.restDuration / 60
 
-        enforceSwitch.state      = s.enforceRest      ? .on : .off
-        pauseOnLockSwitch.state  = s.pauseOnLock      ? .on : .off
+        enforceSwitch.state               = s.enforceRest               ? .on : .off
+        restWindowAutoActivateSwitch.state = s.restWindowAutoActivate   ? .on : .off
+        pauseOnLockSwitch.state           = s.pauseOnLock               ? .on : .off
         notifyWorkSwitch.state   = s.notifyOnWorkEnd  ? .on : .off
         notifyRestSwitch.state   = s.notifyOnRestEnd  ? .on : .off
         soundSwitch.state        = s.soundEnabled     ? .on : .off
@@ -732,6 +746,11 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     @objc private func enforceChanged() {
         Settings.shared.enforceRest = (enforceSwitch.state == .on)
         NotificationCenter.default.post(name: .settingsDidChange, object: "enforceRest")
+    }
+
+    /// 同步「休息弹窗是否自动获取焦点」到持久化存储。
+    @objc private func restWindowAutoActivateChanged() {
+        Settings.shared.restWindowAutoActivate = (restWindowAutoActivateSwitch.state == .on)
     }
 
     @objc private func pauseOnLockChanged() {

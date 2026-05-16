@@ -347,11 +347,17 @@ class RestWindowController: NSObject {
 
     // MARK: - Show / Close
 
+    /// 呈现休息浮动窗：`Settings.shared.restWindowAutoActivate` 为 `true` 时激活 EyeGuard 并使其成为 key window；
+    /// 为 `false` 时仅用 `orderFrontRegardless` 显示窗体，不改变当前前台应用的键盘焦点。用户可随时点击面板以重新激活。
     func show() {
         applyRestPanelTone()
         quoteLabel.stringValue = RestQuoteProvider.randomQuote()
-        NSApp.activate(ignoringOtherApps: true)
-        panel.makeKeyAndOrderFront(nil)
+        if Settings.shared.restWindowAutoActivate {
+            NSApp.activate(ignoringOtherApps: true)
+            panel.makeKeyAndOrderFront(nil)
+        } else {
+            panel.orderFrontRegardless()
+        }
         startCountdown()
         startLocalTimer()
         animateIn()
@@ -429,11 +435,12 @@ class RestWindowController: NSObject {
     }
 }
 
-// MARK: - RestPanel（点击时重新夺回 key window）
+// MARK: - RestPanel（用户点击时仍可激活应用并成为 key window）
 
 private class RestPanel: NSPanel {
     override var canBecomeKey: Bool { true }
 
+    /// 用户点击休息面板时将 EyeGuard 置前并让本窗成为 key window；在未自动抢焦点时也用于恢复快捷键。
     override func mouseDown(with event: NSEvent) {
         super.mouseDown(with: event)
         NSApp.activate(ignoringOtherApps: true)

@@ -13,6 +13,7 @@ class Settings {
         static let workDuration   = "workDuration"
         static let restDuration   = "restDuration"
         static let enforceRest    = "enforceRest"
+        static let restWindowAutoActivate = "restWindowAutoActivate"
         static let pauseOnLock    = "pauseOnLock"
         static let notifyOnWorkEnd = "notifyOnWorkEnd"
         static let notifyOnRestEnd = "notifyOnRestEnd"
@@ -79,6 +80,7 @@ class Settings {
             Keys.workDuration: Self.defaultWork,
             Keys.restDuration: Self.defaultRest,
             Keys.enforceRest: true,
+            Keys.restWindowAutoActivate: true,
             Keys.pauseOnLock: true,
             Keys.notifyOnWorkEnd: true,
             Keys.notifyOnRestEnd: false,
@@ -111,6 +113,14 @@ class Settings {
     var enforceRest: Bool {
         get { defaults.bool(forKey: Keys.enforceRest) }
         set { defaults.set(newValue, forKey: Keys.enforceRest) }
+    }
+
+    /// 休息时弹窗是否在显示时自动将应用激活并让休息窗成为 key window。
+    ///
+    /// 为 `false` 时不调用 `activate` / `makeKey`，保留当前前台应用的键盘焦点；用户仍可点击休息窗通过现有逻辑手动激活。
+    var restWindowAutoActivate: Bool {
+        get { defaults.bool(forKey: Keys.restWindowAutoActivate) }
+        set { defaults.set(newValue, forKey: Keys.restWindowAutoActivate) }
     }
 
     /// 锁屏是否自动暂停
