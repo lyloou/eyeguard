@@ -50,15 +50,6 @@ class AboutWindowController: NSWindowController, NSWindowDelegate {
         heroCard.translatesAutoresizingMaskIntoConstraints = false
         blur.addSubview(heroCard)
 
-        let iconRing = NSView()
-        iconRing.wantsLayer = true
-        iconRing.layer?.cornerRadius = 22
-        iconRing.layer?.borderWidth = 1.5
-        iconRing.layer?.borderColor = ThemeColor.accent.withAlphaComponent(0.35).cgColor
-        iconRing.layer?.backgroundColor = ThemeColor.accentSubtle.cgColor
-        iconRing.translatesAutoresizingMaskIntoConstraints = false
-        heroCard.contentView.addSubview(iconRing)
-
         let iconView = NSImageView()
         if let appIcon = NSImage(named: NSImage.applicationIconName) ?? NSImage(named: "AppIcon") {
             iconView.image = appIcon
@@ -70,8 +61,12 @@ class AboutWindowController: NSWindowController, NSWindowDelegate {
         }
         iconView.imageScaling = .scaleProportionallyUpOrDown
         iconView.wantsLayer = true
-        iconView.layer?.cornerRadius = 16
-        iconView.layer?.masksToBounds = true
+        iconView.layer?.cornerRadius = 18
+        iconView.layer?.masksToBounds = false
+        iconView.layer?.shadowColor = NSColor.black.cgColor
+        iconView.layer?.shadowOpacity = 0.14
+        iconView.layer?.shadowRadius = 10
+        iconView.layer?.shadowOffset = CGSize(width: 0, height: -3)
         iconView.translatesAutoresizingMaskIntoConstraints = false
         heroCard.contentView.addSubview(iconView)
 
@@ -114,17 +109,12 @@ class AboutWindowController: NSWindowController, NSWindowDelegate {
             heroCard.leadingAnchor.constraint(equalTo: blur.leadingAnchor, constant: 20),
             heroCard.trailingAnchor.constraint(equalTo: blur.trailingAnchor, constant: -20),
 
-            iconRing.topAnchor.constraint(equalTo: hero.topAnchor, constant: 22),
-            iconRing.centerXAnchor.constraint(equalTo: hero.centerXAnchor),
-            iconRing.widthAnchor.constraint(equalToConstant: 88),
-            iconRing.heightAnchor.constraint(equalToConstant: 88),
+            iconView.topAnchor.constraint(equalTo: hero.topAnchor, constant: 22),
+            iconView.centerXAnchor.constraint(equalTo: hero.centerXAnchor),
+            iconView.widthAnchor.constraint(equalToConstant: 80),
+            iconView.heightAnchor.constraint(equalToConstant: 80),
 
-            iconView.centerXAnchor.constraint(equalTo: iconRing.centerXAnchor),
-            iconView.centerYAnchor.constraint(equalTo: iconRing.centerYAnchor),
-            iconView.widthAnchor.constraint(equalToConstant: 72),
-            iconView.heightAnchor.constraint(equalToConstant: 72),
-
-            appNameLabel.topAnchor.constraint(equalTo: iconRing.bottomAnchor, constant: 14),
+            appNameLabel.topAnchor.constraint(equalTo: iconView.bottomAnchor, constant: 16),
             appNameLabel.centerXAnchor.constraint(equalTo: hero.centerXAnchor),
             appNameLabel.leadingAnchor.constraint(greaterThanOrEqualTo: hero.leadingAnchor, constant: 16),
             appNameLabel.trailingAnchor.constraint(lessThanOrEqualTo: hero.trailingAnchor, constant: -16),

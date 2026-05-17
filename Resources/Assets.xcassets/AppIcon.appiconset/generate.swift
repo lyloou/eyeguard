@@ -7,12 +7,24 @@ import AppKit
 enum IconPalette {
     /// 翡翠绿强调色
     static let accent = NSColor(red: 0.22, green: 0.78, blue: 0.55, alpha: 1.0)
-    /// 略深翡翠（渐变底、瞳孔）
+    /// 略深翡翠（渐变底、瞳孔、内描边）
     static let accentDark = NSColor(red: 0.12, green: 0.52, blue: 0.38, alpha: 1.0)
-    /// 渐变高光端
+    /// 渐变高光端、外环描边
     static let accentLight = NSColor(red: 0.30, green: 0.86, blue: 0.62, alpha: 1.0)
     static let sclera = NSColor.white
     static let pupilSpecular = NSColor(white: 1.0, alpha: 0.55)
+}
+
+/// 周边修饰强度档位（F3 = 明显）。
+private enum DecorIntensity {
+  case strong
+
+  /// 内环：白描边不透明度
+  var innerRingAlpha: CGFloat { 0.50 }
+  /// 外环：浅翡翠描边不透明度
+  var outerRingAlpha: CGFloat { 0.45 }
+  /// Squircle 内缘描边不透明度
+  var insetBorderAlpha: CGFloat { 0.28 }
 }
 
 // MARK: - Drawing
@@ -43,6 +55,92 @@ private func eyeScleraPath(center: NSPoint, width: CGFloat, height: CGFloat) -> 
     return path
 }
 
+/// 以眼心为圆心描边圆环。
+private func strokeRing(
+    center: NSPoint,
+    radius: CGFloat,
+    lineWidth: CGFloat,
+    color: NSColor
+) {
+    let ring = NSBezierPath()
+    ring.lineWidth = lineWidth
+    color.setStroke()
+    ring.appendArc(withCenter: center, radius: radius, startAngle: 0, endAngle: 360)
+    ring.stroke()
+}
+
+/// Squircle 内缘镶边（方案 3 内描边，与双环配套）。
+private func drawSquircleInsetBorder(canvas: NSRect, lineWidth: CGFloat, alpha: CGFloat) {
+    let inset = lineWidth / 2
+    let border = squirclePath(in: canvas.insetBy(dx: inset, dy: inset))
+    border.lineWidth = lineWidth
+    IconPalette.accentDark.withAlphaComponent(alpha).setStroke()
+    border.stroke()
+}
+
+/// 翡翠双环周边修饰（E1）；按尺寸降级。
+private func drawPeripheralDecorations(
+    size: Int,
+    canvas: NSRect,
+    eyeCenter: NSPoint,
+    eyeWidth: CGFloat,
+    intensity: DecorIntensity
+) {
+    let s = canvas.width
+    let scale = s / 1024
+    let innerRadius = eyeWidth * 0.62
+    let outerRadius = eyeWidth * 0.78
+
+    let insetLW = max(1, 2.5 * scale)
+    drawSquircleInsetBorder(
+        canvas: canvas,
+        lineWidth: insetLW,
+        alpha: intensity.insetBorderAlpha
+    )
+
+    if size <= 16 {
+        return
+    }
+
+    if size <= 32 {
+        let lw = max(1.5, 5.5 * scale * 1.35)
+        strokeRing(
+            center: eyeCenter,
+            radius: outerRadius,
+            lineWidth: lw,
+            color: NSColor.white.withAlphaComponent(intensity.innerRingAlpha)
+        )
+        return
+    }
+
+    let boost: CGFloat = size <= 64 ? 1.30 : 1.0
+    let innerLW = max(1.5, 7.0 * scale * boost)
+    let outerLW = max(1.5, 6.0 * scale * boost)
+
+    strokeRing(
+        center: eyeCenter,
+        radius: innerRadius,
+        lineWidth: innerLW,
+        color: NSColor.white.withAlphaComponent(intensity.innerRingAlpha)
+    )
+    strokeRing(
+        center: eyeCenter,
+        radius: outerRadius,
+        lineWidth: outerLW,
+        color: IconPalette.accentLight.withAlphaComponent(intensity.outerRingAlpha)
+    )
+}
+
+/// 按尺寸返回眼形占画布比例（为双环留出空间）。
+private func eyeScaleForIcon(size: Int) -> CGFloat {
+    switch size {
+    case ...16: return 0.58
+    case ...32: return 0.54
+    case ...64: return 0.50
+    default: return 0.46
+    }
+}
+
 /// 在 8-bit RGBA 位图上绘制完整图标并写出 PNG。
 private func drawIcon(size: Int, to url: URL) {
     guard let rep = NSBitmapImageRep(
@@ -65,6 +163,7 @@ private func drawIcon(size: Int, to url: URL) {
     let canvas = NSRect(x: 0, y: 0, width: s, height: s)
     let detail = size >= 128
     let showHighlight = size >= 64
+    let intensity = DecorIntensity.strong
 
     NSGraphicsContext.saveGraphicsState()
     let ctx = NSGraphicsContext(bitmapImageRep: rep)!
@@ -110,10 +209,18 @@ private func drawIcon(size: Int, to url: URL) {
 
     cg.restoreGState()
 
-    let eyeScale: CGFloat = size <= 32 ? 0.58 : (size <= 64 ? 0.54 : 0.50)
+    let eyeScale = eyeScaleForIcon(size: size)
     let eyeW = s * eyeScale
     let eyeH = eyeW * (size <= 32 ? 0.46 : 0.42)
     let center = NSPoint(x: s / 2, y: s * 0.50)
+
+    drawPeripheralDecorations(
+        size: size,
+        canvas: canvas,
+        eyeCenter: center,
+        eyeWidth: eyeW,
+        intensity: intensity
+    )
 
     let sclera = eyeScleraPath(center: center, width: eyeW, height: eyeH)
     IconPalette.sclera.setFill()
