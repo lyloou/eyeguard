@@ -691,30 +691,10 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     /// 语言切换后刷新设置界面文案（窗口已构建时调用）。
     /// 刷新设置页顶栏：「标题 · 描述」同一行。
     private func updateSettingsHeader() {
-        let title = L10n.settingsTitle
-        let subtitle = L10n.settingsSubtitle
-        let separator = " · "
-        let full = title + separator + subtitle
-        let attr = NSMutableAttributedString(string: full)
-
-        let titleRange = (full as NSString).range(of: title)
-        let sepRange = (full as NSString).range(of: separator)
-        let subRange = (full as NSString).range(of: subtitle)
-
-        attr.addAttributes([
-            .font: NSFont.systemFont(ofSize: 22, weight: .bold),
-            .foregroundColor: NSColor.labelColor,
-        ], range: titleRange)
-        attr.addAttributes([
-            .font: NSFont.systemFont(ofSize: 13, weight: .medium),
-            .foregroundColor: NSColor.tertiaryLabelColor,
-        ], range: sepRange)
-        attr.addAttributes([
-            .font: NSFont.systemFont(ofSize: 13),
-            .foregroundColor: NSColor.secondaryLabelColor,
-        ], range: subRange)
-
-        settingsHeaderLabel?.attributedStringValue = attr
+        settingsHeaderLabel?.attributedStringValue = EyeGuardWindowChrome.attributedHeader(
+            title: L10n.settingsTitle,
+            subtitle: L10n.settingsSubtitle
+        )
     }
 
     func applyLocalization() {

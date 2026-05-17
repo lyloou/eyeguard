@@ -1,5 +1,6 @@
-import Foundation
+import AppKit
 import Carbon
+import Foundation
 
 /// 用户可配置设置项（UserDefaults 持久化）
 class Settings {
@@ -57,6 +58,15 @@ class Settings {
         case dark   = "dark"    // 强制暗色
 
         var index: Int { ThemeMode.allCases.firstIndex(of: self) ?? 0 }
+
+        /// 对应的 `NSAppearance`；跟随系统时为 `nil`。
+        var nsAppearance: NSAppearance? {
+            switch self {
+            case .system: return nil
+            case .light:  return NSAppearance(named: .aqua)
+            case .dark:   return NSAppearance(named: .darkAqua)
+            }
+        }
     }
 
     /// 状态栏样式

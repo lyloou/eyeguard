@@ -65,6 +65,28 @@ enum EyeGuardWindowChrome {
         return label
     }
 
+    /// 生成「标题 · 描述」单行富文本顶栏。
+    static func attributedHeader(title: String, subtitle: String, separator: String = " · ") -> NSAttributedString {
+        let full = title + separator + subtitle
+        let attr = NSMutableAttributedString(string: full)
+        let titleRange = (full as NSString).range(of: title)
+        let sepRange = (full as NSString).range(of: separator)
+        let subRange = (full as NSString).range(of: subtitle)
+        attr.addAttributes([
+            .font: NSFont.systemFont(ofSize: 22, weight: .bold),
+            .foregroundColor: NSColor.labelColor,
+        ], range: titleRange)
+        attr.addAttributes([
+            .font: NSFont.systemFont(ofSize: 13, weight: .medium),
+            .foregroundColor: NSColor.tertiaryLabelColor,
+        ], range: sepRange)
+        attr.addAttributes([
+            .font: NSFont.systemFont(ofSize: 13),
+            .foregroundColor: NSColor.secondaryLabelColor,
+        ], range: subRange)
+        return attr
+    }
+
     /// 根据 `contentLayoutRect` 计算标题顶部约束常量。
     static func titleTopInset(for window: NSWindow?, extraPadding: CGFloat = 10) -> CGFloat {
         guard let window, let contentView = window.contentView else { return 52 }
@@ -124,10 +146,12 @@ final class StatusMenuHeaderView: NSView {
     private let badge = NSTextField(labelWithString: "")
     private let statusLabel = NSTextField(labelWithString: "")
     private let timeLabel = NSTextField(labelWithString: "")
+    private let bottomRule = NSView()
 
     override init(frame frameRect: NSRect) {
         super.init(frame: frameRect)
         translatesAutoresizingMaskIntoConstraints = false
+        wantsLayer = true
 
         badge.font = NSFont.systemFont(ofSize: 10, weight: .bold)
         badge.textColor = ThemeColor.accent
@@ -135,7 +159,6 @@ final class StatusMenuHeaderView: NSView {
         badge.lineBreakMode = .byTruncatingTail
         badge.wantsLayer = true
         badge.layer?.cornerRadius = 4
-        badge.layer?.backgroundColor = ThemeColor.accentSubtle.cgColor
         badge.translatesAutoresizingMaskIntoConstraints = false
         badge.setContentHuggingPriority(.required, for: .horizontal)
         addSubview(badge)
@@ -152,6 +175,10 @@ final class StatusMenuHeaderView: NSView {
         timeLabel.translatesAutoresizingMaskIntoConstraints = false
         addSubview(timeLabel)
 
+        bottomRule.wantsLayer = true
+        bottomRule.translatesAutoresizingMaskIntoConstraints = false
+        addSubview(bottomRule)
+
         NSLayoutConstraint.activate([
             heightAnchor.constraint(equalToConstant: 56),
             badge.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 14),
@@ -165,10 +192,35 @@ final class StatusMenuHeaderView: NSView {
 
             timeLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -14),
             timeLabel.centerYAnchor.constraint(equalTo: centerYAnchor),
+
+            bottomRule.leadingAnchor.constraint(equalTo: leadingAnchor),
+            bottomRule.trailingAnchor.constraint(equalTo: trailingAnchor),
+            bottomRule.bottomAnchor.constraint(equalTo: bottomAnchor),
+            bottomRule.heightAnchor.constraint(equalToConstant: 1),
         ])
     }
 
     required init?(coder: NSCoder) { fatalError() }
+
+    override var wantsUpdateLayer: Bool { true }
+
+    override func updateLayer() {
+        let appearance = effectiveAppearance
+        layer?.backgroundColor = ThemeColor.resolve(ThemeColor.cardBackground, for: appearance).cgColor
+        badge.layer?.backgroundColor = ThemeColor.resolve(ThemeColor.accentSubtle, for: appearance).cgColor
+        bottomRule.layer?.backgroundColor = ThemeColor.resolve(ThemeColor.cardDivider, for: appearance).cgColor
+    }
+
+    override func viewDidChangeEffectiveAppearance() {
+        super.viewDidChangeEffectiveAppearance()
+        needsDisplay = true
+    }
+
+    /// 主题切换后刷新 layer 颜色。
+    func refreshAppearance() {
+        appearance = Settings.shared.themeMode.nsAppearance
+        needsDisplay = true
+    }
 
     /// 刷新状态、倒计时与徽章文案。
     func update(state: EyeState, statusText: String, timeText: String?) {
@@ -205,20 +257,41 @@ enum StatusMenuStyle {
         menu.minimumWidth = minimumWidth
     }
 
-    /// 添加分组标题行（不可点击）。
-    static func addSection(_ title: String, to menu: NSMenu) {
+    /// 将当前主题应用到菜单、子菜单及自定义 view（状态栏菜单不继承 `NSApp.appearance`）。
+    static func applyAppearance(to menu: NSMenu) {
+        let appearance = Settings.shared.themeMode.nsAppearance
+        menu.appearance = appearance
+        for item in menu.items {
+            item.view?.appearance = appearance
+            if let submenu = item.submenu {
+                applyAppearance(to: submenu)
+            }
+        }
+    }
+
+    /// 添加分组标题行（不可点击），返回该项以便主题切换时刷新。
+    @discardableResult
+    static func addSection(_ title: String, to menu: NSMenu) -> NSMenuItem {
         let item = NSMenuItem(title: "", action: nil, keyEquivalent: "")
         item.isEnabled = false
+        updateSection(item, title: title)
+        menu.addItem(item)
+        return item
+    }
+
+    /// 更新分组标题的 attributed 样式（语言或主题变更时调用）。
+    static func updateSection(_ item: NSMenuItem, title: String) {
+        item.attributedTitle = sectionAttributedTitle(title)
+    }
+
+    /// 构建分组标题的 attributed 字符串。
+    static func sectionAttributedTitle(_ title: String) -> NSAttributedString {
         let attrs: [NSAttributedString.Key: Any] = [
             .font: NSFont.systemFont(ofSize: 10, weight: .semibold),
             .foregroundColor: NSColor.tertiaryLabelColor,
             .kern: 0.6,
         ]
-        item.attributedTitle = NSAttributedString(
-            string: title.uppercased(),
-            attributes: attrs
-        )
-        menu.addItem(item)
+        return NSAttributedString(string: title.uppercased(), attributes: attrs)
     }
 
     /// 创建带 SF Symbol 的菜单项。
@@ -236,9 +309,20 @@ enum StatusMenuStyle {
         }
         if let image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil) {
             let config = NSImage.SymbolConfiguration(pointSize: 12, weight: .medium)
-            item.image = image.withSymbolConfiguration(config)
+            let symbolImage = image.withSymbolConfiguration(config)
+            symbolImage?.isTemplate = true
+            item.image = symbolImage
         }
         return item
+    }
+
+    /// 为统计行等菜单项配置 template 图标。
+    static func templateSymbolImage(_ symbol: String) -> NSImage? {
+        guard let image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil) else { return nil }
+        let config = NSImage.SymbolConfiguration(pointSize: 12, weight: .medium)
+        let symbolImage = image.withSymbolConfiguration(config)
+        symbolImage?.isTemplate = true
+        return symbolImage
     }
 }
 

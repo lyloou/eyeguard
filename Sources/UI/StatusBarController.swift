@@ -1,7 +1,7 @@
 import AppKit
 
 /// 状态栏菜单控制器
-class StatusBarController: NSObject {
+class StatusBarController: NSObject, NSMenuDelegate {
 
     // MARK: - Properties
 
@@ -25,6 +25,7 @@ class StatusBarController: NSObject {
     private var settingsMenuItem: NSMenuItem!
     private var aboutMenuItem: NSMenuItem!
     private var quitMenuItem: NSMenuItem!
+    private var menuSectionItems: [NSMenuItem] = []
 
     // MARK: - Init
 
@@ -45,11 +46,11 @@ class StatusBarController: NSObject {
     }
 
     @objc private func settingsDidChange(_ notification: Notification) {
-        guard let manager = timerManager else { return }
         if let key = notification.object as? String, key == "appLanguage" {
             refreshLocalizedUI()
             return
         }
+        guard let manager = timerManager else { return }
         updateState(manager.state, remaining: manager.remainingSeconds)
     }
 
@@ -77,7 +78,7 @@ class StatusBarController: NSObject {
 
         menu.addItem(NSMenuItem.separator())
 
-        StatusMenuStyle.addSection(L10n.menuSectionControl, to: menu)
+        menuSectionItems.append(StatusMenuStyle.addSection(L10n.menuSectionControl, to: menu))
 
         toggleMenuItem = StatusMenuStyle.item(
             title: L10n.menuStart,
@@ -97,7 +98,23 @@ class StatusBarController: NSObject {
 
         menu.addItem(NSMenuItem.separator())
 
-        StatusMenuStyle.addSection(L10n.menuSectionDisplay, to: menu)
+        menuSectionItems.append(StatusMenuStyle.addSection(L10n.menuSectionDisplay, to: menu))
+
+        dimMenuItem = StatusMenuStyle.item(
+            title: L10n.menuDimScreen,
+            symbol: "moon.fill",
+            action: #selector(dimScreenClicked),
+            target: self
+        )
+        menu.addItem(dimMenuItem)
+
+        brightMenuItem = StatusMenuStyle.item(
+            title: L10n.menuBrightScreen,
+            symbol: "sun.max.fill",
+            action: #selector(brightScreenClicked),
+            target: self
+        )
+        menu.addItem(brightMenuItem)
 
         styleSubmenuItem = StatusMenuStyle.item(
             title: L10n.statusBarStyle,
@@ -120,25 +137,9 @@ class StatusBarController: NSObject {
         menu.addItem(styleSubmenuItem)
         updateStyleSubmenuPreviews()
 
-        dimMenuItem = StatusMenuStyle.item(
-            title: L10n.menuDimScreen,
-            symbol: "moon.fill",
-            action: #selector(dimScreenClicked),
-            target: self
-        )
-        menu.addItem(dimMenuItem)
-
-        brightMenuItem = StatusMenuStyle.item(
-            title: L10n.menuBrightScreen,
-            symbol: "sun.max.fill",
-            action: #selector(brightScreenClicked),
-            target: self
-        )
-        menu.addItem(brightMenuItem)
-
         menu.addItem(NSMenuItem.separator())
 
-        StatusMenuStyle.addSection(L10n.menuSectionStats, to: menu)
+        menuSectionItems.append(StatusMenuStyle.addSection(L10n.menuSectionStats, to: menu))
 
         statsMenuItem = NSMenuItem(title: L10n.todayStats, action: nil, keyEquivalent: "")
         statsMenuItem.isEnabled = false
@@ -172,7 +173,7 @@ class StatusBarController: NSObject {
 
         menu.addItem(NSMenuItem.separator())
 
-        StatusMenuStyle.addSection(L10n.menuSectionApp, to: menu)
+        menuSectionItems.append(StatusMenuStyle.addSection(L10n.menuSectionApp, to: menu))
 
         settingsMenuItem = StatusMenuStyle.item(
             title: L10n.menuSettings,
@@ -200,17 +201,27 @@ class StatusBarController: NSObject {
         )
         menu.addItem(quitMenuItem)
 
+        menu.delegate = self
         statusItem.menu = menu
+        applyMenuTheme()
+    }
+
+    // MARK: - NSMenuDelegate
+
+    func menuWillOpen(_ menu: NSMenu) {
+        applyMenuTheme()
+    }
+
+    /// 将设置中的主题同步到状态栏菜单（`NSApp.appearance` 更新后由 AppDelegate 调用）。
+    func applyMenuTheme() {
+        refreshMenuAppearance()
     }
 
     /// 创建不可点击的统计行（带图标）。
     private func statLineItem(title: String, symbol: String) -> NSMenuItem {
         let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
         item.isEnabled = false
-        if let image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil) {
-            let config = NSImage.SymbolConfiguration(pointSize: 12, weight: .medium)
-            item.image = image.withSymbolConfiguration(config)
-        }
+        item.image = StatusMenuStyle.templateSymbolImage(symbol)
         return item
     }
 
@@ -282,7 +293,6 @@ class StatusBarController: NSObject {
     /// 构建带预览的菜单项标题
     private func buildMenuItemTitle(name: String, preview: String) -> NSAttributedString {
         let font = NSFont.systemFont(ofSize: 13)
-        let grayColor = NSColor(white: 0.5, alpha: 1.0)
 
         let namePart = NSMutableAttributedString(string: name, attributes: [
             .font: font,
@@ -291,7 +301,7 @@ class StatusBarController: NSObject {
 
         let previewPart = NSMutableAttributedString(string: "  " + preview, attributes: [
             .font: font,
-            .foregroundColor: grayColor
+            .foregroundColor: NSColor.secondaryLabelColor
         ])
 
         let result = NSMutableAttributedString()
@@ -348,8 +358,30 @@ class StatusBarController: NSObject {
         }
     }
 
+    /// 主题切换后刷新菜单中的自定义颜色与 layer。
+    private func refreshMenuAppearance() {
+        StatusMenuStyle.applyAppearance(to: menu)
+        refreshMenuSections()
+        menuHeaderView.refreshAppearance()
+        updateStyleSubmenuPreviews()
+    }
+
+    /// 刷新四个分组标题的 attributed 文案。
+    private func refreshMenuSections() {
+        let titles = [
+            L10n.menuSectionControl,
+            L10n.menuSectionDisplay,
+            L10n.menuSectionStats,
+            L10n.menuSectionApp,
+        ]
+        for (item, title) in zip(menuSectionItems, titles) {
+            StatusMenuStyle.updateSection(item, title: title)
+        }
+    }
+
     /// 更新菜单中依赖本地化的静态标题（语言切换或统计刷新时调用）。
     private func rebuildMenuLocalizedStrings() {
+        refreshMenuSections()
         restNowMenuItem.title = L10n.menuRestNow
         dimMenuItem.title = L10n.menuDimScreen
         brightMenuItem.title = L10n.menuBrightScreen

@@ -42,12 +42,20 @@ class OnboardingWindowController: NSWindowController {
         guard let contentView = window?.contentView else { return }
         contentView.wantsLayer = true
 
-        // SF Symbol icon
-        iconView = NSImageView(frame: NSRect(x: 0, y: 0, width: 340, height: 80))
-        iconView.image = NSImage(systemSymbolName: "eye.fill", accessibilityDescription: nil)
-        iconView.symbolConfiguration = NSImage.SymbolConfiguration(pointSize: 48, weight: .medium)
-        iconView.contentTintColor = NSColor(red: 0.13, green: 0.55, blue: 0.13, alpha: 1.0)
+        iconView = NSImageView(frame: NSRect(x: 0, y: 0, width: 60, height: 60))
+        if let appIcon = NSImage(named: NSImage.applicationIconName) ?? NSImage(named: "AppIcon") {
+            appIcon.size = NSSize(width: 60, height: 60)
+            iconView.image = appIcon
+        } else {
+            let cfg = NSImage.SymbolConfiguration(pointSize: 40, weight: .medium)
+            iconView.image = NSImage(systemSymbolName: "eye.fill", accessibilityDescription: nil)?
+                .withSymbolConfiguration(cfg)
+            iconView.contentTintColor = ThemeColor.accent
+        }
         iconView.imageScaling = .scaleProportionallyUpOrDown
+        iconView.wantsLayer = true
+        iconView.layer?.cornerRadius = 12
+        iconView.layer?.masksToBounds = true
         iconView.translatesAutoresizingMaskIntoConstraints = false
         contentView.addSubview(iconView)
 

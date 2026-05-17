@@ -74,4 +74,13 @@ enum ThemeColor {
             }
         }
     }
+
+    /// 在指定 appearance 下解析动态色（用于 layer 等需 `cgColor` 的场景）。
+    static func resolve(_ color: NSColor, for appearance: NSAppearance) -> NSColor {
+        var resolved = color
+        appearance.performAsCurrentDrawingAppearance {
+            resolved = color.usingColorSpace(.deviceRGB) ?? color
+        }
+        return resolved
+    }
 }

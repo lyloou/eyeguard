@@ -117,11 +117,8 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     }
 
     func applyTheme(_ mode: Settings.ThemeMode) {
-        switch mode {
-        case .system: NSApp.appearance = nil
-        case .light:  NSApp.appearance = NSAppearance(named: .aqua)
-        case .dark:   NSApp.appearance = NSAppearance(named: .darkAqua)
-        }
+        NSApp.appearance = mode.nsAppearance
+        statusBarController?.applyMenuTheme()
     }
 
     // MARK: - Main Menu
