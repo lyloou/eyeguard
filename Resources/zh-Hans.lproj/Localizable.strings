@@ -56,19 +56,25 @@
 "preview.progressBar" = "\"████████ %@\"";
 
 /* Menu */
-"▶ Start" = "▶ 开始";
-"▶ Resume" = "▶ 继续";
-"⏸ Pause" = "⏸ 暂停";
-"🔄 Reset" = "🔄 重置";
-"⏰ Rest Now" = "⏰ 立即休息";
-"🌑 Dim Screen" = "🌑 调暗屏幕";
-"☀️ Bright Screen" = "☀️ 调亮屏幕";
-"⚙ Settings..." = "⚙ 设置...";
-"About EyeGuard" = "关于 EyeGuard";
-"❌ Quit" = "❌ 退出";
+"menu.start" = "开始";
+"menu.resume" = "继续";
+"menu.pause" = "暂停";
+"menu.reset" = "重置";
+"menu.restNow" = "立即休息";
+"menu.dimScreen" = "调暗屏幕";
+"menu.brightScreen" = "调亮屏幕";
+"menu.settings" = "设置…";
+"menu.about" = "关于 EyeGuard";
+"menu.quit" = "退出";
+"menu.section.control" = "控制";
+"menu.section.display" = "显示";
+"menu.section.stats" = "统计";
+"menu.section.app" = "应用";
+"stats.work.min" = "工作 %d 分钟";
 
 /* Settings */
 "settings.title" = "设置";
+"settings.subtitle" = "计时、通知与外观";
 "settings.section.system" = "系统";
 "settings.section.shortcuts" = "快捷键";
 "settings.section.timer" = "计时";

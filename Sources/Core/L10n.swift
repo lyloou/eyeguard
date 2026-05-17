@@ -66,20 +66,25 @@ enum L10n {
 
     // MARK: - 菜单项
 
-    static var menuStart: String { ns("▶ Start") }
-    static var menuResume: String { ns("▶ Resume") }
-    static var menuPause: String { ns("⏸ Pause") }
-    static var menuReset: String { ns("🔄 Reset") }
-    static var menuRestNow: String { ns("⏰ Rest Now") }
-    static var menuDimScreen: String { ns("🌑 Dim Screen") }
-    static var menuBrightScreen: String { ns("☀️ Bright Screen") }
-    static var menuSettings: String { ns("⚙ Settings...") }
-    static var menuAbout: String { ns("About EyeGuard") }
-    static var menuQuit: String { ns("❌ Quit") }
+    static var menuStart: String { ns("menu.start") }
+    static var menuResume: String { ns("menu.resume") }
+    static var menuPause: String { ns("menu.pause") }
+    static var menuReset: String { ns("menu.reset") }
+    static var menuRestNow: String { ns("menu.restNow") }
+    static var menuDimScreen: String { ns("menu.dimScreen") }
+    static var menuBrightScreen: String { ns("menu.brightScreen") }
+    static var menuSettings: String { ns("menu.settings") }
+    static var menuAbout: String { ns("menu.about") }
+    static var menuQuit: String { ns("menu.quit") }
+    static var menuSectionControl: String { ns("menu.section.control") }
+    static var menuSectionDisplay: String { ns("menu.section.display") }
+    static var menuSectionStats: String { ns("menu.section.stats") }
+    static var menuSectionApp: String { ns("menu.section.app") }
 
     // MARK: - 设置窗口
 
     static var settingsTitle: String { ns("settings.title") }
+    static var settingsSubtitle: String { ns("settings.subtitle") }
     static var sectionSystem: String { ns("settings.section.system") }
     static var sectionShortcuts: String { ns("settings.section.shortcuts") }
     static var sectionTimer: String { ns("settings.section.timer") }
@@ -173,6 +178,7 @@ enum L10n {
     static var todayStats: String { ns("Today's Stats") }
     static func roundsCompleted(_ n: Int) -> String { String(format: ns("%d rounds completed"), n) }
     static func totalRest(_ min: Int) -> String { String(format: ns("%d min rested"), min) }
+    static func totalWork(_ min: Int) -> String { String(format: ns("stats.work.min"), min) }
     static var menuViewStats: String { ns("stats.menu.view") }
 
     static var statsTitle: String { ns("stats.title") }

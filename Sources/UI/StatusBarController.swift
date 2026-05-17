@@ -11,13 +11,14 @@ class StatusBarController: NSObject {
     weak var timerManager: TimerManager?
 
     // 菜单项
-    private var statusMenuItem: NSMenuItem!
+    private var menuHeaderView: StatusMenuHeaderView!
     private var toggleMenuItem: NSMenuItem!
     private var restNowMenuItem: NSMenuItem!
     private var dimMenuItem: NSMenuItem!
     private var brightMenuItem: NSMenuItem!
     private var styleSubmenuItem: NSMenuItem!
     private var statsMenuItem: NSMenuItem!
+    private var workStatsMenuItem: NSMenuItem!
     private var roundsMenuItem: NSMenuItem!
     private var restStatsMenuItem: NSMenuItem!
     private var viewStatsMenuItem: NSMenuItem!
@@ -67,40 +68,45 @@ class StatusBarController: NSObject {
 
     private func setupMenu() {
         menu = NSMenu()
+        StatusMenuStyle.apply(to: menu)
 
-        // 状态行
-        statusMenuItem = NSMenuItem(title: "当前状态: 空闲", action: nil, keyEquivalent: "")
-        statusMenuItem.isEnabled = false
-        menu.addItem(statusMenuItem)
+        menuHeaderView = StatusMenuHeaderView(frame: .zero)
+        let headerItem = NSMenuItem()
+        headerItem.view = menuHeaderView
+        menu.addItem(headerItem)
 
         menu.addItem(NSMenuItem.separator())
 
-        // Toggle（暂停/继续）
-        toggleMenuItem = NSMenuItem(title: L10n.menuStart, action: #selector(toggleClicked), keyEquivalent: "")
-        toggleMenuItem.target = self
+        StatusMenuStyle.addSection(L10n.menuSectionControl, to: menu)
+
+        toggleMenuItem = StatusMenuStyle.item(
+            title: L10n.menuStart,
+            symbol: "play.fill",
+            action: #selector(toggleClicked),
+            target: self
+        )
         menu.addItem(toggleMenuItem)
 
-        // 立即休息
-        restNowMenuItem = NSMenuItem(title: L10n.menuRestNow, action: #selector(restNowClicked), keyEquivalent: "")
-        restNowMenuItem.target = self
+        restNowMenuItem = StatusMenuStyle.item(
+            title: L10n.menuRestNow,
+            symbol: "cup.and.saucer.fill",
+            action: #selector(restNowClicked),
+            target: self
+        )
         menu.addItem(restNowMenuItem)
 
         menu.addItem(NSMenuItem.separator())
 
-        // 屏幕亮度
-        dimMenuItem = NSMenuItem(title: L10n.menuDimScreen, action: #selector(dimScreenClicked), keyEquivalent: "")
-        dimMenuItem.target = self
-        menu.addItem(dimMenuItem)
+        StatusMenuStyle.addSection(L10n.menuSectionDisplay, to: menu)
 
-        brightMenuItem = NSMenuItem(title: L10n.menuBrightScreen, action: #selector(brightScreenClicked), keyEquivalent: "")
-        brightMenuItem.target = self
-        menu.addItem(brightMenuItem)
-
-        menu.addItem(NSMenuItem.separator())
-
-        // 状态栏皮肤
-        styleSubmenuItem = NSMenuItem(title: L10n.statusBarStyle, action: nil, keyEquivalent: "")
-        let submenu = NSMenu()
+        styleSubmenuItem = StatusMenuStyle.item(
+            title: L10n.statusBarStyle,
+            symbol: "textformat",
+            action: nil,
+            target: nil
+        )
+        let styleMenu = NSMenu()
+        StatusMenuStyle.apply(to: styleMenu)
         for style in Settings.StatusBarStyle.allCases {
             let item = NSMenuItem(title: styleDisplayName(style), action: #selector(styleSelected(_:)), keyEquivalent: "")
             item.target = self
@@ -108,51 +114,104 @@ class StatusBarController: NSObject {
             if style == Settings.shared.statusBarStyle {
                 item.state = .on
             }
-            submenu.addItem(item)
+            styleMenu.addItem(item)
         }
-        styleSubmenuItem.submenu = submenu
+        styleSubmenuItem.submenu = styleMenu
         menu.addItem(styleSubmenuItem)
-
         updateStyleSubmenuPreviews()
+
+        dimMenuItem = StatusMenuStyle.item(
+            title: L10n.menuDimScreen,
+            symbol: "moon.fill",
+            action: #selector(dimScreenClicked),
+            target: self
+        )
+        menu.addItem(dimMenuItem)
+
+        brightMenuItem = StatusMenuStyle.item(
+            title: L10n.menuBrightScreen,
+            symbol: "sun.max.fill",
+            action: #selector(brightScreenClicked),
+            target: self
+        )
+        menu.addItem(brightMenuItem)
 
         menu.addItem(NSMenuItem.separator())
 
-        // 今日统计
+        StatusMenuStyle.addSection(L10n.menuSectionStats, to: menu)
+
         statsMenuItem = NSMenuItem(title: L10n.todayStats, action: nil, keyEquivalent: "")
         statsMenuItem.isEnabled = false
         menu.addItem(statsMenuItem)
 
-        roundsMenuItem = NSMenuItem(title: L10n.roundsCompleted(StatsManager.shared.roundsCompletedToday), action: nil, keyEquivalent: "")
-        roundsMenuItem.isEnabled = false
-        menu.addItem(roundsMenuItem)
+        workStatsMenuItem = statLineItem(
+            title: L10n.totalWork(StatsManager.shared.totalWorkMinutesToday),
+            symbol: "clock.fill"
+        )
+        menu.addItem(workStatsMenuItem)
 
-        restStatsMenuItem = NSMenuItem(title: L10n.totalRest(StatsManager.shared.totalRestMinutesToday), action: nil, keyEquivalent: "")
-        restStatsMenuItem.isEnabled = false
+        restStatsMenuItem = statLineItem(
+            title: L10n.totalRest(StatsManager.shared.totalRestMinutesToday),
+            symbol: "leaf.fill"
+        )
         menu.addItem(restStatsMenuItem)
 
-        viewStatsMenuItem = NSMenuItem(title: L10n.menuViewStats, action: #selector(viewStatsClicked), keyEquivalent: "")
-        viewStatsMenuItem.target = self
+        roundsMenuItem = statLineItem(
+            title: L10n.roundsCompleted(StatsManager.shared.roundsCompletedToday),
+            symbol: "arrow.triangle.2.circlepath"
+        )
+        menu.addItem(roundsMenuItem)
+
+        viewStatsMenuItem = StatusMenuStyle.item(
+            title: L10n.menuViewStats,
+            symbol: "chart.xyaxis.line",
+            action: #selector(viewStatsClicked),
+            target: self
+        )
         menu.addItem(viewStatsMenuItem)
 
         menu.addItem(NSMenuItem.separator())
 
-        // 设置
-        settingsMenuItem = NSMenuItem(title: L10n.menuSettings, action: #selector(settingsClicked), keyEquivalent: ",")
-        settingsMenuItem.target = self
+        StatusMenuStyle.addSection(L10n.menuSectionApp, to: menu)
+
+        settingsMenuItem = StatusMenuStyle.item(
+            title: L10n.menuSettings,
+            symbol: "gearshape.fill",
+            action: #selector(settingsClicked),
+            target: self,
+            keyEquivalent: ","
+        )
         menu.addItem(settingsMenuItem)
 
-        aboutMenuItem = NSMenuItem(title: L10n.menuAbout, action: #selector(aboutClicked), keyEquivalent: "")
-        aboutMenuItem.target = self
+        aboutMenuItem = StatusMenuStyle.item(
+            title: L10n.menuAbout,
+            symbol: "info.circle.fill",
+            action: #selector(aboutClicked),
+            target: self
+        )
         menu.addItem(aboutMenuItem)
 
-        menu.addItem(NSMenuItem.separator())
-
-        // 退出
-        quitMenuItem = NSMenuItem(title: L10n.menuQuit, action: #selector(quitClicked), keyEquivalent: "q")
-        quitMenuItem.target = self
+        quitMenuItem = StatusMenuStyle.item(
+            title: L10n.menuQuit,
+            symbol: "power",
+            action: #selector(quitClicked),
+            target: self,
+            keyEquivalent: "q"
+        )
         menu.addItem(quitMenuItem)
 
         statusItem.menu = menu
+    }
+
+    /// 创建不可点击的统计行（带图标）。
+    private func statLineItem(title: String, symbol: String) -> NSMenuItem {
+        let item = NSMenuItem(title: title, action: nil, keyEquivalent: "")
+        item.isEnabled = false
+        if let image = NSImage(systemSymbolName: symbol, accessibilityDescription: nil) {
+            let config = NSImage.SymbolConfiguration(pointSize: 12, weight: .medium)
+            item.image = image.withSymbolConfiguration(config)
+        }
+        return item
     }
 
     // MARK: - Actions
@@ -306,6 +365,7 @@ class StatusBarController: NSObject {
         updateStyleSubmenuPreviews()
 
         statsMenuItem.title = L10n.todayStats
+        workStatsMenuItem.title = L10n.totalWork(StatsManager.shared.totalWorkMinutesToday)
         roundsMenuItem.title = L10n.roundsCompleted(StatsManager.shared.roundsCompletedToday)
         restStatsMenuItem.title = L10n.totalRest(StatsManager.shared.totalRestMinutesToday)
         viewStatsMenuItem.title = L10n.menuViewStats
@@ -316,45 +376,44 @@ class StatusBarController: NSObject {
     }
 
     private func refreshMenu(state: EyeState, remaining: Int) {
-        // 状态文字
         let timeStr = formatTime(remaining)
         switch state {
         case .idle:
-            statusMenuItem.title = L10n.statusIdle
+            menuHeaderView.update(state: state, statusText: L10n.statusIdle, timeText: nil)
             toggleMenuItem.title = L10n.menuStart
             toggleMenuItem.isEnabled = true
             restNowMenuItem.isEnabled = false
             applyStatusBarTitle(L10n.appName, state: .idle)
 
         case .working:
-            statusMenuItem.title = L10n.statusWorking(timeStr)
+            menuHeaderView.update(state: state, statusText: L10n.statusWorking(timeStr), timeText: timeStr)
             toggleMenuItem.title = L10n.menuPause
             toggleMenuItem.isEnabled = true
-            restNowMenuItem.title = L10n.menuRestNow
             restNowMenuItem.isEnabled = true
             applyStatusBarTitle(formatStatusBarText(state: .working, timeStr: timeStr, remaining: remaining), state: .working)
 
         case .paused(let frozen):
-            statusMenuItem.title = L10n.statusPaused(formatTime(frozen))
+            let pausedTime = formatTime(frozen)
+            menuHeaderView.update(state: state, statusText: L10n.statusPaused(pausedTime), timeText: pausedTime)
             toggleMenuItem.title = L10n.menuResume
             toggleMenuItem.isEnabled = true
-            restNowMenuItem.title = L10n.menuRestNow
             restNowMenuItem.isEnabled = true
-            applyStatusBarTitle(formatStatusBarText(state: .paused(remaining: frozen), timeStr: formatTime(frozen), remaining: frozen), state: .paused(remaining: frozen))
+            applyStatusBarTitle(formatStatusBarText(state: .paused(remaining: frozen), timeStr: pausedTime, remaining: frozen), state: .paused(remaining: frozen))
 
         case .resting:
-            statusMenuItem.title = L10n.statusResting(timeStr)
+            menuHeaderView.update(state: state, statusText: L10n.statusResting(timeStr), timeText: timeStr)
             toggleMenuItem.isEnabled = false
             restNowMenuItem.isEnabled = false
             applyStatusBarTitle(formatStatusBarText(state: .resting, timeStr: timeStr, remaining: remaining), state: .resting)
 
         case .awaitingActivity:
-            statusMenuItem.title = L10n.statusAwaitingActivity
+            menuHeaderView.update(state: state, statusText: L10n.statusAwaitingActivity, timeText: nil)
             toggleMenuItem.isEnabled = false
             restNowMenuItem.isEnabled = false
             applyStatusBarTitle(formatStatusBarText(state: .awaitingActivity, timeStr: timeStr, remaining: remaining), state: .awaitingActivity)
         }
 
+        workStatsMenuItem.title = L10n.totalWork(StatsManager.shared.totalWorkMinutesToday)
         roundsMenuItem.title = L10n.roundsCompleted(StatsManager.shared.roundsCompletedToday)
         restStatsMenuItem.title = L10n.totalRest(StatsManager.shared.totalRestMinutesToday)
     }

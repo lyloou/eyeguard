@@ -12,6 +12,7 @@
 		10BEA6A897A84B5E6A6973B1 /* TimerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9650AF4E93E22526B4A99521 /* TimerManager.swift */; };
 		179F2929C1280C86B3E266A6 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CCB6207267F5C3452324B74 /* SettingsWindowController.swift */; };
 		196B69055964FEBC533E67CE /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BD959AEF323D3FC899EEDC /* AboutWindowController.swift */; };
+		1B70E55B0DEEBE987048B204 /* EyeGuardChrome.swift in Sources */ = {isa = PBXBuildFile; fileRef = B7AF5C29B08D135A1B22DA8F /* EyeGuardChrome.swift */; };
 		2447EA103AD8695E73F3C9C0 /* StatsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B2AAD9E34CBBAAD3A9747E /* StatsWindowController.swift */; };
 		3509368FEC01C29ACADB9E57 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF99384BFC8824F1774C81D5 /* Localizable.strings */; };
 		3760F1A2A108F8E9FA80E40F /* DualLineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FA53BF26BB3D2B3F5BC020 /* DualLineChartView.swift */; };
@@ -63,6 +64,7 @@
 		A7FA53BF26BB3D2B3F5BC020 /* DualLineChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DualLineChartView.swift; sourceTree = "<group>"; };
 		A96202C8DB002514B2A08326 /* LoginItemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItemManager.swift; sourceTree = "<group>"; };
 		AB0D58E2B068E0FA90C27C4F /* StatsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsManager.swift; sourceTree = "<group>"; };
+		B7AF5C29B08D135A1B22DA8F /* EyeGuardChrome.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EyeGuardChrome.swift; sourceTree = "<group>"; };
 		BECC047FC9C30B733C7DD309 /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 		C384D7842FF70843B032A136 /* LockScreenMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenMonitor.swift; sourceTree = "<group>"; };
 		C7420247C36273FEE7137939 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
@@ -174,6 +176,7 @@
 				69BD959AEF323D3FC899EEDC /* AboutWindowController.swift */,
 				6984A54FE81A6A4D17E4A887 /* AppPanel.swift */,
 				A7FA53BF26BB3D2B3F5BC020 /* DualLineChartView.swift */,
+				B7AF5C29B08D135A1B22DA8F /* EyeGuardChrome.swift */,
 				DA5178CEB6B19E580177C356 /* OnboardingWindowController.swift */,
 				42C385397E83EBD3E5E96CC6 /* RestWindowController.swift */,
 				5CCB6207267F5C3452324B74 /* SettingsWindowController.swift */,
@@ -263,6 +266,7 @@
 				A9B590D946E17E075DC7D502 /* BrightnessManager.swift in Sources */,
 				43C752A0993D82A4F94D08B4 /* DailyStats.swift in Sources */,
 				3760F1A2A108F8E9FA80E40F /* DualLineChartView.swift in Sources */,
+				1B70E55B0DEEBE987048B204 /* EyeGuardChrome.swift in Sources */,
 				DCE87AF5F6C7B244A624D2A5 /* HotkeyManager.swift in Sources */,
 				A2D69B84A19DF9A0B2CED74C /* L10n.swift in Sources */,
 				7E5163BD8205C1A653B58489 /* Localization.swift in Sources */,

@@ -7,6 +7,8 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
     private var window: NSWindow!
     private var keyMonitor: Any?
+    private var titleTopConstraint: NSLayoutConstraint!
+    private var settingsHeaderLabel: NSTextField!
 
     // Timer section
     private var workStepper: NSStepper!
@@ -55,7 +57,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
     private func buildWindow() {
         let panel = AppPanel(
-            contentRect: NSRect(x: 0, y: 0, width: 420, height: 600),
+            contentRect: NSRect(x: 0, y: 0, width: 460, height: 640),
             styleMask: [.titled, .closable],
             backing: .buffered,
             defer: false
@@ -65,8 +67,19 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         panel.isReleasedWhenClosed = false
         panel.hidesOnDeactivate = false
         panel.becomesKeyOnlyIfNeeded = false
+        EyeGuardWindowChrome.configure(panel: panel)
         panel.center()
         window = panel
+
+        guard let contentView = window.contentView else { return }
+        let blur = EyeGuardWindowChrome.installBackground(on: contentView)
+        _ = EyeGuardWindowChrome.addTopGlow(to: blur)
+
+        settingsHeaderLabel = NSTextField(labelWithString: "")
+        settingsHeaderLabel.lineBreakMode = .byTruncatingTail
+        settingsHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
+        blur.addSubview(settingsHeaderLabel)
+        updateSettingsHeader()
 
         let scroll = NSScrollView()
         scroll.hasVerticalScroller = true
@@ -76,22 +89,28 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         scroll.verticalScrollElasticity = .allowed
         scroll.drawsBackground = false
         scroll.translatesAutoresizingMaskIntoConstraints = false
-        window.contentView?.addSubview(scroll)
+        blur.addSubview(scroll)
+
+        titleTopConstraint = settingsHeaderLabel.topAnchor.constraint(equalTo: blur.topAnchor, constant: 52)
 
         NSLayoutConstraint.activate([
-            scroll.topAnchor.constraint(equalTo: window.contentView!.topAnchor),
-            scroll.leadingAnchor.constraint(equalTo: window.contentView!.leadingAnchor),
-            scroll.trailingAnchor.constraint(equalTo: window.contentView!.trailingAnchor),
-            scroll.bottomAnchor.constraint(equalTo: window.contentView!.bottomAnchor),
+            titleTopConstraint,
+            settingsHeaderLabel.leadingAnchor.constraint(equalTo: blur.leadingAnchor, constant: 78),
+            settingsHeaderLabel.trailingAnchor.constraint(lessThanOrEqualTo: blur.trailingAnchor, constant: -20),
+
+            scroll.topAnchor.constraint(equalTo: settingsHeaderLabel.bottomAnchor, constant: 14),
+            scroll.leadingAnchor.constraint(equalTo: blur.leadingAnchor),
+            scroll.trailingAnchor.constraint(equalTo: blur.trailingAnchor),
+            scroll.bottomAnchor.constraint(equalTo: blur.bottomAnchor),
         ])
 
         let stack = NSStackView()
         stack.orientation = .vertical
         stack.alignment = .leading
         stack.distribution = .fill
-        stack.spacing = 8
+        stack.spacing = 10
         stack.translatesAutoresizingMaskIntoConstraints = false
-        stack.edgeInsets = NSEdgeInsets(top: 16, left: 20, bottom: 20, right: 20)
+        stack.edgeInsets = NSEdgeInsets(top: 4, left: 20, bottom: 24, right: 20)
         /// 纵向由子视图撑开高度，避免把文档底钉在 clipView 上（那样会拉高窗口、不会出现滚动条）
         stack.setContentHuggingPriority(.defaultLow, for: .vertical)
         stack.setContentCompressionResistancePriority(.required, for: .vertical)
@@ -109,7 +128,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
         let sysCard = makeCard()
         stack.addArrangedSubview(sysCard)
-        sysCard.widthAnchor.constraint(equalTo: stack.widthAnchor, constant: -40).isActive = true
+        sysCard.widthAnchor.constraint(equalTo: stack.widthAnchor).isActive = true
 
         let sysStack = makeCardStack()
         sysCard.addSubview(sysStack)
@@ -160,7 +179,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
         let shortcutCard = makeCard()
         stack.addArrangedSubview(shortcutCard)
-        shortcutCard.widthAnchor.constraint(equalTo: stack.widthAnchor, constant: -40).isActive = true
+        shortcutCard.widthAnchor.constraint(equalTo: stack.widthAnchor).isActive = true
 
         let shortcutStack = makeCardStack()
         shortcutCard.addSubview(shortcutStack)
@@ -204,7 +223,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
         let timerCard = makeCard()
         stack.addArrangedSubview(timerCard)
-        timerCard.widthAnchor.constraint(equalTo: stack.widthAnchor, constant: -40).isActive = true
+        timerCard.widthAnchor.constraint(equalTo: stack.widthAnchor).isActive = true
 
         let timerStack = makeCardStack()
         timerCard.addSubview(timerStack)
@@ -231,7 +250,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
         let behaviorCard = makeCard()
         stack.addArrangedSubview(behaviorCard)
-        behaviorCard.widthAnchor.constraint(equalTo: stack.widthAnchor, constant: -40).isActive = true
+        behaviorCard.widthAnchor.constraint(equalTo: stack.widthAnchor).isActive = true
 
         let behaviorStack = makeCardStack()
         behaviorCard.addSubview(behaviorStack)
@@ -283,7 +302,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
 
         let notifyCard = makeCard()
         stack.addArrangedSubview(notifyCard)
-        notifyCard.widthAnchor.constraint(equalTo: stack.widthAnchor, constant: -40).isActive = true
+        notifyCard.widthAnchor.constraint(equalTo: stack.widthAnchor).isActive = true
 
         let notifyStack = makeCardStack()
         notifyCard.addSubview(notifyStack)
@@ -322,7 +341,7 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         card.lightColor = ThemeColor.cardBackground
         card.darkColor  = ThemeColor.cardBackground
         card.wantsLayer = true
-        card.layer?.cornerRadius = 10
+        card.layer?.cornerRadius = 12
         card.layer?.borderWidth = 0.5
         card.translatesAutoresizingMaskIntoConstraints = false
         return card
@@ -345,24 +364,8 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
         ])
     }
 
-    private func sectionHeader(_ key: String) -> NSView {
-        let label = NSTextField(labelWithString: L10n.string(forKey: key))
-        label.identifier = NSUserInterfaceItemIdentifier(key)
-        label.font = NSFont.systemFont(ofSize: 10, weight: .semibold)
-        label.textColor = NSColor.secondaryLabelColor
-        label.translatesAutoresizingMaskIntoConstraints = false
-
-        let wrapper = NSView()
-        wrapper.translatesAutoresizingMaskIntoConstraints = false
-        wrapper.addSubview(label)
-        NSLayoutConstraint.activate([
-            label.leadingAnchor.constraint(equalTo: wrapper.leadingAnchor, constant: 4),
-            label.topAnchor.constraint(equalTo: wrapper.topAnchor, constant: 4),
-            label.bottomAnchor.constraint(equalTo: wrapper.bottomAnchor, constant: -4),
-            label.trailingAnchor.constraint(equalTo: wrapper.trailingAnchor),
-            wrapper.heightAnchor.constraint(equalToConstant: 24),
-        ])
-        return wrapper
+    private func sectionHeader(_ key: String) -> EyeGuardSectionHeaderView {
+        EyeGuardSectionHeaderView(titleKey: key)
     }
 
     private func cardDivider() -> NSView {
@@ -686,8 +689,37 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     }
 
     /// 语言切换后刷新设置界面文案（窗口已构建时调用）。
+    /// 刷新设置页顶栏：「标题 · 描述」同一行。
+    private func updateSettingsHeader() {
+        let title = L10n.settingsTitle
+        let subtitle = L10n.settingsSubtitle
+        let separator = " · "
+        let full = title + separator + subtitle
+        let attr = NSMutableAttributedString(string: full)
+
+        let titleRange = (full as NSString).range(of: title)
+        let sepRange = (full as NSString).range(of: separator)
+        let subRange = (full as NSString).range(of: subtitle)
+
+        attr.addAttributes([
+            .font: NSFont.systemFont(ofSize: 22, weight: .bold),
+            .foregroundColor: NSColor.labelColor,
+        ], range: titleRange)
+        attr.addAttributes([
+            .font: NSFont.systemFont(ofSize: 13, weight: .medium),
+            .foregroundColor: NSColor.tertiaryLabelColor,
+        ], range: sepRange)
+        attr.addAttributes([
+            .font: NSFont.systemFont(ofSize: 13),
+            .foregroundColor: NSColor.secondaryLabelColor,
+        ], range: subRange)
+
+        settingsHeaderLabel?.attributedStringValue = attr
+    }
+
     func applyLocalization() {
         window.title = L10n.settingsTitle
+        updateSettingsHeader()
         localizeViewTree(window.contentView)
         themeSegment.setLabel(L10n.themeSystem, forSegment: 0)
         themeSegment.setLabel(L10n.themeLight, forSegment: 1)
@@ -897,9 +929,19 @@ class SettingsWindowController: NSObject, NSWindowDelegate {
     func show() {
         applyLocalization()
         loadSettings()
+        updateTitleBarInsets()
         window.makeKeyAndOrderFront(nil)
         NSApp.activate(ignoringOtherApps: true)
         installKeyMonitor()
+    }
+
+    func windowDidResize(_ notification: Notification) {
+        updateTitleBarInsets()
+    }
+
+    /// 根据标题栏高度调整主标题顶部间距。
+    private func updateTitleBarInsets() {
+        titleTopConstraint?.constant = EyeGuardWindowChrome.titleTopInset(for: window)
     }
 
     func windowWillClose(_ notification: Notification) {

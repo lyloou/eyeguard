@@ -56,19 +56,25 @@
 "preview.progressBar" = "\"████████ %@\"";
 
 /* Menu */
-"▶ Start" = "▶ Start";
-"▶ Resume" = "▶ Resume";
-"⏸ Pause" = "⏸ Pause";
-"🔄 Reset" = "🔄 Reset";
-"⏰ Rest Now" = "⏰ Rest Now";
-"🌑 Dim Screen" = "🌑 Dim Screen";
-"☀️ Bright Screen" = "☀️ Bright Screen";
-"⚙ Settings..." = "⚙ Settings...";
-"About EyeGuard" = "About EyeGuard";
-"❌ Quit" = "❌ Quit";
+"menu.start" = "Start";
+"menu.resume" = "Resume";
+"menu.pause" = "Pause";
+"menu.reset" = "Reset";
+"menu.restNow" = "Rest Now";
+"menu.dimScreen" = "Dim Screen";
+"menu.brightScreen" = "Brighten Screen";
+"menu.settings" = "Settings…";
+"menu.about" = "About EyeGuard";
+"menu.quit" = "Quit";
+"menu.section.control" = "Control";
+"menu.section.display" = "Display";
+"menu.section.stats" = "Statistics";
+"menu.section.app" = "App";
+"stats.work.min" = "%d min worked";
 
 /* Settings */
 "settings.title" = "Settings";
+"settings.subtitle" = "Timer, notifications & appearance";
 "settings.section.system" = "SYSTEM";
 "settings.section.shortcuts" = "SHORTCUTS";
 "settings.section.timer" = "TIMER";
