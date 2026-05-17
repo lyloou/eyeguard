@@ -10,6 +10,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
     private var hotkeyManager: HotkeyManager!
     private var onboardingWindowController: OnboardingWindowController?
     private var aboutWindowController: AboutWindowController?
+    private var statsWindowController: StatsWindowController?
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         setupMainMenu()
@@ -78,6 +79,17 @@ class AppDelegate: NSObject, NSApplicationDelegate {
             self?.aboutWindowController?.show()
         }
 
+        NotificationCenter.default.addObserver(
+            forName: .showStatsWindow,
+            object: nil,
+            queue: .main
+        ) { [weak self] _ in
+            if self?.statsWindowController == nil {
+                self?.statsWindowController = StatsWindowController()
+            }
+            self?.statsWindowController?.show()
+        }
+
         // 启动后自动开始工作计时
         timerManager.start()
 
@@ -101,6 +113,7 @@ class AppDelegate: NSObject, NSApplicationDelegate {
         SettingsWindowController.shared.applyLocalization()
         onboardingWindowController?.applyLocalization()
         aboutWindowController?.applyLocalization()
+        statsWindowController?.applyLocalization()
     }
 
     func applyTheme(_ mode: Settings.ThemeMode) {

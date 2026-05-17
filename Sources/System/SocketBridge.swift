@@ -145,7 +145,9 @@ class SocketBridge {
             return jsonify([
                 "ok": true,
                 "rounds": StatsManager.shared.roundsCompletedToday,
-                "restMinutes": StatsManager.shared.totalRestMinutesToday
+                "workMinutes": StatsManager.shared.totalWorkMinutesToday,
+                "restMinutes": StatsManager.shared.totalRestMinutesToday,
+                "history": StatsManager.shared.historySummaryForCLI(lastDays: 7),
             ])
 
         case "settings":

@@ -40,6 +40,22 @@ enum ThemeColor {
         )
     }
 
+    /// 统计图休息折线色（暖琥珀，与工作绿区分）
+    static var chartRest: NSColor {
+        dynamic(
+            light: NSColor(red: 0.92, green: 0.55, blue: 0.18, alpha: 1.0),
+            dark:  NSColor(red: 0.98, green: 0.62, blue: 0.28, alpha: 1.0)
+        )
+    }
+
+    /// 统计图绘图区背景
+    static var chartPlotBackground: NSColor {
+        dynamic(
+            light: NSColor.black.withAlphaComponent(0.02),
+            dark:  NSColor.white.withAlphaComponent(0.04)
+        )
+    }
+
     /// 浮层叠加色（About 窗口用，亮色 3%，暗色 30%）
     static var overlayTint: NSColor {
         dynamic(

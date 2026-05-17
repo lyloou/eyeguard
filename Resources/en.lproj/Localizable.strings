@@ -158,6 +158,28 @@
 "Today's Stats" = "Today's Stats";
 "%d rounds completed" = "%d rounds completed";
 "%d min rested" = "%d min rested";
+"stats.menu.view" = "View Statistics…";
+"stats.title" = "Statistics";
+"stats.today.summary" = "Today: %d min work · %d min rest · %d rounds";
+"stats.range.label" = "Date range";
+"stats.preset.7" = "7 days";
+"stats.preset.14" = "14 days";
+"stats.preset.30" = "30 days";
+"stats.from" = "From";
+"stats.to" = "To";
+"stats.range.invalid" = "End date must be on or after start date";
+"stats.range.tooLong" = "Custom range is limited to %d days";
+"stats.range.summary" = "%d days: %d min work · %d min rest · %d rounds (avg %d min work, %d min rest per day)";
+"stats.legend.work" = "Work";
+"stats.legend.rest" = "Rest";
+"stats.chart.empty" = "No data in this range";
+"stats.yAxis.unit" = "min";
+"stats.metric.work" = "Work today";
+"stats.metric.rest" = "Rest today";
+"stats.metric.rounds" = "Rounds";
+"stats.metric.unit.min" = "min";
+"stats.metric.unit.round" = "rounds";
+"stats.range.title" = "Date range";
 
 /* Guide */
 "Welcome to EyeGuard" = "Welcome to EyeGuard";

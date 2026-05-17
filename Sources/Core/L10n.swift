@@ -173,6 +173,35 @@ enum L10n {
     static var todayStats: String { ns("Today's Stats") }
     static func roundsCompleted(_ n: Int) -> String { String(format: ns("%d rounds completed"), n) }
     static func totalRest(_ min: Int) -> String { String(format: ns("%d min rested"), min) }
+    static var menuViewStats: String { ns("stats.menu.view") }
+
+    static var statsTitle: String { ns("stats.title") }
+    static func statsTodaySummary(work: Int, rest: Int, rounds: Int) -> String {
+        String(format: ns("stats.today.summary"), work, rest, rounds)
+    }
+    static var statsRangeLabel: String { ns("stats.range.label") }
+    static var statsPreset7: String { ns("stats.preset.7") }
+    static var statsPreset14: String { ns("stats.preset.14") }
+    static var statsPreset30: String { ns("stats.preset.30") }
+    static var statsFrom: String { ns("stats.from") }
+    static var statsTo: String { ns("stats.to") }
+    static var statsInvalidRange: String { ns("stats.range.invalid") }
+    static func statsRangeTooLong(_ maxDays: Int) -> String {
+        String(format: ns("stats.range.tooLong"), maxDays)
+    }
+    static func statsRangeSummary(days: Int, work: Int, rest: Int, rounds: Int, avgWork: Int, avgRest: Int) -> String {
+        String(format: ns("stats.range.summary"), days, work, rest, rounds, avgWork, avgRest)
+    }
+    static var statsLegendWork: String { ns("stats.legend.work") }
+    static var statsLegendRest: String { ns("stats.legend.rest") }
+    static var statsChartEmpty: String { ns("stats.chart.empty") }
+    static var statsYAxisUnit: String { ns("stats.yAxis.unit") }
+    static var statsMetricWork: String { ns("stats.metric.work") }
+    static var statsMetricRest: String { ns("stats.metric.rest") }
+    static var statsMetricRounds: String { ns("stats.metric.rounds") }
+    static var statsMetricUnitMin: String { ns("stats.metric.unit.min") }
+    static var statsMetricUnitRound: String { ns("stats.metric.unit.round") }
+    static var statsRangeTitle: String { ns("stats.range.title") }
 
     // MARK: - 引导
 
@@ -211,5 +240,6 @@ enum L10n {
 
 extension Notification.Name {
     static let showAboutWindow = Notification.Name("showAboutWindow")
+    static let showStatsWindow = Notification.Name("showStatsWindow")
     static let settingsDidChange = Notification.Name("settingsDidChange")
 }

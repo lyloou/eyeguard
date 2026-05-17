@@ -12,9 +12,12 @@
 		10BEA6A897A84B5E6A6973B1 /* TimerManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9650AF4E93E22526B4A99521 /* TimerManager.swift */; };
 		179F2929C1280C86B3E266A6 /* SettingsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5CCB6207267F5C3452324B74 /* SettingsWindowController.swift */; };
 		196B69055964FEBC533E67CE /* AboutWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 69BD959AEF323D3FC899EEDC /* AboutWindowController.swift */; };
+		2447EA103AD8695E73F3C9C0 /* StatsWindowController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 80B2AAD9E34CBBAAD3A9747E /* StatsWindowController.swift */; };
 		3509368FEC01C29ACADB9E57 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = DF99384BFC8824F1774C81D5 /* Localizable.strings */; };
+		3760F1A2A108F8E9FA80E40F /* DualLineChartView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7FA53BF26BB3D2B3F5BC020 /* DualLineChartView.swift */; };
 		3ABCC27C7F4B9CA51BBBC906 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DB3C76F23D59C8FA85E7C1EA /* Assets.xcassets */; };
 		434AF3D631890B2F827EE709 /* AppPanel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6984A54FE81A6A4D17E4A887 /* AppPanel.swift */; };
+		43C752A0993D82A4F94D08B4 /* DailyStats.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5BE2888EC524E093EA6FF3C /* DailyStats.swift */; };
 		4F2C43A7D0C475DC0CFAE44A /* LockScreenMonitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = C384D7842FF70843B032A136 /* LockScreenMonitor.swift */; };
 		59674A9C59AFC20A8335EF13 /* SocketBridge.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3EF024B07DCD3D7FA6D4A283 /* SocketBridge.swift */; };
 		7802780B81A0ADE9E4BAA905 /* LoginItemManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A96202C8DB002514B2A08326 /* LoginItemManager.swift */; };
@@ -50,17 +53,20 @@
 		6B63A120A6F3CD1EB9B5518B /* RestQuoteProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RestQuoteProvider.swift; sourceTree = "<group>"; };
 		74E3AAF8330651BFB3517313 /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = UserNotifications.framework; sourceTree = "<group>"; };
 		7CF8ADAC3813149ED5103419 /* L10n.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = L10n.swift; sourceTree = "<group>"; };
+		80B2AAD9E34CBBAAD3A9747E /* StatsWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsWindowController.swift; sourceTree = "<group>"; };
 		8EBC9083AB6CFBFD94734F0B /* StateMachine.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StateMachine.swift; sourceTree = "<group>"; };
 		9211CAD0BAC93F0685AAE8A2 /* main.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = main.swift; sourceTree = "<group>"; };
 		93BD80D60F81F32FB77FCA97 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		9650AF4E93E22526B4A99521 /* TimerManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerManager.swift; sourceTree = "<group>"; };
 		9E7E62EA4297D0F2B0333D62 /* HotkeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HotkeyManager.swift; sourceTree = "<group>"; };
 		A4226A4FBD912F2956E7A824 /* BrightnessManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BrightnessManager.swift; sourceTree = "<group>"; };
+		A7FA53BF26BB3D2B3F5BC020 /* DualLineChartView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DualLineChartView.swift; sourceTree = "<group>"; };
 		A96202C8DB002514B2A08326 /* LoginItemManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginItemManager.swift; sourceTree = "<group>"; };
 		AB0D58E2B068E0FA90C27C4F /* StatsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsManager.swift; sourceTree = "<group>"; };
 		BECC047FC9C30B733C7DD309 /* Localization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Localization.swift; sourceTree = "<group>"; };
 		C384D7842FF70843B032A136 /* LockScreenMonitor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LockScreenMonitor.swift; sourceTree = "<group>"; };
 		C7420247C36273FEE7137939 /* Settings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Settings.swift; sourceTree = "<group>"; };
+		D5BE2888EC524E093EA6FF3C /* DailyStats.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyStats.swift; sourceTree = "<group>"; };
 		D69B95E3CA5DE16846A232EF /* StatusBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatusBarController.swift; sourceTree = "<group>"; };
 		DA5178CEB6B19E580177C356 /* OnboardingWindowController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingWindowController.swift; sourceTree = "<group>"; };
 		DB3C76F23D59C8FA85E7C1EA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -125,6 +131,7 @@
 		78A2E0D52716C7DB3F43A06C /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				D5BE2888EC524E093EA6FF3C /* DailyStats.swift */,
 				7CF8ADAC3813149ED5103419 /* L10n.swift */,
 				BECC047FC9C30B733C7DD309 /* Localization.swift */,
 				6B63A120A6F3CD1EB9B5518B /* RestQuoteProvider.swift */,
@@ -166,9 +173,11 @@
 			children = (
 				69BD959AEF323D3FC899EEDC /* AboutWindowController.swift */,
 				6984A54FE81A6A4D17E4A887 /* AppPanel.swift */,
+				A7FA53BF26BB3D2B3F5BC020 /* DualLineChartView.swift */,
 				DA5178CEB6B19E580177C356 /* OnboardingWindowController.swift */,
 				42C385397E83EBD3E5E96CC6 /* RestWindowController.swift */,
 				5CCB6207267F5C3452324B74 /* SettingsWindowController.swift */,
+				80B2AAD9E34CBBAAD3A9747E /* StatsWindowController.swift */,
 				D69B95E3CA5DE16846A232EF /* StatusBarController.swift */,
 			);
 			path = UI;
@@ -252,6 +261,8 @@
 				D1853B7CDC5B7559DCBC117C /* AppDelegate.swift in Sources */,
 				434AF3D631890B2F827EE709 /* AppPanel.swift in Sources */,
 				A9B590D946E17E075DC7D502 /* BrightnessManager.swift in Sources */,
+				43C752A0993D82A4F94D08B4 /* DailyStats.swift in Sources */,
+				3760F1A2A108F8E9FA80E40F /* DualLineChartView.swift in Sources */,
 				DCE87AF5F6C7B244A624D2A5 /* HotkeyManager.swift in Sources */,
 				A2D69B84A19DF9A0B2CED74C /* L10n.swift in Sources */,
 				7E5163BD8205C1A653B58489 /* Localization.swift in Sources */,
@@ -267,6 +278,7 @@
 				8E541B77DE3ECB7529B6B971 /* SoundManager.swift in Sources */,
 				00863D4473F9BEBB2846B9BF /* StateMachine.swift in Sources */,
 				B441A7B9E9D972F3C09DD218 /* StatsManager.swift in Sources */,
+				2447EA103AD8695E73F3C9C0 /* StatsWindowController.swift in Sources */,
 				E29F1F58C5868B954EC2AE70 /* StatusBarController.swift in Sources */,
 				0A89B4E0A945B0CD3CA26E96 /* ThemeColor.swift in Sources */,
 				10BEA6A897A84B5E6A6973B1 /* TimerManager.swift in Sources */,

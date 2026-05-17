@@ -20,7 +20,7 @@ platforms: [macos]
 | `eyeguard reset` | 重置当前计时 |
 | `eyeguard rest-now` | 立即进入休息 |
 | `eyeguard skip` | 跳过休息（需处于休息中） |
-| `eyeguard stats` | 今日统计（轮次+累计休息） |
+| `eyeguard stats` | 今日统计（工作/休息/轮次 + 近 7 日历史） |
 | `eyeguard settings` | 查看当前所有配置 |
 | `eyeguard set-style <name>` | 切换状态栏样式 |
 | `eyeguard launch` | 启动 App |
@@ -64,7 +64,10 @@ $ eyeguard status
 工作中 29:55
 
 $ eyeguard stats
-今日完成 3 轮，休息 15 分钟
+今日：工作 120 分钟，休息 15 分钟，完成 3 轮
+近 7 日：
+  2026-05-11  工作 90 分  休息 10 分  2 轮
+  ...
 
 $ eyeguard settings
 工作时长:   30 分钟

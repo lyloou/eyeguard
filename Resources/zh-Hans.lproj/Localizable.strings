@@ -158,6 +158,28 @@
 "Today's Stats" = "今日统计";
 "%d rounds completed" = "已完成 %d 轮";
 "%d min rested" = "已休息 %d 分钟";
+"stats.menu.view" = "查看统计…";
+"stats.title" = "运行统计";
+"stats.today.summary" = "今日：工作 %d 分钟 · 休息 %d 分钟 · %d 轮";
+"stats.range.label" = "统计区间";
+"stats.preset.7" = "7 天";
+"stats.preset.14" = "14 天";
+"stats.preset.30" = "30 天";
+"stats.from" = "从";
+"stats.to" = "到";
+"stats.range.invalid" = "结束日期不能早于开始日期";
+"stats.range.tooLong" = "自定义区间最多 %d 天";
+"stats.range.summary" = "共 %d 天：工作 %d 分钟 · 休息 %d 分钟 · %d 轮（日均工作 %d 分钟，休息 %d 分钟）";
+"stats.legend.work" = "工作时长";
+"stats.legend.rest" = "休息时长";
+"stats.chart.empty" = "该区间暂无数据";
+"stats.yAxis.unit" = "分钟";
+"stats.metric.work" = "今日工作";
+"stats.metric.rest" = "今日休息";
+"stats.metric.rounds" = "完成轮次";
+"stats.metric.unit.min" = "分钟";
+"stats.metric.unit.round" = "轮";
+"stats.range.title" = "选择区间";
 
 /* Guide */
 "Welcome to EyeGuard" = "欢迎使用 EyeGuard";

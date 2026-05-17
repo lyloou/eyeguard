@@ -161,6 +161,9 @@ class TimerManager {
             return
         }
         remainingSeconds -= 1
+        if state == .working {
+            StatsManager.shared.recordWorkSecond()
+        }
         updateUI()
     }
 

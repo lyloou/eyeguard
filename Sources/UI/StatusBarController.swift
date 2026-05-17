@@ -20,6 +20,7 @@ class StatusBarController: NSObject {
     private var statsMenuItem: NSMenuItem!
     private var roundsMenuItem: NSMenuItem!
     private var restStatsMenuItem: NSMenuItem!
+    private var viewStatsMenuItem: NSMenuItem!
     private var settingsMenuItem: NSMenuItem!
     private var aboutMenuItem: NSMenuItem!
     private var quitMenuItem: NSMenuItem!
@@ -128,6 +129,10 @@ class StatusBarController: NSObject {
         restStatsMenuItem = NSMenuItem(title: L10n.totalRest(StatsManager.shared.totalRestMinutesToday), action: nil, keyEquivalent: "")
         restStatsMenuItem.isEnabled = false
         menu.addItem(restStatsMenuItem)
+
+        viewStatsMenuItem = NSMenuItem(title: L10n.menuViewStats, action: #selector(viewStatsClicked), keyEquivalent: "")
+        viewStatsMenuItem.target = self
+        menu.addItem(viewStatsMenuItem)
 
         menu.addItem(NSMenuItem.separator())
 
@@ -259,6 +264,10 @@ class StatusBarController: NSObject {
         NotificationCenter.default.post(name: .showAboutWindow, object: nil)
     }
 
+    @objc private func viewStatsClicked() {
+        NotificationCenter.default.post(name: .showStatsWindow, object: nil)
+    }
+
     @objc private func quitClicked() {
         NSApp.terminate(nil)
     }
@@ -299,6 +308,7 @@ class StatusBarController: NSObject {
         statsMenuItem.title = L10n.todayStats
         roundsMenuItem.title = L10n.roundsCompleted(StatsManager.shared.roundsCompletedToday)
         restStatsMenuItem.title = L10n.totalRest(StatsManager.shared.totalRestMinutesToday)
+        viewStatsMenuItem.title = L10n.menuViewStats
 
         settingsMenuItem.title = L10n.menuSettings
         aboutMenuItem.title = L10n.menuAbout
