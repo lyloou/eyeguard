@@ -11,7 +11,6 @@ class StatusBarController: NSObject, NSMenuDelegate {
     weak var timerManager: TimerManager?
 
     // 菜单项
-    private var menuHeaderView: StatusMenuHeaderView!
     private var toggleMenuItem: NSMenuItem!
     private var restNowMenuItem: NSMenuItem!
     private var dimMenuItem: NSMenuItem!
@@ -70,13 +69,6 @@ class StatusBarController: NSObject, NSMenuDelegate {
     private func setupMenu() {
         menu = NSMenu()
         StatusMenuStyle.apply(to: menu)
-
-        menuHeaderView = StatusMenuHeaderView(frame: .zero)
-        let headerItem = NSMenuItem()
-        headerItem.view = menuHeaderView
-        menu.addItem(headerItem)
-
-        menu.addItem(NSMenuItem.separator())
 
         menuSectionItems.append(StatusMenuStyle.addSection(L10n.menuSectionControl, to: menu))
 
@@ -362,7 +354,6 @@ class StatusBarController: NSObject, NSMenuDelegate {
     private func refreshMenuAppearance() {
         StatusMenuStyle.applyAppearance(to: menu)
         refreshMenuSections()
-        menuHeaderView.refreshAppearance()
         updateStyleSubmenuPreviews()
     }
 
@@ -411,14 +402,12 @@ class StatusBarController: NSObject, NSMenuDelegate {
         let timeStr = formatTime(remaining)
         switch state {
         case .idle:
-            menuHeaderView.update(state: state, statusText: L10n.statusIdle, timeText: nil)
             toggleMenuItem.title = L10n.menuStart
             toggleMenuItem.isEnabled = true
             restNowMenuItem.isEnabled = false
             applyStatusBarTitle(L10n.appName, state: .idle)
 
         case .working:
-            menuHeaderView.update(state: state, statusText: L10n.statusWorking(timeStr), timeText: timeStr)
             toggleMenuItem.title = L10n.menuPause
             toggleMenuItem.isEnabled = true
             restNowMenuItem.isEnabled = true
@@ -426,20 +415,17 @@ class StatusBarController: NSObject, NSMenuDelegate {
 
         case .paused(let frozen):
             let pausedTime = formatTime(frozen)
-            menuHeaderView.update(state: state, statusText: L10n.statusPaused(pausedTime), timeText: pausedTime)
             toggleMenuItem.title = L10n.menuResume
             toggleMenuItem.isEnabled = true
             restNowMenuItem.isEnabled = true
             applyStatusBarTitle(formatStatusBarText(state: .paused(remaining: frozen), timeStr: pausedTime, remaining: frozen), state: .paused(remaining: frozen))
 
         case .resting:
-            menuHeaderView.update(state: state, statusText: L10n.statusResting(timeStr), timeText: timeStr)
             toggleMenuItem.isEnabled = false
             restNowMenuItem.isEnabled = false
             applyStatusBarTitle(formatStatusBarText(state: .resting, timeStr: timeStr, remaining: remaining), state: .resting)
 
         case .awaitingActivity:
-            menuHeaderView.update(state: state, statusText: L10n.statusAwaitingActivity, timeText: nil)
             toggleMenuItem.isEnabled = false
             restNowMenuItem.isEnabled = false
             applyStatusBarTitle(formatStatusBarText(state: .awaitingActivity, timeStr: timeStr, remaining: remaining), state: .awaitingActivity)
