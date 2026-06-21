@@ -1,0 +1,14 @@
+README.md
+  h_76a3716dbfb2d7 35-42
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.5.9",
+  "base_commit_sha": "567ff8a42372bd40a511673d77f40791182fa497",
+  "prompts": {},
+  "humans": {
+    "h_76a3716dbfb2d7": {
+      "author": "lilou <lyloou@qq.com>"
+    }
+  }
+}
